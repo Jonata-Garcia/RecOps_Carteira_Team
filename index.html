@@ -689,7 +689,7 @@ tr.row.flip.out{ transition-duration:.32s; }
 .kml-file{ display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; font-size:12.5px; color:#bae6fd; background:rgba(56,189,248,.08); border:1px dashed rgba(56,189,248,.45); --is:15px; }
 .kml-file .link-btn{ margin-left:auto; color:#7dd3fc; }
 .kml-file{ flex-wrap:wrap; }
-.kml-file .mapa-btn{ margin-left:auto; height:28px; padding:0 10px; font-size:12px; --is:14px; }
+.kml-file .mapa-btn{ margin-left:auto; height:30px; padding:0 12px; font-size:12px; --is:14px; box-shadow:0 6px 18px -8px rgba(0,177,49,.7); }
 .kml-file .mapa-btn ~ .link-btn{ margin-left:6px; }
 .mapa-ov{ position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center; padding:32px 16px; background:rgba(0,0,0,.72); backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity .18s var(--ease); }
 .mapa-ov.open{ opacity:1; pointer-events:auto; }
@@ -705,8 +705,10 @@ tr.row.flip.out{ transition-duration:.32s; }
 .mapa-legend img{ width:16px; height:16px; object-fit:contain; }
 .mapa-dot{ display:block; width:10px; height:10px; border-radius:50%; background:var(--kc); box-shadow:0 0 0 2px rgba(0,0,0,.5); flex:none; }
 #mapaLeaflet{ height:min(460px, 56vh); margin:12px 22px 0; border-radius:12px; border:1px solid var(--line-2); background:#0d0f0d; overflow:hidden; }
-#mapaLeaflet.leaflet-container{ background:#0d0f0d; font-family:var(--font-body); }
-#mapaLeaflet .leaflet-tile-pane{ filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9); }
+#mapaLeaflet.leaflet-container{ background:#e8e6e1; font-family:var(--font-body); }
+#mapaLeaflet.escuro.leaflet-container{ background:#0d0f0d; }
+.mapa-opts{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+#mapaLeaflet.escuro .leaflet-tile-pane{ filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9); }
 #mapaLeaflet .leaflet-bar a{ background:#1a1f1b; color:var(--text-primary); border-bottom-color:var(--line-2); }
 #mapaLeaflet .leaflet-bar a:hover{ background:#232a24; }
 #mapaLeaflet .leaflet-bar{ border:1px solid var(--line-2); box-shadow:none; }
@@ -1376,11 +1378,35 @@ async function __iniciarAppComDados(__payload) {
     const m = (s || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
     return m ? `${m[3]}/${m[2]}/${m[1]}` : s || "—";
   }
+  const FMT_SP = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  });
+  function fmtDataHora(v) {
+    if (v == null || v === "") return null;
+    const s = String(v).trim();
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);
+    if (m) {
+      if (m[4] && /(Z|[+-]\d{2}:?\d{2})$/.test(s)) {
+        const dt = new Date(s);
+        if (!isNaN(dt)) {
+          const p = Object.fromEntries(FMT_SP.formatToParts(dt).map((x => [ x.type, x.value ])));
+          return `${p.day}/${p.month}/${p.year} - ${p.hour}:${p.minute}`;
+        }
+      }
+      return m[4] ? `${m[3]}/${m[2]}/${m[1]} - ${m[4]}:${m[5]}` : `${m[3]}/${m[2]}/${m[1]}`;
+    }
+    m = s.match(/^(\d{2}\/\d{2}\/\d{4})(?:\s*-?\s*(\d{2}):(\d{2}))?/);
+    if (m) return m[2] ? `${m[1]} - ${m[2]}:${m[3]}` : m[1];
+    return s;
+  }
   function formatFacematchData(iso) {
-    if (!iso) return "—";
-    const [d, t] = iso.split("T");
-    const [y, m, day] = d.split("-");
-    return `${day}/${m}/${y} ${(t || "").slice(0, 5)}`;
+    return iso ? fmtDataHora(iso) : "—";
   }
   function ultimaAtualizacaoTexto(placa) {
     const minAgo = PING_MIN_BY_PLACA[placa];
@@ -1543,7 +1569,7 @@ async function __iniciarAppComDados(__payload) {
         nome: "Ping celular (App)",
         janela: "≤30 dias",
         recente: d.evt_ping_cel,
-        rows: [ [ "Sinal", tempo(d.horas_desde_ping_celular), "hl" ], [ "Último uso", i.ultimoEventoFmt ], [ "Evento", i.tipo ] ]
+        rows: [ [ "Sinal", tempo(d.horas_desde_ping_celular), "hl" ], [ "Último uso", fmtDataHora(i.ultimoEventoFmt) ], [ "Evento", i.tipo ] ]
       } : {
         ...base,
         nome: "Ping celular (App)",
@@ -1558,7 +1584,7 @@ async function __iniciarAppComDados(__payload) {
         nome: "Ticket (Intercom)",
         janela: "≤30 dias",
         recente: d.evt_ticket,
-        rows: [ [ "Sinal", tempo(d.horas_desde_ticket), "hl" ], [ "Evento", TICKET_EVENTO_DESC[i.tipo] || i.tipo ], [ "Data", i.eventoFmt ], [ "Assunto", i.titulo ] ],
+        rows: [ [ "Sinal", tempo(d.horas_desde_ticket), "hl" ], [ "Evento", TICKET_EVENTO_DESC[i.tipo] || i.tipo ], [ "Data", fmtDataHora(i.eventoFmt) ], [ "Assunto", i.titulo ] ],
         link: {
           url: `https://app.intercom.com/a/inbox/${INTERCOM_APP_ID}/inbox/conversation/${i.ticketId}`,
           label: "Abrir no Intercom"
@@ -1577,7 +1603,7 @@ async function __iniciarAppComDados(__payload) {
         nome: "Multa",
         janela: "≤30 dias",
         recente: d.evt_multa,
-        rows: [ [ "Sinal", tempo(d.horas_desde_multa), "hl" ], [ "Data", i.data ], [ "Motivo", i.descricao ], [ "Local", `${i.cidade}/${i.uf}` ] ]
+        rows: [ [ "Sinal", tempo(d.horas_desde_multa), "hl" ], [ "Data", fmtDataHora(i.data) ], [ "Motivo", i.descricao ], [ "Local", `${i.cidade}/${i.uf}` ] ]
       } : {
         ...base,
         nome: "Multa",
@@ -1592,7 +1618,7 @@ async function __iniciarAppComDados(__payload) {
         nome: "CarBigData",
         janela: "≤30 dias",
         recente: d.evt_cbd,
-        rows: [ [ "Sinal", tempo(d.horas_desde_cbd), "hl" ], [ "Captura", i.ultimaCaptura ], [ "Endereço", i.endereco ], [ "Passagens", `${i.totalPassagens} no local` ] ]
+        rows: [ [ "Sinal", tempo(d.horas_desde_cbd), "hl" ], [ "Captura", fmtDataHora(i.ultimaCaptura) ], [ "Endereço", i.endereco ], [ "Passagens", `${i.totalPassagens} no local` ] ]
       } : {
         ...base,
         nome: "CarBigData",
@@ -1617,7 +1643,7 @@ async function __iniciarAppComDados(__payload) {
       return {
         ...base,
         nome: "Boletim de Ocorrência (Furto)",
-        rows: [ [ "Data", i.data ], [ "Pontua?", "Não — sinal informativo" ] ],
+        rows: [ [ "Data", fmtDataHora(i.data) ], [ "Pontua?", "Não — sinal informativo" ] ],
         link: {
           url: `https://monitor.mottu.cloud/#/home/ocorrencias/ocorrencias/${i.usuarioId}`,
           label: "Ver ocorrência do locatário"
@@ -2315,12 +2341,12 @@ async function __iniciarAppComDados(__payload) {
     return `<div class="fm-loc ${cls}">${ic("pin")}${temCoords ? `<a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" rel="noopener">${lat.toFixed(5)}, ${lon.toFixed(5)}</a> · ` : ""}${dist}</div>`;
   }
   function fmPingHTML(e) {
-    if (e.diffMinVeiculoDevice == null) return e.lastGpsPing ? `<div class="fm-ping alert h">Último ping do veículo: ${esc(e.lastGpsPing)}</div>` : "";
+    if (e.diffMinVeiculoDevice == null) return e.lastGpsPing ? `<div class="fm-ping alert h">Último ping do veículo: ${esc(fmtDataHora(e.lastGpsPing))}</div>` : "";
     if (e.diffMinVeiculoDevice > FM_PING_DEFASADO_MIN) {
       const dias = e.diffMinVeiculoDevice >= 1440;
-      return `<div class="fm-ping alert ${dias ? "d" : "h"}"><span class="dur">${formatHoras(e.diffMinVeiculoDevice / 60)}</span>Ping não estava ativo — sem comunicar com a moto antes da tentativa${e.lastGpsPing ? ` · último ping ${esc(e.lastGpsPing)}` : ""}</div>`;
+      return `<div class="fm-ping alert ${dias ? "d" : "h"}"><span class="dur">${formatHoras(e.diffMinVeiculoDevice / 60)}</span>Ping não estava ativo — sem comunicar com a moto antes da tentativa${e.lastGpsPing ? ` · último ping ${esc(fmtDataHora(e.lastGpsPing))}` : ""}</div>`;
     }
-    return `<div class="fm-ping ok">Ping ativo nesse momento${e.lastGpsPing ? ` (${esc(e.lastGpsPing)})` : ""}</div>`;
+    return `<div class="fm-ping ok">Ping ativo nesse momento${e.lastGpsPing ? ` (${esc(fmtDataHora(e.lastGpsPing))})` : ""}</div>`;
   }
   function fmItemHTML(e, i, placa, ref, aprovado) {
     const status = aprovado ? `<span class="fm-okb">Aprovado · matchLevel ${esc(e.matchLevel ?? "—")}</span>` : `<span class="fm-fail">Falha · matchLevel ${esc(e.matchLevel ?? "—")}</span>`;
@@ -2561,11 +2587,11 @@ async function __iniciarAppComDados(__payload) {
     }
     if (tipo === "cbd") {
       const c = CBD_INFO[placa];
-      return c ? `- CarBigData: ${c.totalPassagens} passagem(ns) em ${c.endereco} (última captura ${c.ultimaCaptura})` : "";
+      return c ? `- CarBigData: ${c.totalPassagens} passagem(ns) em ${c.endereco} (última captura ${fmtDataHora(c.ultimaCaptura)})` : "";
     }
     if (tipo === "multa") {
       const m = MULTA_INFO[placa];
-      return m ? `- Multa recente (${m.data}, ${m.cidade}/${m.uf}): ${m.descricao}` : "";
+      return m ? `- Multa recente (${fmtDataHora(m.data)}, ${m.cidade}/${m.uf}): ${m.descricao}` : "";
     }
     return "";
   }
@@ -2580,7 +2606,7 @@ async function __iniciarAppComDados(__payload) {
     const sel = draft.qthSelections.length ? `<div class="sel-panel"><span class="t">QTH marcados — nesta ordem no texto</span>${draft.qthSelections.map(((x, i) => `<div class="sel-item"><span class="qth-order">${i + 1}</span><span>${esc(x.label)}</span><button class="icon-btn" type="button" data-qth-remove="${i}" aria-label="Remover">${ic("x")}</button></div>`)).join("")}</div>` : "";
     let lista = "";
     if (kml) {
-      lista = `<div class="kml-file">${ic("file")}<span>${esc(kml.fileName)} · ${kml.summary.length} QTH</span>${kml.folders.length ? `<button class="btn kml mapa-btn" type="button" data-kml-mapa>${ic("map")}Ver no mapa</button>` : ""}<button class="link-btn" type="button" data-kml-pick>Trocar arquivo</button></div>` + (kml.summary.length ? `<div class="kml-list">${kml.summary.map(((pt, i) => {
+      lista = `<div class="kml-file">${ic("file")}<span>${esc(kml.fileName)} · ${kml.summary.length} QTH</span>${kml.folders.length ? `<button class="btn pri mapa-btn" type="button" data-kml-mapa>${ic("map")}Ver no mapa</button>` : ""}<button class="link-btn" type="button" data-kml-pick>Trocar arquivo</button></div>` + (kml.summary.length ? `<div class="kml-list">${kml.summary.map(((pt, i) => {
         const o = draft.qthSelections.findIndex((x => x.url === qthKmlPointMapsUrl(pt)));
         return `<button class="kml-item" type="button" data-kml-idx="${i}" aria-pressed="${o >= 0}"><span class="qth-order">${o >= 0 ? o + 1 : ""}</span><span class="kml-cat" style="--kc:${corCategoria(pt.categoria)}">${esc(pt.categoria)}</span><span class="kml-txt">${pt.label && pt.label !== pt.categoria ? esc(pt.label) : ""}<small>${[ pt.dataStr, pt.motivo ].filter(Boolean).map(esc).join(" · ") || `${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)}`}</small></span></button>`;
       })).join("")}</div>` : `<div class="empty-note">Nenhum QTH encontrado neste arquivo.</div>`);
@@ -2630,13 +2656,14 @@ async function __iniciarAppComDados(__payload) {
       const u = f.placemarks[0] && f.placemarks[0].style && f.placemarks[0].style.iconUrl, cor = corCategoria(f.categoria);
       return `<span>${u ? `<img src="${esc(u)}" alt="" data-cor="${cor}">` : `<i class="mapa-dot" style="--kc:${cor}"></i>`}${esc(f.categoria)}<small>${f.placemarks.length}</small></span>`;
     })).join("");
-    $("#mapaBox").innerHTML = `\n    <div class="modal-head" style="--mc:#38BDF8"><span class="mic">${ic("map")}</span><h2 class="modal-title" id="mapaTitle">Mapa do KML<small>${placa} · ${esc(kml.fileName)}</small></h2><button class="icon-btn" type="button" data-mapa-fechar aria-label="Fechar">${ic("x")}</button></div>\n    <div class="mapa-tools"><span>Clique num ponto e use <b>Usar este QTH</b>. O mapa fica aberto para marcar outros.</span>${temTel ? `<label class="mapa-toggle"><input type="checkbox" id="mapaTel">Telemetria do app (rastro bruto)</label>` : ""}</div>\n    ${legenda ? `<div class="mapa-legend">${legenda}</div>` : ""}\n    <div id="mapaLeaflet"><div class="mapa-load">Carregando mapa…</div></div>\n    <div class="mapa-foot"><span id="mapaSel"></span><button class="btn pri" type="button" data-mapa-fechar>${ic("check")}Concluir</button></div>`;
+    $("#mapaBox").innerHTML = `\n    <div class="modal-head" style="--mc:#38BDF8"><span class="mic">${ic("map")}</span><h2 class="modal-title" id="mapaTitle">Mapa do KML<small>${placa} · ${esc(kml.fileName)}</small></h2><button class="icon-btn" type="button" data-mapa-fechar aria-label="Fechar">${ic("x")}</button></div>\n    <div class="mapa-tools"><span>Clique num ponto e use <b>Usar este QTH</b>. O mapa fica aberto para marcar outros.</span><span class="mapa-opts">${temTel ? `<label class="mapa-toggle"><input type="checkbox" id="mapaTel">Telemetria do app (rastro bruto)</label>` : ""}<label class="mapa-toggle"><input type="checkbox" id="mapaEscuro">Mapa escuro</label></span></div>\n    ${legenda ? `<div class="mapa-legend">${legenda}</div>` : ""}\n    <div id="mapaLeaflet"><div class="mapa-load">Carregando mapa…</div></div>\n    <div class="mapa-foot"><span id="mapaSel"></span><button class="btn pri" type="button" data-mapa-fechar>${ic("check")}Concluir</button></div>`;
     $("#mapaBox").querySelectorAll(".mapa-legend img").forEach((img => img.addEventListener("error", (() => {
       img.outerHTML = `<i class="mapa-dot" style="--kc:${img.dataset.cor}"></i>`;
     }), {
       once: true
     })));
     const tel = $("#mapaTel");
+    $("#mapaEscuro").addEventListener("change", (e => $("#mapaLeaflet").classList.toggle("escuro", e.target.checked)));
     if (tel) tel.addEventListener("change", (() => {
       if (mapa.map) desenharMarcadores(placa, tel.checked);
     }));
@@ -2662,6 +2689,7 @@ async function __iniciarAppComDados(__payload) {
     }
     const el = $("#mapaLeaflet");
     el.innerHTML = "";
+    el.classList.toggle("escuro", !!($("#mapaEscuro") && $("#mapaEscuro").checked));
     mapa.map = L.map(el, {
       scrollWheelZoom: true
     });
