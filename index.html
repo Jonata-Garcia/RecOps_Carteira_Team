@@ -310,6 +310,9 @@ main{ max-width:1520px; margin:0 auto; padding:28px 28px 110px; }
 .stk-col b{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:50px; line-height:.95; padding-right:.06em; font-variant-numeric:tabular-nums; }
 .stk-col b.stk-ini{ color:var(--text-secondary); }
 .stk-arrow{ color:var(--text-faint); --is:20px; margin-top:16px; }
+.stk-mx{ display:inline-flex; align-items:baseline; gap:5px; margin-top:3px; font-family:var(--font-display); font-style:italic; font-weight:700; font-size:13px; color:var(--text-muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.stk-mx i{ align-self:center; padding:1px 5px; border-radius:4px; font-style:normal; font-size:10px; letter-spacing:.6px; color:var(--text-secondary); border:1px solid var(--line-2); background:rgba(255,255,255,.04); }
+.stk-mx b{ font-size:15px; font-weight:800; color:var(--text-primary); }
 .stk-deltas{ margin-top:auto; }
 .stk-hoje.down{ color:#86e6ad; } .stk-hoje.up{ color:#ff9d9d; }
 .stk-deltas{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -963,6 +966,7 @@ async function __iniciarAppComDados(__payload) {
   const USUARIO_ID_BY_PLACA = __obj(__payload.USUARIO_ID_BY_PLACA);
   const ESTOQUE_INICIO_MES_DATA = __payload.ESTOQUE_INICIO_MES_DATA && __payload.ESTOQUE_INICIO_MES_DATA.porUf ? __payload.ESTOQUE_INICIO_MES_DATA : undefined;
   const SAIDAS_150_MES = Array.isArray(__payload.SAIDAS_150_MES) ? __payload.SAIDAS_150_MES : undefined;
+  const ESTOQUE_MX_DATA = __payload.ESTOQUE_MX && typeof __payload.ESTOQUE_MX.hoje === "number" ? __payload.ESTOQUE_MX : undefined;
   const ANALISTAS = Array.isArray(__payload.ANALISTAS) && __payload.ANALISTAS.length ? __payload.ANALISTAS : [ {
     id: "jonata",
     nome: "Jonata Garcia",
@@ -1965,6 +1969,7 @@ async function __iniciarAppComDados(__payload) {
     g.closest(".kpi-total").querySelectorAll(".comp-chip").forEach((ch => ch.classList.toggle("on", ch.dataset.comp === k)));
   }
   const ESTOQUE_INICIO_MES = typeof ESTOQUE_INICIO_MES_DATA !== "undefined" ? ESTOQUE_INICIO_MES_DATA : null;
+  const ESTOQUE_MX = typeof ESTOQUE_MX_DATA !== "undefined" ? ESTOQUE_MX_DATA : null;
   const ESTOQUE_EXEMPLO = (() => {
     const por = {};
     DATA.forEach((d => por[d.uf] = (por[d.uf] || 0) + 1));
@@ -1981,7 +1986,9 @@ async function __iniciarAppComDados(__payload) {
     const dia = snap.data.split("-").reverse().slice(0, 2).join("/");
     const pctv = ini ? Math.abs(dv / ini * 100).toFixed(1).replace(".", ",") : "0,0", sinal = dv > 0 ? "+" : dv < 0 ? "−" : "";
     const tom = dv < 0 ? "down" : dv > 0 ? "up" : "flat", seta = dv < 0 ? ic("arrowDown") : dv > 0 ? ic("arrowUp") : "";
-    return `<div class="card kpi kpi-stock ai" style="--kc:var(--mottu-green)">\n    <span class="stk-ttl">${ic("box")}Estoque${snap.exemplo ? `<span class="stk-ex" title="A foto do dia 1 ainda não vem do refresh — número ilustrativo">exemplo</span>` : ""}</span>\n    <span class="stk-nums"><span class="stk-col"><b class="stk-ini">${ini}</b><small>Dia ${dia}</small></span><span class="stk-arrow">${ic("arrowRight")}</span><span class="stk-col"><b class="stk-hoje ${tom}">${atual}</b><small>Hoje</small></span></span>\n    <span class="stk-deltas"><span class="stk-delta ${tom}"><small>Placas</small><b>${seta}${sinal}${Math.abs(dv)}</b></span><span class="stk-delta ${tom}"><small>Taxa</small><b>${sinal}${pctv}%</b></span></span></div>`;
+    const mx = !a && ESTOQUE_MX ? ESTOQUE_MX : null;
+    const mxLinha = (n, br) => mx && n != null ? `<span class="stk-mx" title="Brasil ${br} + México ${n} = ${br + n} placas na esteira RecOps">+ ${n} <i>MX</i> = <b>${br + n}</b></span>` : "";
+    return `<div class="card kpi kpi-stock ai" style="--kc:var(--mottu-green)">\n    <span class="stk-ttl">${ic("box")}Estoque${snap.exemplo ? `<span class="stk-ex" title="A foto do dia 1 ainda não vem do refresh — número ilustrativo">exemplo</span>` : ""}</span>\n    <span class="stk-nums"><span class="stk-col"><b class="stk-ini">${ini}</b><small>Dia ${dia}</small>${mxLinha(mx && mx.inicio, ini)}</span><span class="stk-arrow">${ic("arrowRight")}</span><span class="stk-col"><b class="stk-hoje ${tom}">${atual}</b><small>Hoje</small>${mxLinha(mx && mx.hoje, atual)}</span></span>\n    <span class="stk-deltas"><span class="stk-delta ${tom}"><small>Placas</small><b>${seta}${sinal}${Math.abs(dv)}</b></span><span class="stk-delta ${tom}"><small>Taxa</small><b>${sinal}${pctv}%</b></span></span></div>`;
   }
   const AVISO_150_DIAS = 30;
   const vence150 = d => d.dias_inadimplencia != null && d.dias_inadimplencia >= LIMITE_DIAS_CARTEIRA - AVISO_150_DIAS && d.dias_inadimplencia < LIMITE_DIAS_CARTEIRA;
