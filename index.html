@@ -400,7 +400,7 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .nat{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:9px; font-size:11.5px; font-weight:500; color:var(--status-info); background:rgba(111,168,255,.12); border:1px solid rgba(111,168,255,.4); white-space:nowrap; --is:15px; }
 .dias{ font-family:var(--font-display); font-weight:700; font-size:17px; font-variant-numeric:tabular-nums; }
 .gauge{ display:inline-flex; align-items:center; gap:10px; }
-.gauge svg{ transform:rotate(-90deg); flex:none; }
+.gauge svg{ transform:rotate(-90deg); flex:none; overflow:visible; }
 .gauge .gv{ display:flex; flex-direction:column; line-height:1.1; }
 .gauge .gv small{ font-size:10.5px; color:var(--text-muted); }
 
@@ -688,6 +688,50 @@ tr.row.flip.out{ transition-duration:.32s; }
 #qthWrap:empty{ display:none; }
 .kml-file{ display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; font-size:12.5px; color:#bae6fd; background:rgba(56,189,248,.08); border:1px dashed rgba(56,189,248,.45); --is:15px; }
 .kml-file .link-btn{ margin-left:auto; color:#7dd3fc; }
+.kml-file{ flex-wrap:wrap; }
+.kml-file .mapa-btn{ margin-left:auto; height:28px; padding:0 10px; font-size:12px; --is:14px; }
+.kml-file .mapa-btn ~ .link-btn{ margin-left:6px; }
+.mapa-ov{ position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center; padding:32px 16px; background:rgba(0,0,0,.72); backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity .18s var(--ease); }
+.mapa-ov.open{ opacity:1; pointer-events:auto; }
+.mapa-box{ width:min(940px, 100%); max-height:100%; display:flex; flex-direction:column; overflow:hidden; border-radius:var(--radius-card); background:linear-gradient(170deg, #1a1f1b, #121513); border:1px solid var(--line-2); box-shadow:0 30px 80px rgba(0,0,0,.6); transform:translateY(10px) scale(.99); transition:transform .25s var(--ease); }
+.mapa-ov.open .mapa-box{ transform:none; }
+.mapa-tools{ display:flex; align-items:center; justify-content:space-between; gap:8px 16px; flex-wrap:wrap; padding:14px 22px 0; font-size:12px; color:var(--text-secondary); }
+.mapa-tools b{ color:#7dd3fc; font-weight:500; }
+.mapa-toggle{ display:flex; align-items:center; gap:7px; cursor:pointer; color:var(--text-primary); }
+.mapa-toggle input{ accent-color:#38BDF8; width:15px; height:15px; margin:0; }
+.mapa-legend{ display:flex; flex-wrap:wrap; gap:6px 16px; padding:10px 22px 0; font-size:11.5px; color:var(--text-secondary); }
+.mapa-legend span{ display:flex; align-items:center; gap:6px; }
+.mapa-legend small{ color:var(--text-muted); }
+.mapa-legend img{ width:16px; height:16px; object-fit:contain; }
+.mapa-dot{ display:block; width:10px; height:10px; border-radius:50%; background:var(--kc); box-shadow:0 0 0 2px rgba(0,0,0,.5); flex:none; }
+#mapaLeaflet{ height:min(460px, 56vh); margin:12px 22px 0; border-radius:12px; border:1px solid var(--line-2); background:#0d0f0d; overflow:hidden; }
+#mapaLeaflet.leaflet-container{ background:#0d0f0d; font-family:var(--font-body); }
+#mapaLeaflet .leaflet-tile-pane{ filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9); }
+#mapaLeaflet .leaflet-bar a{ background:#1a1f1b; color:var(--text-primary); border-bottom-color:var(--line-2); }
+#mapaLeaflet .leaflet-bar a:hover{ background:#232a24; }
+#mapaLeaflet .leaflet-bar{ border:1px solid var(--line-2); box-shadow:none; }
+#mapaLeaflet .leaflet-control-attribution{ background:rgba(0,0,0,.6); color:var(--text-muted); font-size:10px; }
+#mapaLeaflet .leaflet-control-attribution a{ color:var(--text-secondary); }
+#mapaLeaflet .leaflet-popup-content-wrapper, #mapaLeaflet .leaflet-popup-tip{ background:#141714; color:var(--text-primary); border:1px solid var(--line-2); box-shadow:0 14px 34px rgba(0,0,0,.55); }
+#mapaLeaflet .leaflet-popup-content{ margin:12px 14px; }
+#mapaLeaflet a.leaflet-popup-close-button{ color:var(--text-muted); }
+.mapa-load{ display:grid; place-items:center; height:100%; padding:16px; text-align:center; font-size:12.5px; color:var(--text-muted); }
+.mapa-pop{ display:flex; flex-direction:column; gap:2px; min-width:190px; font-size:12px; line-height:1.45; }
+.mapa-pop b{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:13.5px; margin-bottom:2px; }
+.mapa-pop small{ font-size:11.5px; color:var(--text-secondary); }
+.mapa-pop .acts{ display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.mapa-pop button{ display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 10px; border-radius:8px; font:inherit; font-size:12px; font-weight:500; cursor:pointer; --is:14px; }
+.mapa-use{ border:1px solid rgba(56,189,248,.6); background:rgba(56,189,248,.12); color:#7dd3fc; }
+.mapa-use[aria-pressed="true"]{ background:#38BDF8; border-color:transparent; color:#04121c; }
+.mapa-foto{ border:1px solid var(--line-2); background:rgba(255,255,255,.04); color:var(--text-primary); }
+.mapa-mk{ display:grid; place-items:center; background:none; border:0; }
+.mapa-mk img{ display:block; filter:drop-shadow(0 1px 2px rgba(0,0,0,.7)); }
+.mapa-mk .mapa-dot{ width:100%; height:100%; }
+.mapa-mk .mapa-dot.err{ width:16px; height:16px; }
+.mapa-mk.sel img, .mapa-mk.sel .mapa-dot{ filter:drop-shadow(0 0 1px #38BDF8) drop-shadow(0 0 6px #38BDF8); }
+.mapa-mk.sel::after{ content:attr(data-ord); position:absolute; top:-9px; right:-9px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:#38BDF8; color:#04121c; font:700 11px/18px var(--font-body); text-align:center; box-shadow:0 0 0 2px #0d0f0d; }
+.mapa-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 22px 18px; font-size:12.5px; color:var(--text-secondary); }
+.mapa-foot b{ color:#7dd3fc; }
 .kml-list{ display:flex; flex-direction:column; gap:6px; max-height:240px; overflow-y:auto; padding-right:4px; }
 .kml-item{ display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:10px; border:1px solid var(--line-2); background:rgba(0,0,0,.35); cursor:pointer; text-align:left; font-size:12.5px; }
 .kml-item:hover{ border-color:rgba(56,189,248,.5); }
@@ -876,6 +920,7 @@ body.gate-on{ overflow:hidden; }
 
 <div class="pop" id="pop" role="dialog" aria-modal="false"></div>
 <div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div></div>
+<div class="mapa-ov" id="qthMapa" role="dialog" aria-modal="true" aria-labelledby="mapaTitle"><div class="mapa-box" id="mapaBox"></div></div>
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true"><div class="lb-inner"><div class="lb-head"><span id="lbTitle"></span><button class="icon-btn" type="button" data-action="close-lb" aria-label="Fechar"><span class="li" data-icon="x"></span></button></div><div class="lb-body" id="lbBody"></div></div></div>
 <button class="fab fab-top" id="fabTop" type="button" aria-label="Voltar ao topo"><span class="li" data-icon="arrowUp"></span></button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1058,6 +1103,7 @@ async function __iniciarAppComDados(__payload) {
     copy: `<rect class="a" width="14" height="14" x="8" y="8" rx="2"/><path class="b" d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>`,
     check: `<path class="draw" pathLength="1" d="M20 6 9 17l-5-5"/>`,
     send: `<g class="a"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></g><path class="trail" d="M-3 28C-.5 26.8 1.6 24.6 3.3 22c1.5-2.3 1.9-4.4.9-5.9-1-1.4-2.8-1.6-3.9-.3-1.2 1.4-.9 3.6.9 4.6 2.2 1.1 5.2-1 7.8-4.6"/>`,
+    map: `<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>`,
     pin: `<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle class="draw" pathLength="1" cx="12" cy="10" r="3"/>`,
     mapPinPlus: `<path d="M19.914 11.105A7.298 7.298 0 0 0 20 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32 32 0 0 0 .824-.738"/><circle cx="12" cy="10" r="3"/><path class="draw" pathLength="1" d="M16 18h6"/><path class="draw" pathLength="1" d="M19 15v6"/>`,
     monitorCheck: `<rect height="14" rx="2" width="20" x="2" y="3"/><path d="M12 17v4"/><path d="M8 21h8"/><path class="draw" pathLength="1" d="m9 10 2 2 4-4"/>`,
@@ -2260,6 +2306,7 @@ async function __iniciarAppComDados(__payload) {
     if (!$("#overlay").classList.contains("open")) return;
     $("#overlay").classList.remove("open");
     unlockScroll();
+    solicitAtual = null;
   }
   function fmLocHTML(e) {
     const lat = Number(e.lat), lon = Number(e.lon), temCoords = e.lat != null && e.lon != null && Number.isFinite(lat) && Number.isFinite(lon);
@@ -2533,12 +2580,223 @@ async function __iniciarAppComDados(__payload) {
     const sel = draft.qthSelections.length ? `<div class="sel-panel"><span class="t">QTH marcados — nesta ordem no texto</span>${draft.qthSelections.map(((x, i) => `<div class="sel-item"><span class="qth-order">${i + 1}</span><span>${esc(x.label)}</span><button class="icon-btn" type="button" data-qth-remove="${i}" aria-label="Remover">${ic("x")}</button></div>`)).join("")}</div>` : "";
     let lista = "";
     if (kml) {
-      lista = `<div class="kml-file">${ic("file")}<span>${esc(kml.fileName)} · ${kml.summary.length} QTH</span><button class="link-btn" type="button" data-kml-pick>Trocar arquivo</button></div>` + (kml.summary.length ? `<div class="kml-list">${kml.summary.map(((pt, i) => {
+      lista = `<div class="kml-file">${ic("file")}<span>${esc(kml.fileName)} · ${kml.summary.length} QTH</span>${kml.folders.length ? `<button class="btn kml mapa-btn" type="button" data-kml-mapa>${ic("map")}Ver no mapa</button>` : ""}<button class="link-btn" type="button" data-kml-pick>Trocar arquivo</button></div>` + (kml.summary.length ? `<div class="kml-list">${kml.summary.map(((pt, i) => {
         const o = draft.qthSelections.findIndex((x => x.url === qthKmlPointMapsUrl(pt)));
         return `<button class="kml-item" type="button" data-kml-idx="${i}" aria-pressed="${o >= 0}"><span class="qth-order">${o >= 0 ? o + 1 : ""}</span><span class="kml-cat" style="--kc:${corCategoria(pt.categoria)}">${esc(pt.categoria)}</span><span class="kml-txt">${pt.label && pt.label !== pt.categoria ? esc(pt.label) : ""}<small>${[ pt.dataStr, pt.motivo ].filter(Boolean).map(esc).join(" · ") || `${pt.lat.toFixed(5)}, ${pt.lon.toFixed(5)}`}</small></span></button>`;
       })).join("")}</div>` : `<div class="empty-note">Nenhum QTH encontrado neste arquivo.</div>`);
     }
     return sel + lista;
+  }
+  let solicitAtual = null;
+  const mapa = {
+    map: null,
+    camada: null,
+    marcadores: [],
+    placa: null
+  };
+  let leafletPromise = null;
+  function carregarLeaflet() {
+    if (window.L) return Promise.resolve();
+    if (leafletPromise) return leafletPromise;
+    const tag = (el, attrs) => new Promise(((ok, falha) => {
+      Object.assign(el, attrs, {
+        crossOrigin: ""
+      });
+      el.onload = ok;
+      el.onerror = () => {
+        el.remove();
+        falha();
+      };
+      document.head.appendChild(el);
+    }));
+    leafletPromise = Promise.all([ tag(document.createElement("link"), {
+      rel: "stylesheet",
+      href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+      integrity: "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    }), tag(document.createElement("script"), {
+      src: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+      integrity: "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    }) ]).catch((err => {
+      leafletPromise = null;
+      throw err;
+    }));
+    return leafletPromise;
+  }
+  async function abrirMapaQth(placa) {
+    const kml = draftDe(placa).kml;
+    if (!kml || !kml.folders.length) return;
+    const temTel = kml.folders.some((f => /telemetria/i.test(f.categoria)));
+    const legenda = kml.folders.filter((f => !/telemetria/i.test(f.categoria))).map((f => {
+      const u = f.placemarks[0] && f.placemarks[0].style && f.placemarks[0].style.iconUrl, cor = corCategoria(f.categoria);
+      return `<span>${u ? `<img src="${esc(u)}" alt="" data-cor="${cor}">` : `<i class="mapa-dot" style="--kc:${cor}"></i>`}${esc(f.categoria)}<small>${f.placemarks.length}</small></span>`;
+    })).join("");
+    $("#mapaBox").innerHTML = `\n    <div class="modal-head" style="--mc:#38BDF8"><span class="mic">${ic("map")}</span><h2 class="modal-title" id="mapaTitle">Mapa do KML<small>${placa} · ${esc(kml.fileName)}</small></h2><button class="icon-btn" type="button" data-mapa-fechar aria-label="Fechar">${ic("x")}</button></div>\n    <div class="mapa-tools"><span>Clique num ponto e use <b>Usar este QTH</b>. O mapa fica aberto para marcar outros.</span>${temTel ? `<label class="mapa-toggle"><input type="checkbox" id="mapaTel">Telemetria do app (rastro bruto)</label>` : ""}</div>\n    ${legenda ? `<div class="mapa-legend">${legenda}</div>` : ""}\n    <div id="mapaLeaflet"><div class="mapa-load">Carregando mapa…</div></div>\n    <div class="mapa-foot"><span id="mapaSel"></span><button class="btn pri" type="button" data-mapa-fechar>${ic("check")}Concluir</button></div>`;
+    $("#mapaBox").querySelectorAll(".mapa-legend img").forEach((img => img.addEventListener("error", (() => {
+      img.outerHTML = `<i class="mapa-dot" style="--kc:${img.dataset.cor}"></i>`;
+    }), {
+      once: true
+    })));
+    const tel = $("#mapaTel");
+    if (tel) tel.addEventListener("change", (() => {
+      if (mapa.map) desenharMarcadores(placa, tel.checked);
+    }));
+    mapa.placa = placa;
+    if (!$("#qthMapa").classList.contains("open")) {
+      $("#qthMapa").classList.add("open");
+      lockScroll();
+    }
+    mapaSyncSel();
+    try {
+      await carregarLeaflet();
+    } catch {
+      $("#mapaLeaflet").innerHTML = `<div class="mapa-load">Não foi possível carregar o mapa (sem acesso ao unpkg.com). A lista de QTH continua funcionando.</div>`;
+      return;
+    }
+    if (mapa.placa !== placa || !$("#qthMapa").classList.contains("open")) return;
+    montarMapa(placa);
+  }
+  function montarMapa(placa) {
+    if (mapa.map) {
+      mapa.map.remove();
+      mapa.map = null;
+    }
+    const el = $("#mapaLeaflet");
+    el.innerHTML = "";
+    mapa.map = L.map(el, {
+      scrollWheelZoom: true
+    });
+    L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      subdomains: [ "a", "b", "c" ],
+      referrerPolicy: "strict-origin-when-cross-origin",
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> · tiles OSM France'
+    }).addTo(mapa.map);
+    mapa.map.createPane("mapaTel").style.zIndex = 610;
+    mapa.map.createPane("mapaMain").style.zIndex = 640;
+    desenharMarcadores(placa, false);
+  }
+  function iconeKml(pm, cat, tel) {
+    const u = pm.style && pm.style.iconUrl, cor = corCategoria(cat);
+    if (!u) {
+      const s = tel ? 9 : 16;
+      return L.divIcon({
+        className: "mapa-mk",
+        html: `<i class="mapa-dot" style="--kc:${cor}"></i>`,
+        iconSize: [ s, s ],
+        iconAnchor: [ s / 2, s / 2 ],
+        popupAnchor: [ 0, -s / 2 ]
+      });
+    }
+    const s = Math.max(10, Math.round((tel ? 14 : 30) * (pm.style.scale || 1))), hs = pm.style.hotSpot || {
+      x: .5,
+      y: .5
+    };
+    const ax = Math.round(s * hs.x), ay = Math.round(s * (1 - hs.y));
+    return L.divIcon({
+      className: "mapa-mk",
+      html: `<img src="${esc(u)}" width="${s}" height="${s}" alt="">`,
+      iconSize: [ s, s ],
+      iconAnchor: [ ax, ay ],
+      popupAnchor: [ 0, -ay ]
+    });
+  }
+  function mapaPopup(placa, pm, rotulo, url) {
+    const div = document.createElement("div");
+    div.className = "mapa-pop";
+    div.innerHTML = `<b>${esc(rotulo)}</b>${pm.dataStr ? `<small>${esc(pm.dataStr)}</small>` : ""}${pm.motivo ? `<small>${esc(pm.motivo)}${pm.detalhe ? ` — ${esc(pm.detalhe)}` : ""}</small>` : ""}<small>${pm.lat.toFixed(5)}, ${pm.lon.toFixed(5)}</small>\n    <div class="acts">${pm.photoUrl ? `<button class="mapa-foto" type="button">${ic("image")}Ver foto</button>` : ""}<button class="mapa-use" type="button"></button></div>`;
+    const usar = div.querySelector(".mapa-use");
+    const pinta = () => {
+      const o = draftDe(placa).qthSelections.findIndex((x => x.url === url));
+      usar.setAttribute("aria-pressed", o >= 0);
+      usar.innerHTML = o >= 0 ? `${ic("check")}QTH ${o + 1} marcado · remover` : `${ic("pin")}Usar este QTH`;
+    };
+    pinta();
+    usar.addEventListener("click", (() => {
+      alternarQthMapa(placa, rotulo, url);
+      pinta();
+    }));
+    const foto = div.querySelector(".mapa-foto");
+    if (foto) foto.addEventListener("click", (() => openLightbox(pm.photoUrl, [ rotulo, pm.dataStr ].filter(Boolean).join(" · "), LOCATARIO_FOTO_BY_PLACA[placa])));
+    return div;
+  }
+  function desenharMarcadores(placa, comTel) {
+    const kml = draftDe(placa).kml, pts = [];
+    if (mapa.camada) mapa.map.removeLayer(mapa.camada);
+    mapa.camada = L.layerGroup().addTo(mapa.map);
+    mapa.marcadores = [];
+    kml.folders.forEach((f => {
+      const tel = /telemetria/i.test(f.categoria);
+      if (tel && !comTel) return;
+      f.placemarks.forEach((pm => {
+        const pt = {
+          categoria: f.categoria,
+          label: pm.label,
+          lat: pm.lat,
+          lon: pm.lon
+        }, url = qthKmlPointMapsUrl(pt), rotulo = kmlLabel(pt);
+        const mk = L.marker([ pm.lat, pm.lon ], {
+          icon: iconeKml(pm, f.categoria, tel),
+          pane: tel ? "mapaTel" : "mapaMain",
+          title: rotulo
+        });
+        mk.on("add", (() => {
+          const img = mk.getElement() && mk.getElement().querySelector("img");
+          if (img) img.addEventListener("error", (() => {
+            img.outerHTML = `<i class="mapa-dot err" style="--kc:${corCategoria(f.categoria)}"></i>`;
+          }), {
+            once: true
+          });
+          marcaSel(mk, url);
+        }));
+        mk.bindPopup((() => mapaPopup(placa, pm, rotulo, url)), {
+          autoPanPadding: [ 16, 16 ]
+        });
+        mapa.marcadores.push({
+          mk,
+          url
+        });
+        mk.addTo(mapa.camada);
+        pts.push([ pm.lat, pm.lon ]);
+      }));
+    }));
+    if (pts.length) mapa.map.fitBounds(pts, {
+      padding: [ 28, 28 ],
+      maxZoom: 16
+    }); else mapa.map.setView([ -14.2, -51.9 ], 4);
+  }
+  function marcaSel(mk, url) {
+    const el = mk.getElement();
+    if (!el) return;
+    const o = draftDe(mapa.placa).qthSelections.findIndex((x => x.url === url));
+    el.classList.toggle("sel", o >= 0);
+    el.dataset.ord = o >= 0 ? o + 1 : "";
+  }
+  function mapaSyncSel() {
+    const n = draftDe(mapa.placa).qthSelections.length;
+    mapa.marcadores.forEach((({mk, url}) => marcaSel(mk, url)));
+    $("#mapaSel").innerHTML = n ? `<b>${n}</b> QTH marcado(s), nesta ordem no texto` : "Nenhum QTH marcado ainda";
+  }
+  function alternarQthMapa(placa, label, url) {
+    const sel = draftDe(placa).qthSelections, i = sel.findIndex((x => x.url === url));
+    if (i >= 0) sel.splice(i, 1); else sel.push({
+      label,
+      url
+    });
+    if (solicitAtual && solicitAtual.placa === placa && $("#qthWrap")) solicitAtual.refresh();
+    mapaSyncSel();
+  }
+  function fecharMapaQth() {
+    const ov = $("#qthMapa");
+    if (!ov.classList.contains("open")) return;
+    ov.classList.remove("open");
+    unlockScroll();
+    setTimeout((() => {
+      if (ov.classList.contains("open") || !mapa.map) return;
+      mapa.map.remove();
+      mapa.map = null;
+      mapa.camada = null;
+      mapa.marcadores = [];
+    }), 220);
   }
   function injectsHTML(placa) {
     const draft = draftDe(placa), disp = INJECTS.filter((x => solicitInjectTexto(placa, x.k)));
@@ -2559,6 +2817,10 @@ async function __iniciarAppComDados(__payload) {
     const refreshQth = () => {
       $("#qthWrap").innerHTML = qthHTML(placa);
       upd();
+    };
+    solicitAtual = {
+      placa,
+      refresh: refreshQth
     };
     upd();
     $("#qthLivre").addEventListener("input", (e => {
@@ -2593,6 +2855,10 @@ async function __iniciarAppComDados(__payload) {
     $("#modal").querySelector(".modal-form").addEventListener("click", (e => {
       if (e.target.closest("[data-kml-pick]")) {
         $("#kmlFile").click();
+        return;
+      }
+      if (e.target.closest("[data-kml-mapa]")) {
+        abrirMapaQth(placa);
         return;
       }
       const it = e.target.closest("[data-kml-idx]");
@@ -2697,6 +2963,10 @@ async function __iniciarAppComDados(__payload) {
     }
     if (t.closest("[data-action='close-lb']") || t === $("#lightbox")) {
       closeLightbox();
+      return;
+    }
+    if (t.closest("[data-mapa-fechar]") || t === $("#qthMapa")) {
+      fecharMapaQth();
       return;
     }
     if (t.closest("[data-action='close-modal']") || t === $("#overlay")) {
@@ -3065,7 +3335,7 @@ async function __iniciarAppComDados(__payload) {
   }));
   document.addEventListener("keydown", (e => {
     if (e.key !== "Escape") return;
-    if ($("#lightbox").classList.contains("open")) closeLightbox(); else if ($("#overlay").classList.contains("open")) closeModal(); else closePop();
+    if ($("#lightbox").classList.contains("open")) closeLightbox(); else if ($("#qthMapa").classList.contains("open")) fecharMapaQth(); else if ($("#overlay").classList.contains("open")) closeModal(); else closePop();
   }));
   const MOV_IDS = [ "movEntradas", "movSituacao", "mov150" ];
   let movIdx = -1;
