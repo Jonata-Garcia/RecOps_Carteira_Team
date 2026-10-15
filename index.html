@@ -180,6 +180,7 @@ main{ max-width:1520px; margin:0 auto; padding:28px 28px 110px; }
 .title-row small{ display:block; margin-bottom:8px; font-size:11px; letter-spacing:1.6px; text-transform:uppercase; color:var(--mottu-green); }
 .title-row h1{ margin:0; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:34px; line-height:1; letter-spacing:-.3px; }
 .ufs{ display:flex; gap:6px; margin-left:auto; flex-wrap:wrap; }
+.ufs:empty{ display:none; }
 .uf{ padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:500; border:1px solid var(--line-2); color:var(--text-secondary); background:rgba(0,0,0,.25); }
 .uf.no{ color:var(--text-faint); border-style:dashed; }
 .card{ background:linear-gradient(160deg, var(--glass-2), var(--glass)); border:1px solid var(--line); border-radius:var(--radius-card); box-shadow:0 18px 40px -24px rgba(0,0,0,.9); }
@@ -691,6 +692,71 @@ tr.row.flip.out{ transition-duration:.32s; }
 #qthWrap:empty{ display:none; }
 .kml-file{ display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; font-size:12.5px; color:#bae6fd; background:rgba(56,189,248,.08); border:1px dashed rgba(56,189,248,.45); --is:15px; }
 .kml-file .link-btn{ margin-left:auto; color:#7dd3fc; }
+.exp-btn{ display:inline-flex; align-items:center; gap:7px; flex:none; height:34px; padding:0 13px; border-radius:999px; border:1px solid var(--line-2); background:rgba(255,255,255,.03); color:var(--text-primary); font-family:var(--font-body); font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap; transition:all .15s var(--ease); --is:15px; }
+.exp-btn .li{ color:var(--mottu-green-70); }
+.exp-btn:hover{ background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.22); }
+.exp-btn[aria-expanded="true"]{ border-color:var(--mottu-green); background:rgba(0,177,49,.10); }
+.exp-btn.done{ border-color:var(--mottu-green); color:var(--mottu-green-70); background:rgba(0,177,49,.12); }
+.exp-btn:focus-visible{ outline:2px solid var(--mottu-green); outline-offset:2px; }
+.pop.xp-pop{ width:440px; max-width:calc(100vw - 16px); padding:0; display:flex; flex-direction:column; overflow:hidden; }
+.xp-h{ padding:14px 16px 10px; border-bottom:1px solid var(--line); }
+.xp-h b{ display:block; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:16px; }
+.xp-h small{ font-size:11.5px; color:var(--text-muted); }
+.xp-body{ display:flex; flex-direction:column; gap:12px; padding:12px 16px; overflow-y:auto; overscroll-behavior:contain; min-height:0; }
+.xp-k{ margin-bottom:6px; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
+.xp-in{ width:100%; height:36px; padding:0 11px; border-radius:9px; border:1px solid var(--line-2); background:rgba(0,0,0,.4); color:var(--text-primary); font:inherit; font-size:13px; }
+.xp-in:focus{ outline:none; border-color:var(--mottu-green); box-shadow:0 0 0 3px var(--mottu-green-soft); }
+.xp-pre{ display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; }
+.xp-pre button{ height:32px; padding:0 6px; border-radius:9px; border:1px solid var(--line-2); background:rgba(255,255,255,.03); color:var(--text-secondary); font:inherit; font-size:11.5px; font-weight:600; cursor:pointer; }
+.xp-pre button:hover{ border-color:rgba(255,255,255,.22); color:var(--text-primary); }
+.xp-pre button[aria-pressed="true"]{ border-color:var(--mottu-green); background:var(--mottu-green); color:#031a08; }
+.xp-blks{ display:flex; flex-direction:column; gap:6px; }
+.xp-blk{ border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+.xp-bh{ display:flex; align-items:center; gap:9px; padding:7px 10px; background:rgba(255,255,255,.035); }
+.xp-bh small{ margin-left:auto; font-size:11px; color:var(--text-muted); }
+.xp-cols{ display:grid; grid-template-columns:1fr 1fr; gap:2px 10px; padding:7px 10px 9px 30px; }
+.xp-c{ display:flex; align-items:center; gap:7px; padding:3px 0; border:0; background:none; color:var(--text-secondary); font:inherit; font-size:12px; text-align:left; cursor:pointer; }
+.xp-c:hover{ color:var(--text-primary); }
+.xp-bh .xp-c{ font-weight:700; color:var(--text-primary); }
+.xp-c::before{ content:""; flex:none; display:grid; width:14px; height:14px; border-radius:4px; border:1.5px solid rgba(255,255,255,.35); box-sizing:border-box; }
+.xp-c[aria-checked="true"]::before{ border-color:var(--mottu-green); background:var(--mottu-green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23031a08' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/10px no-repeat; }
+.xp-c[aria-checked="mixed"]::before{ border-color:var(--mottu-green); background:linear-gradient(var(--mottu-green), var(--mottu-green)) center/7px 2px no-repeat; }
+.xp-c:focus-visible{ outline:2px solid var(--mottu-green); outline-offset:2px; border-radius:4px; }
+.xp-f{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:12px 16px; border-top:1px solid var(--line); }
+.xp-f span{ margin-right:auto; font-size:12px; color:var(--text-secondary); }
+.xp-f span b{ font-family:var(--font-display); font-style:italic; font-size:15px; color:var(--mottu-green-70); }
+.xp-f .btn{ height:34px; padding:0 13px; font-size:12.5px; }
+.xp-f .btn.pri[disabled]{ background:rgba(255,255,255,.08); color:var(--text-muted); box-shadow:none; cursor:not-allowed; filter:none; }
+.uf-chips{ align-items:center; }
+.chip.ufx{ background:#000; gap:7px; }
+.chip.ufx .li-chev{ color:var(--mottu-green); --is:13px; margin-left:-2px; }
+.chip.ufx .li-chev svg{ transition:transform .2s var(--ease); }
+.chip.ufx[aria-expanded="true"]{ border-color:var(--mottu-green); }
+.chip.ufx[aria-expanded="true"] .li-chev svg{ transform:rotate(180deg); }
+.chip.ufx.active{ border-color:var(--mottu-green); color:var(--mottu-green); }
+.chip.ufx .sel{ padding:1px 6px; border-radius:6px; font-style:normal; font-size:10.5px; color:#031a08; background:var(--mottu-green); }
+.chip.ufx.mx .n, .chip.ufx.mx .li-chev{ color:#FF9F40; }
+.chip.ufx.mx[aria-expanded="true"], .chip.ufx.mx.active{ border-color:#FF9F40; color:var(--text-primary); }
+.chip.ufx.mx .sel{ background:#FF9F40; color:#1a0d00; }
+.uf-pane{ order:99; flex-basis:100%; display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:4px; padding:6px; border-radius:16px; border:1px dashed rgba(255,255,255,.14); background:rgba(255,255,255,.025); }
+.uf-pane .chip{ height:28px; padding:0 10px; font-size:12px; }
+.uf-pane .chip.zero, .uf-pane .chip:disabled{ opacity:.42; border-style:dashed; cursor:default; }
+.uf-pane .chip.zero .n{ color:var(--text-muted); }
+.uf-pane .chip.zero:hover{ background:transparent; }
+.uf-pane.mx{ border-color:rgba(255,159,64,.35); }
+.uf-pane.mx .chip .n{ color:#FF9F40; }
+.uf-pane.mx .chip[aria-pressed="true"]{ background:#FF9F40; border-color:#FF9F40; color:#1a0d00; }
+.uf-pane.mx .chip[aria-pressed="true"] .n{ color:#1a0d00; }
+.flag-mx{ position:relative; display:inline-block; overflow:hidden; border-radius:50%; background:#fff; flex:none; }
+.flag-mx svg{ position:absolute; inset:0; width:100%; height:100%; }
+.chip .flag-mx{ width:16px; height:16px; box-shadow:0 0 0 1px rgba(255,255,255,.6); }
+.av.mx{ position:relative; overflow:hidden; padding:0; background:#fff !important; color:transparent; box-shadow:0 0 0 1.5px rgba(255,255,255,.85), 0 0 16px rgba(206,17,38,.35); }
+.av.mx svg{ position:absolute; inset:0; width:100%; height:100%; }
+.overview.com-mx{ grid-template-columns:repeat(5, minmax(0,1fr)); }
+button.ov-go{ border:0; background:none; padding:0; font:inherit; font-size:12px; cursor:pointer; }
+button.ov-go:hover{ color:var(--text-primary); }
+.plate.mx .plate-bar{ background:linear-gradient(180deg, #006847 0 33%, #fff 33% 66%, #CE1126 66%); }
+.plate-uf .mxt, .uf .mxt{ margin-left:4px; padding:0 4px; border-radius:3px; font-size:8.5px; font-weight:700; letter-spacing:.3px; color:#fff; background:#CE1126; }
 .kml-file{ flex-wrap:wrap; }
 .kml-file .mapa-btn{ margin-left:auto; height:30px; padding:0 12px; font-size:12px; --is:14px; box-shadow:0 6px 18px -8px rgba(0,177,49,.7); }
 .kml-file .mapa-btn ~ .link-btn{ margin-left:6px; }
@@ -831,7 +897,7 @@ tr.row.flip.out{ transition-duration:.32s; }
   .kpis > .kpi{ grid-column:span 2; }
   .kpis > .kpi-total, .kpis > .kpi-stock{ grid-column:span 3; }
   .kpis > .kpi:not(.kpi-total):not(.kpi-stock){ order:1; }
-  .overview{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .overview, .overview.com-mx{ grid-template-columns:repeat(2, minmax(0,1fr)); }
   .panel-grid{ grid-template-columns:1fr 1fr; }
   .who{ grid-column:1 / -1; }
   .table-wrap{ overflow-x:auto; }
@@ -845,7 +911,9 @@ tr.row.flip.out{ transition-duration:.32s; }
   .brand-word, .fresh span, .mov-pill{ display:none; }
   main{ padding:18px 14px 110px; }
   .kpis{ grid-template-columns:1fr 1fr; }
-  .overview{ grid-template-columns:1fr; }
+  .overview, .overview.com-mx{ grid-template-columns:1fr; }
+  .exp-btn .t{ display:none; }
+  .exp-btn{ padding:0 10px; }
   .kpis > .kpi{ grid-column:auto; }
   .kpis > .kpi-total, .kpis > .kpi-stock{ grid-column:1 / -1; }
   .lq-pct{ white-space:normal; font-size:11px; } .lq-n{ font-size:32px; }
@@ -892,6 +960,7 @@ body.gate-on{ overflow:hidden; }
   <a class="brand" href="#/geral" aria-label="Carteira RecOps — visão geral"><svg id="mottu-logo-header" aria-label="Mottu" role="img" width="57.44" height="54.06" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-3 -2 356 335"><defs><linearGradient id="mlg-h-g1" x1="280.3" y1="46.21" x2="335.1" y2="357.15" gradientUnits="userSpaceOnUse"><stop offset="0.37" stop-color="#00b131"/><stop offset="1" stop-color="#008c30"/></linearGradient><linearGradient id="mlg-h-g2" x1="42.36" y1="195.87" x2="82.74" y2="-5.32" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#00b131"/><stop offset="1" stop-color="#008c30"/></linearGradient></defs><path fill="#008c30" d="M10.3,312.68a22,22,0,0,0,17.37-8.47h0l17.59-22.81L248.73,12.23a27.67,27.67,0,0,1,48.37,9.28A22,22,0,0,0,271,28.15h0L253.38,51,108.21,243,49.9,320.12a27.66,27.66,0,0,1-48.36-9.27A22,22,0,0,0,10.3,312.68Z"/><path fill="url(#mlg-h-g1)" d="M348.94,301.57l-.17-.89L297.79,24a27.73,27.73,0,0,0-47.44-13.63,22.62,22.62,0,0,1,8.77,2.32,22,22,0,0,1,11.64,15.42h0l5.34,28.3L322.4,303.7l.4.52h0a22,22,0,0,0,26.14,6.64c-.1.34-.23.67-.34,1h0S350.2,308.45,348.94,301.57Z"/><path fill="url(#mlg-h-g2)" d="M27.13,304.16h0l5-28.36L80.07,25l-1.68-.22-.9-.12-6.77-6.45L58.61,15.57l-5.23,5.94L18.13,203.38.39,298.46A27.67,27.67,0,0,0,39.84,328a22,22,0,0,1-12.71-23.79Z"/><path fill="#00b131" d="M340.17,312.68a22,22,0,0,1-17.37-8.47h0l-17.58-22.81L101.75,12.23a27.67,27.67,0,0,0-48.37,9.28,22,22,0,0,1,26.13,6.64h0L97.1,51,242.26,243l58.31,77.16a27.67,27.67,0,0,0,48.37-9.27A22.09,22.09,0,0,1,340.17,312.68Z"/></svg><div class="brand-word">Carteira<span>RecOps</span></div></a>
   <nav class="tabs" id="hubNav" aria-label="Carteiras por analista"></nav>
   <button class="mov-pill ai" id="fabMov" type="button" title="Movimentação do ciclo: entraram / saíram por situação / saíram por 150 dias — clique para ir (de novo para a próxima seção)"></button>
+  <button class="exp-btn ai" id="expBtn" type="button" aria-haspopup="dialog" aria-expanded="false" title="Exportar a carteira em planilha (.xls)"><span class="li" data-icon="download"></span><span class="t">Exportar</span></button>
   <div class="fresh ai" id="fresh"></div>
 </header>
 
@@ -967,6 +1036,7 @@ async function __iniciarAppComDados(__payload) {
   const ESTOQUE_INICIO_MES_DATA = __payload.ESTOQUE_INICIO_MES_DATA && __payload.ESTOQUE_INICIO_MES_DATA.porUf ? __payload.ESTOQUE_INICIO_MES_DATA : undefined;
   const SAIDAS_150_MES = Array.isArray(__payload.SAIDAS_150_MES) ? __payload.SAIDAS_150_MES : undefined;
   const ESTOQUE_MX_DATA = __payload.ESTOQUE_MX && typeof __payload.ESTOQUE_MX.hoje === "number" ? __payload.ESTOQUE_MX : undefined;
+  const MX_UFS_DATA = Array.isArray(__payload.MX_UFS) ? __payload.MX_UFS : undefined;
   const ANALISTAS = Array.isArray(__payload.ANALISTAS) && __payload.ANALISTAS.length ? __payload.ANALISTAS : [ {
     id: "jonata",
     nome: "Jonata Garcia",
@@ -1083,9 +1153,19 @@ async function __iniciarAppComDados(__payload) {
       cor: "#7E6FF0",
       categoria: "PENDÊNCIA"
     },
+    sem_previa_pr: {
+      label: "Sem Prévia de PR",
+      cor: "#E5484D",
+      categoria: "FINALIZAÇÃO"
+    },
     finalizar_card: {
       label: "Finalizar Card",
       cor: "#C7A42C",
+      categoria: "FINALIZAÇÃO"
+    },
+    pago: {
+      label: "Pago",
+      cor: "#2DD4BF",
       categoria: "FINALIZAÇÃO"
     },
     recuperada: {
@@ -1110,6 +1190,7 @@ async function __iniciarAppComDados(__payload) {
     check: `<path class="draw" pathLength="1" d="M20 6 9 17l-5-5"/>`,
     send: `<g class="a"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></g><path class="trail" d="M-3 28C-.5 26.8 1.6 24.6 3.3 22c1.5-2.3 1.9-4.4.9-5.9-1-1.4-2.8-1.6-3.9-.3-1.2 1.4-.9 3.6.9 4.6 2.2 1.1 5.2-1 7.8-4.6"/>`,
     map: `<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>`,
+    download: `<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>`,
     pin: `<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle class="draw" pathLength="1" cx="12" cy="10" r="3"/>`,
     mapPinPlus: `<path d="M19.914 11.105A7.298 7.298 0 0 0 20 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32 32 0 0 0 .824-.738"/><circle cx="12" cy="10" r="3"/><path class="draw" pathLength="1" d="M16 18h6"/><path class="draw" pathLength="1" d="M19 15v6"/>`,
     monitorCheck: `<rect height="14" rx="2" width="20" x="2" y="3"/><path d="M12 17v4"/><path d="M8 21h8"/><path class="draw" pathLength="1" d="m9 10 2 2 4-4"/>`,
@@ -1478,6 +1559,13 @@ async function __iniciarAppComDados(__payload) {
     const a = carteiraAtual();
     return a ? l.filter((x => a.ufs.includes(x.uf))) : l;
   };
+  const BR_UFS = [ "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO" ];
+  const MX_UF_SET = new Set([ "AGS", "BC", "BCS", "CAMP", "CHIS", "CHIH", "CDMX", "COAH", "COL", "DGO", "GTO", "GRO", "HGO", "JAL", "MEX", "MICH", "MOR", "NAY", "NL", "OAX", "PUE", "QRO", "QROO", "SLP", "SIN", "SON", "TAB", "TAMS", "TLAX", "VER", "YUC", "ZAC" ].concat(typeof MX_UFS_DATA !== "undefined" && Array.isArray(MX_UFS_DATA) ? MX_UFS_DATA : []));
+  const ehMxUf = uf => MX_UF_SET.has(uf);
+  const ehMx = d => ehMxUf(d.uf);
+  const BANDEIRA_MX = `<svg viewBox="0 0 36 36" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="12" height="36" fill="#006847"/><rect x="12" width="12" height="36" fill="#fff"/><rect x="24" width="12" height="36" fill="#CE1126"/><circle cx="18" cy="17" r="4" fill="#8C5A2B"/><path d="M13.2 20.2q4.8 4.4 9.6 0" stroke="#3A7D3A" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`;
+  const flagMx = () => `<span class="flag-mx" role="img" aria-label="México">${BANDEIRA_MX}</span>`;
+  const ufMxTag = uf => ehMxUf(uf) ? `<span class="mxt">MX</span>` : "";
   const SINAIS_DEF = [ {
     key: "cel",
     label: "Cel",
@@ -1663,7 +1751,7 @@ async function __iniciarAppComDados(__payload) {
     const foot = p.link ? `<div class="pop-foot"><a class="btn sm ai" href="${p.link.url}" target="_blank" rel="noopener">${esc(p.link.label)}${ic("external")}</a></div>` : "";
     return `<div class="pop-title ai live-hover" style="--sc:${p.cor}">${ic(p.icon, "live")}${esc(p.nome)}${badge}</div>${body}${foot}`;
   }
-  const plateHTML = d => `<span class="plate"><span class="plate-bar"></span><span class="plate-body"><span class="plate-number">${d.placa}</span><span class="plate-uf">${d.uf}</span></span><button class="plate-copy ai" type="button" data-copy="${d.placa}" title="Copiar placa" aria-label="Copiar placa ${d.placa}">${ic("copy")}</button></span>`;
+  const plateHTML = d => `<span class="plate${ehMx(d) ? " mx" : ""}"><span class="plate-bar"></span><span class="plate-body"><span class="plate-number">${d.placa}</span><span class="plate-uf">${d.uf}${ufMxTag(d.uf)}</span></span><button class="plate-copy ai" type="button" data-copy="${d.placa}" title="Copiar placa" aria-label="Copiar placa ${d.placa}">${ic("copy")}</button></span>`;
   function prioHTML(d) {
     const map = {
       alta: [ "flame", "Alta" ],
@@ -1727,7 +1815,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function filtrar(lista) {
     return lista.filter((d => {
-      if (state.search && !d.placa.includes(state.search)) return false;
+      if (state.search && !d.placa.replace(/-/g, "").includes(state.search.replace(/-/g, ""))) return false;
       if (state.ufs.length && !state.ufs.includes(d.uf)) return false;
       if (state.prioridades.length && !state.prioridades.includes(d.prioridade)) return false;
       if (state.semAtuacao && !d.ainda_nao_atuada) return false;
@@ -1837,7 +1925,7 @@ async function __iniciarAppComDados(__payload) {
       ini: "G",
       cor: "#F7F7F7",
       n: DATA.length,
-      sub: "todas as UFs"
+      sub: DATA.some(ehMx) ? "BR + MX" : "todas as UFs"
     } ].concat(ANALISTAS.map((a => ({
       ...a,
       n: DATA.filter((d => a.ufs.includes(d.uf))).length,
@@ -1857,11 +1945,10 @@ async function __iniciarAppComDados(__payload) {
     $("#fresh").innerHTML = `${ic("refresh")}<span class="dot"></span><span>Atualizado</span><b title="${dt.toLocaleString("pt-BR")}">${formatRelativoTempo(Date.now() - dt)}</b>`;
   }
   function renderHead() {
-    const a = carteiraAtual(), presentes = new Set(escopo().map((d => d.uf)));
+    const a = carteiraAtual();
     $("#pageKicker").textContent = a ? "Carteira do analista" : "Visão consolidada";
     $("#pageTitle").textContent = a ? a.nome : "Todas as carteiras";
-    const ufs = a ? a.ufs : [];
-    $("#pageUfs").innerHTML = ufs.map((u => `<span class="uf ${presentes.has(u) ? "" : "no"}" title="${presentes.has(u) ? "com placas" : "sem placas neste snapshot"}">${u}</span>`)).join("");
+    $("#pageUfs").innerHTML = "";
   }
   const COMP_CATS = [ {
     k: "nat",
@@ -1982,13 +2069,271 @@ async function __iniciarAppComDados(__payload) {
   })();
   function estoqueHTML(l) {
     const snap = ESTOQUE_INICIO_MES || ESTOQUE_EXEMPLO, a = carteiraAtual();
-    const ini = Object.entries(snap.porUf).filter((([uf]) => !a || a.ufs.includes(uf))).reduce(((soma, [, n]) => soma + n), 0), atual = l.length, dv = atual - ini;
+    const ini = Object.entries(snap.porUf).filter((([uf]) => !a || a.ufs.includes(uf))).reduce(((soma, [, n]) => soma + n), 0), atual = l.filter((d => !ehMx(d))).length, dv = atual - ini;
     const dia = snap.data.split("-").reverse().slice(0, 2).join("/");
     const pctv = ini ? Math.abs(dv / ini * 100).toFixed(1).replace(".", ",") : "0,0", sinal = dv > 0 ? "+" : dv < 0 ? "−" : "";
     const tom = dv < 0 ? "down" : dv > 0 ? "up" : "flat", seta = dv < 0 ? ic("arrowDown") : dv > 0 ? ic("arrowUp") : "";
-    const mx = !a && ESTOQUE_MX ? ESTOQUE_MX : null;
+    const mxHoje = l.filter(ehMx).length, mx = !a && (ESTOQUE_MX || mxHoje) ? {
+      inicio: ESTOQUE_MX ? ESTOQUE_MX.inicio : null,
+      hoje: mxHoje
+    } : null;
     const mxLinha = (n, br) => mx && n != null ? `<span class="stk-mx" title="Brasil ${br} + México ${n} = ${br + n} placas na esteira RecOps">+ ${n} <i>MX</i> = <b>${br + n}</b></span>` : "";
     return `<div class="card kpi kpi-stock ai" style="--kc:var(--mottu-green)">\n    <span class="stk-ttl">${ic("box")}Estoque${snap.exemplo ? `<span class="stk-ex" title="A foto do dia 1 ainda não vem do refresh — número ilustrativo">exemplo</span>` : ""}</span>\n    <span class="stk-nums"><span class="stk-col"><b class="stk-ini">${ini}</b><small>Dia ${dia}</small>${mxLinha(mx && mx.inicio, ini)}</span><span class="stk-arrow">${ic("arrowRight")}</span><span class="stk-col"><b class="stk-hoje ${tom}">${atual}</b><small>Hoje</small>${mxLinha(mx && mx.hoje, atual)}</span></span>\n    <span class="stk-deltas"><span class="stk-delta ${tom}"><small>Placas</small><b>${seta}${sinal}${Math.abs(dv)}</b></span><span class="stk-delta ${tom}"><small>Taxa</small><b>${sinal}${pctv}%</b></span></span></div>`;
+  }
+  const XLS_BLOCOS = [ [ "id", "Identificação" ], [ "inad", "Inadimplência e atuação" ], [ "loc", "Localização" ], [ "sin", "Sinais (Sim/Não)" ], [ "acomp", "Acompanhamento" ], [ "ref", "Referência" ] ];
+  const simNao = v => v ? "Sim" : "Não";
+  const xlsSinal = k => d => {
+    const s = SINAIS_FILTRO.find((x => x.key === k));
+    return simNao(s && s.match(d));
+  };
+  const XLS_EVENTO_TICKET = {
+    abriu: "Locatário abriu o ticket",
+    respondeu: "Locatário respondeu ao ticket"
+  };
+  const XLS_COLUNAS = [ {
+    k: "placa",
+    l: "Placa",
+    b: "id",
+    get: d => d.placa
+  }, {
+    k: "pais",
+    l: "País",
+    b: "id",
+    get: d => ehMx(d) ? "México" : "Brasil"
+  }, {
+    k: "uf",
+    l: "UF",
+    b: "id",
+    get: d => d.uf
+  }, {
+    k: "filial",
+    l: "Filial",
+    b: "id",
+    get: d => (LOCATARIO_INFO[d.placa] || [])[1] || ""
+  }, {
+    k: "locatario",
+    l: "Locatário",
+    b: "id",
+    get: d => (LOCATARIO_INFO[d.placa] || [])[0] || ""
+  }, {
+    k: "modelo",
+    l: "Modelo",
+    b: "id",
+    get: d => (MODELO_INFO[d.placa] || [])[0] || ""
+  }, {
+    k: "dias_inad",
+    l: "Dias de inadimplência",
+    b: "inad",
+    get: d => d.dias_inadimplencia
+  }, {
+    k: "dias_atuacao",
+    l: "Dias sem atuação",
+    b: "inad",
+    get: d => d.ainda_nao_atuada ? "Sem atuação do RecOps" : d.dias_sem_atuacao
+  }, {
+    k: "nao_atuada",
+    l: "Ainda não atuada",
+    b: "inad",
+    get: d => simNao(d.ainda_nao_atuada)
+  }, {
+    k: "prioridade",
+    l: "Prioridade",
+    b: "inad",
+    get: d => ({
+      alta: "Alta",
+      atencao: "Média",
+      normal: "Baixa"
+    }[d.prioridade] || "")
+  }, {
+    k: "h_gps",
+    l: "Horas desde GPS",
+    b: "loc",
+    get: d => d.horas_desde_gps
+  }, {
+    k: "h_ping",
+    l: "Horas desde ping (rastreador)",
+    b: "loc",
+    get: d => d.horas_desde_ping
+  }, {
+    k: "h_cel",
+    l: "Horas desde ping celular",
+    b: "loc",
+    get: d => d.horas_desde_ping_celular
+  }, {
+    k: "s_multa",
+    l: "Multa",
+    b: "sin",
+    get: xlsSinal("multa")
+  }, {
+    k: "s_cbd",
+    l: "CarBigData",
+    b: "sin",
+    get: xlsSinal("cbd")
+  }, {
+    k: "s_ping",
+    l: "Ping",
+    b: "sin",
+    get: xlsSinal("ping")
+  }, {
+    k: "s_cel",
+    l: "Ping celular",
+    b: "sin",
+    get: xlsSinal("cel")
+  }, {
+    k: "s_ticket",
+    l: "Ticket",
+    b: "sin",
+    get: xlsSinal("ticket")
+  }, {
+    k: "s_bo",
+    l: "B.O. furto",
+    b: "sin",
+    get: xlsSinal("bo")
+  }, {
+    k: "s_face",
+    l: "FaceMatch",
+    b: "sin",
+    get: xlsSinal("face")
+  }, {
+    k: "tags",
+    l: "Tags",
+    b: "acomp",
+    get: d => (d.tags || []).map((t => TAG_OPCOES[t] ? TAG_OPCOES[t].label : t)).join(", ")
+  }, {
+    k: "int_recusas",
+    l: "Interpretação das recusas",
+    b: "acomp",
+    get: d => (RECUSAS_BY_PLACA[d.placa] || {}).interpretacao || ""
+  }, {
+    k: "int_recops",
+    l: "Interpretação ocorrência RecOps",
+    b: "acomp",
+    get: d => (RECOPS_OCORRENCIA_BY_PLACA[d.placa] || {}).interpretacao || ""
+  }, {
+    k: "data_bo",
+    l: "Data do B.O.",
+    b: "acomp",
+    get: d => BO_FURTO_BY_PLACA[d.placa] ? fmtDataHora(BO_FURTO_BY_PLACA[d.placa].data) || "" : ""
+  }, {
+    k: "ticket_evento",
+    l: "Evento do ticket",
+    b: "acomp",
+    get: d => {
+      const i = TICKET_INFO[d.placa];
+      return i ? [ XLS_EVENTO_TICKET[i.tipo] || i.tipo, fmtDataHora(i.eventoFmt) ].filter(Boolean).join(" · ") : "";
+    }
+  }, {
+    k: "atualizado",
+    l: "Última atualização do dashboard",
+    b: "ref",
+    get: () => fmtDataHora(DASHBOARD_UPDATED_AT) || ""
+  } ];
+  const XLS_PRESETS = {
+    completa: {
+      l: "Carteira completa",
+      cols: XLS_COLUNAS.map((c => c.k))
+    },
+    decisao: {
+      l: "Decisão rápida",
+      cols: [ "placa", "uf", "dias_inad", "dias_atuacao", "nao_atuada", "prioridade", "s_multa", "s_cbd", "s_ping", "s_cel", "s_ticket", "s_bo", "s_face", "tags" ]
+    },
+    local: {
+      l: "Só localização",
+      cols: [ "placa", "uf", "h_gps", "h_ping", "h_cel", "s_multa", "s_cbd", "s_ping", "s_cel" ]
+    }
+  };
+  const xp = {
+    sel: new Set,
+    nome: "",
+    preset: "completa"
+  };
+  const xlsNomePadrao = () => `carteira_recops_${(carteiraAtual() || {
+    id: "geral"
+  }).id}_${(new Date).toLocaleDateString("en-CA", {
+    timeZone: TZ_SP
+  })}.xls`;
+  function exportPopHTML() {
+    const n = escopo().length, nada = !xp.sel.size || !n;
+    const marca = (on, total) => on === total ? "true" : on ? "mixed" : "false";
+    const blocos = XLS_BLOCOS.map((([b, nome]) => {
+      const cols = XLS_COLUNAS.filter((c => c.b === b)), on = cols.filter((c => xp.sel.has(c.k))).length;
+      return `<div class="xp-blk"><div class="xp-bh"><button class="xp-c" type="button" role="checkbox" aria-checked="${marca(on, cols.length)}" data-xp-blk="${b}">${nome}</button><small>${on}/${cols.length}</small></div>\n      <div class="xp-cols">${cols.map((c => `<button class="xp-c" type="button" role="checkbox" aria-checked="${xp.sel.has(c.k)}" data-xp-col="${c.k}">${c.l}</button>`)).join("")}</div></div>`;
+    })).join("");
+    return `<div class="xp-h"><b>Exportar carteira</b><small>Sai a carteira inteira desta visão, sem os filtros da tela</small></div>\n    <div class="xp-body"><div><label class="xp-k" for="xpNome">Nome do arquivo</label><input class="xp-in" id="xpNome" type="text" spellcheck="false" autocomplete="off" value="${esc(xp.nome)}"></div>\n      <div><div class="xp-k">Preset de colunas</div><div class="xp-pre">${Object.entries(XLS_PRESETS).map((([k, p]) => `<button type="button" data-xp-preset="${k}" aria-pressed="${xp.preset === k}">${p.l}</button>`)).join("")}</div></div>\n      <div><div class="xp-k">Colunas (${xp.sel.size} de ${XLS_COLUNAS.length})</div><div class="xp-blks">${blocos}</div></div></div>\n    <div class="xp-f"><span><b>${n}</b> placa${n === 1 ? "" : "s"} ser${n === 1 ? "á exportada" : "ão exportadas"}</span><button class="btn cancel" type="button" data-xp-cancel>Cancelar</button><button class="btn pri" type="button" data-xp-go ${nada ? "disabled" : ""}>${nada ? "Nada para exportar" : `${ic("download")}Baixar XLS`}</button></div>`;
+  }
+  function exportRefresh() {
+    const inp = document.getElementById("xpNome");
+    if (inp) xp.nome = inp.value;
+    const body = pop.querySelector(".xp-body"), y = body ? body.scrollTop : 0;
+    pop.innerHTML = exportPopHTML();
+    const nb = pop.querySelector(".xp-body");
+    if (nb) nb.scrollTop = y;
+    positionPop();
+  }
+  function abrirExport(btn) {
+    if (popCtx && popCtx.menuKey === "export") {
+      closePop();
+      return;
+    }
+    closePop();
+    xp.sel = new Set(XLS_PRESETS.completa.cols);
+    xp.preset = "completa";
+    xp.nome = xlsNomePadrao();
+    openPop(btn, exportPopHTML(), {
+      menu: true,
+      menuKey: "export",
+      menuBtn: btn,
+      pinned: true
+    });
+    pop.classList.add("xp-pop");
+    positionPop();
+  }
+  function xlsCelula(v, tag = "td") {
+    if (v === "" || v == null) return `<${tag}></${tag}>`;
+    if (typeof v === "number" && Number.isFinite(v)) return `<${tag}>${v}</${tag}>`;
+    const s = String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\r\n|\r|\n/g, "<br>");
+    return `<${tag} style="mso-number-format:'\\@'">${s}</${tag}>`;
+  }
+  function gerarXls() {
+    const cols = XLS_COLUNAS.filter((c => xp.sel.has(c.k))), linhas = ordenar(escopo());
+    const cab = "<" + "!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Carteira RecOps</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--" + ">";
+    const thead = `<tr>${cols.map((c => xlsCelula(c.l, "th"))).join("")}</tr>`;
+    const tbody = linhas.map((d => `<tr>${cols.map((c => {
+      let v;
+      try {
+        v = c.get(d);
+      } catch {
+        v = "";
+      }
+      return xlsCelula(v);
+    })).join("")}</tr>`)).join("");
+    return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8">${cab}</head><body><table border="1">${thead}${tbody}</table></body></html>`;
+  }
+  function baixarXls() {
+    if (!xp.sel.size || !escopo().length) return;
+    const inp = document.getElementById("xpNome");
+    let nome = ((inp ? inp.value : xp.nome) || "").trim().replace(/[\\/:*?"<>|]+/g, "_") || xlsNomePadrao();
+    if (!/\.xls$/i.test(nome)) nome += ".xls";
+    const url = URL.createObjectURL(new Blob([ gerarXls() ], {
+      type: "application/vnd.ms-excel"
+    }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = nome;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout((() => URL.revokeObjectURL(url)), 1e3);
+    closePop();
+    const btn = $("#expBtn");
+    clearTimeout(btn._t);
+    btn.classList.add("done");
+    btn.innerHTML = `${ic("check")}<span class="t">Exportado ✓</span>`;
+    btn._t = setTimeout((() => {
+      btn.classList.remove("done");
+      btn.innerHTML = `${ic("download")}<span class="t">Exportar</span>`;
+    }), 1500);
   }
   const AVISO_150_DIAS = 30;
   const vence150 = d => d.dias_inadimplencia != null && d.dias_inadimplencia >= LIMITE_DIAS_CARTEIRA - AVISO_150_DIAS && d.dias_inadimplencia < LIMITE_DIAS_CARTEIRA;
@@ -2006,10 +2351,20 @@ async function __iniciarAppComDados(__payload) {
       return;
     }
     el.hidden = false;
-    el.innerHTML = ANALISTAS.map(((a, i) => {
+    const mxL = DATA.filter(ehMx);
+    const itens = ANALISTAS.concat(mxL.length ? [ {
+      id: "mexico",
+      nome: "México",
+      ini: "",
+      cor: "#CE1126",
+      ufs: [ ...new Set(mxL.map((d => d.uf))) ].sort(),
+      mx: true
+    } ] : []);
+    el.classList.toggle("com-mx", itens.length > ANALISTAS.length);
+    el.innerHTML = itens.map(((a, i) => {
       const l = DATA.filter((d => a.ufs.includes(d.uf))), n = p => l.filter((d => d.prioridade === p)).length, t = l.length || 1;
-      const aberto = ufsAbertas.has(a.id);
-      return `<div class="ov ai" data-ov="${a.id}" style="--ac:${a.cor};animation-delay:${i * 50}ms">\n      <div class="ov-head"><span class="av">${a.ini}</span><div><b>${a.nome}</b></div><a class="ov-go" href="#/${a.id}">Entrar ${ic("arrowRight")}</a></div>\n      <div class="ov-ufs ${aberto ? "open" : ""}"><button class="ov-ufn" type="button" data-ufs-toggle="${a.id}" aria-expanded="${aberto}" title="${aberto ? "Recolher" : "Mostrar"} UFs"><b>${a.ufs.length}</b>UF${a.ufs.length > 1 ? "s" : ""}${ic("chevDown")}</button>\n        <div class="ov-uf-wrap"><div class="ov-uf-list">${a.ufs.map((u => {
+      const aberto = ufsAbertas.has(a.id), rotuloUf = a.mx ? a.ufs.length > 1 ? "estados" : "estado" : `UF${a.ufs.length > 1 ? "s" : ""}`;
+      return `<div class="ov ai" data-ov="${a.id}" style="--ac:${a.cor};animation-delay:${i * 50}ms">\n      <div class="ov-head"><span class="av ${a.mx ? "mx" : ""}">${a.mx ? BANDEIRA_MX : a.ini}</span><div><b>${a.nome}</b></div>${a.mx ? `<button class="ov-go" type="button" data-ov-mx>Ver placas ${ic("arrowRight")}</button>` : `<a class="ov-go" href="#/${a.id}">Entrar ${ic("arrowRight")}</a>`}</div>\n      <div class="ov-ufs ${aberto ? "open" : ""}"><button class="ov-ufn" type="button" data-ufs-toggle="${a.id}" aria-expanded="${aberto}" title="${aberto ? "Recolher" : "Mostrar"} ${rotuloUf}"><b>${a.ufs.length}</b>${rotuloUf}${ic("chevDown")}</button>\n        <div class="ov-uf-wrap"><div class="ov-uf-list">${a.ufs.map((u => {
         const k = l.filter((d => d.uf === u)).length;
         return `<span class="ov-uf ${k ? "" : "no"}" title="${k ? `${k} placa${k > 1 ? "s" : ""}` : "sem placas neste snapshot"}">${u}</span>`;
       })).join("")}</div></div></div>\n      <div class="ov-num ${l.length ? "" : "zero"}"><b class="tnum">${l.length}</b><span>placas<br>na carteira</span></div>\n      ${l.length ? ovKpis(l) : `<div class="ov-empty">Sem placas neste snapshot.</div>`}\n    </div>`;
@@ -2021,9 +2376,81 @@ async function __iniciarAppComDados(__payload) {
     const tile = (key, kc, icon, label, v, hot, i, sub) => `<button class="card kpi ai ${hot ? "hot" : ""}" type="button" style="--kc:${kc};animation-delay:${i * 60}ms" data-kpi="${key}" aria-pressed="${key === "sem_atuacao" ? state.semAtuacao : state.prioridades.includes(key)}">\n      <span class="kpi-top"><span class="kpi-ic">${ic(icon)}</span><span class="kpi-lb">${label}</span></span>\n      <span class="kpi-v"><b>${v}</b><em>${pct(v, t)}%</em></span><span class="kpi-meter"><i style="width:${pct(v, t)}%"></i></span>${sub ? `<span class="kpi-nat">${ic("hourglass")}<b>${sub}</b>sem atuação</span>` : ""}</button>`;
     $("#kpis").innerHTML = compHTML(l) + tile("alta", "var(--status-critical)", "flame", "Alta", n("alta"), false, 1, natDe("alta")) + tile("atencao", "var(--status-warning)", "badge", "Média", n("atencao"), false, 2, natDe("atencao")) + tile("normal", "var(--status-normal)", "gauge", "Baixa", n("normal"), false, 3, natDe("normal")) + estoqueHTML(l);
   }
+  const ufPainel = {
+    aberto: null
+  };
+  function gruposUf() {
+    const l = escopo(), a = carteiraAtual();
+    if (a) return [ {
+      k: "uf",
+      label: "UFs",
+      ufs: [ ...a.ufs ].sort(),
+      zero: true,
+      mx: false
+    } ];
+    const brUfs = [ ...new Set(BR_UFS.concat(l.filter((d => !ehMx(d))).map((d => d.uf)).filter(Boolean))) ].sort();
+    const mxUfs = [ ...new Set(l.filter(ehMx).map((d => d.uf))) ].sort();
+    return [ {
+      k: "br",
+      label: "Brasil",
+      ufs: brUfs,
+      zero: true,
+      mx: false
+    } ].concat(mxUfs.length ? [ {
+      k: "mx",
+      label: "México",
+      ufs: mxUfs,
+      zero: false,
+      mx: true
+    } ] : []);
+  }
+  const ufsComPlaca = (g, l) => g.ufs.filter((u => l.some((d => d.uf === u))));
+  const mesmaLista = (x, y) => x.length === y.length && x.every((v => y.includes(v)));
   function renderUfChips() {
-    const l = escopo(), ufs = [ ...new Set(l.map((d => d.uf))) ].sort();
-    $("#ufChips").innerHTML = `<button class="chip" type="button" data-uf="__all__" aria-pressed="${state.ufs.length === 0}">Todas UFs <span class="n">(${l.length})</span></button>` + ufs.map((u => `<button class="chip" type="button" data-uf="${u}" aria-pressed="${state.ufs.includes(u)}">${u} <span class="n">(${l.filter((d => d.uf === u)).length})</span></button>`)).join("");
+    const l = escopo(), a = carteiraAtual(), grupos = gruposUf();
+    if (!grupos.some((g => g.k === ufPainel.aberto))) ufPainel.aberto = null;
+    $("#ufChips").innerHTML = grupos.map((g => {
+      const n = l.filter((d => g.ufs.includes(d.uf))).length, sel = state.ufs.filter((u => g.ufs.includes(u))).length, aberto = ufPainel.aberto === g.k;
+      return `<button class="chip ufx ${g.mx ? "mx" : ""} ${sel ? "active" : ""}" type="button" data-ufx="${g.k}" aria-expanded="${aberto}">${g.mx ? flagMx() : ""}${g.label} <span class="n">(${n})</span>${sel && !aberto ? `<span class="sel">${sel} selecionada${sel > 1 ? "s" : ""}</span>` : ""}${ic("chevDown", "li-chev")}</button>`;
+    })).join("");
+    let pane = document.getElementById("ufPane");
+    const g = grupos.find((x => x.k === ufPainel.aberto));
+    if (!g) {
+      if (pane) pane.remove();
+      return;
+    }
+    if (!pane) {
+      pane = document.createElement("div");
+      pane.id = "ufPane";
+      $("#toolbar").appendChild(pane);
+    }
+    const n = l.filter((d => g.ufs.includes(d.uf))).length, comPlaca = ufsComPlaca(g, l);
+    const todasOn = !state.ufs.length || !a && mesmaLista(state.ufs, comPlaca);
+    pane.className = "uf-pane" + (g.mx ? " mx" : "");
+    pane.innerHTML = `<button class="chip" type="button" data-uf="${a ? "__all__" : `__pais__${g.k}`}" aria-pressed="${todasOn}" title="${a ? "Todas as UFs da carteira" : `Só ${g.label}`}">Todas <span class="n">(${n})</span></button>` + g.ufs.map((u => {
+      const k = l.filter((d => d.uf === u)).length;
+      if (!k && !g.zero) return "";
+      return `<button class="chip ${k ? "" : "zero"}" type="button" data-uf="${u}" aria-pressed="${state.ufs.includes(u)}" ${k ? "" : `disabled title="Sem placas nesta UF"`}>${u} <span class="n">(${k})</span></button>`;
+    })).join("");
+  }
+  function selecionarPais(k) {
+    const g = gruposUf().find((x => x.k === k));
+    if (!g) return;
+    const alvo = ufsComPlaca(g, escopo());
+    state.ufs = state.ufs.length && mesmaLista(state.ufs, alvo) ? [] : alvo;
+  }
+  function verMexico() {
+    const g = gruposUf().find((x => x.k === "mx"));
+    if (!g) return;
+    state.ufs = ufsComPlaca(g, escopo());
+    ufPainel.aberto = "mx";
+    renderUfChips();
+    renderTable();
+    const tb = document.getElementById("toolbar");
+    if (tb) scrollTo({
+      top: tb.getBoundingClientRect().top + scrollY - 90,
+      behavior: "smooth"
+    });
   }
   function renderQuickChips() {
     const l = escopo();
@@ -2107,7 +2534,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function rowHTML(d, i) {
     const geral = !carteiraAtual(), a = analistaDaUf[d.uf], open = state.expandedPlaca === d.placa;
-    return `<tr class="row ai p-${d.prioridade} ${open ? "open" : ""}" data-placa="${d.placa}" aria-expanded="${open}" style="animation-delay:${Math.min(i, 12) * 30}ms">\n    <td>${plateHTML(d)}</td>\n    ${geral ? `<td class="c-analista">${a ? `<span class="who-mini" style="--ac:${a.cor}" title="${a.nome}"><span class="av">${a.ini}</span></span>` : `<span class="sinal-off">—</span>`}</td>` : ""}\n    <td>${prioHTML(d)}</td><td>${semAtuacaoHTML(d)}</td><td>${inadHTML(d)}</td>\n    <td>${gpsAtivoHTML(d)}</td><td>${pingHTML(d)}</td><td>${sinaisHTML(d)}</td><td>${tagsHTML(d)}</td>\n    <td class="c-caret">${ic("chevRight")}</td>\n  </tr>${open ? detailHTML(d, "in done") : ""}`;
+    return `<tr class="row ai p-${d.prioridade} ${open ? "open" : ""}" data-placa="${d.placa}" aria-expanded="${open}" style="animation-delay:${Math.min(i, 12) * 30}ms">\n    <td>${plateHTML(d)}</td>\n    ${geral ? `<td class="c-analista">${ehMx(d) ? `<span class="who-mini" title="México"><span class="av mx">${BANDEIRA_MX}</span></span>` : a ? `<span class="who-mini" style="--ac:${a.cor}" title="${a.nome}"><span class="av">${a.ini}</span></span>` : `<span class="sinal-off">—</span>`}</td>` : ""}\n    <td>${prioHTML(d)}</td><td>${semAtuacaoHTML(d)}</td><td>${inadHTML(d)}</td>\n    <td>${gpsAtivoHTML(d)}</td><td>${pingHTML(d)}</td><td>${sinaisHTML(d)}</td><td>${tagsHTML(d)}</td>\n    <td class="c-caret">${ic("chevRight")}</td>\n  </tr>${open ? detailHTML(d, "in done") : ""}`;
   }
   function renderTable() {
     const base = escopo(), lista = ordenar(filtrar(base));
@@ -2125,7 +2552,7 @@ async function __iniciarAppComDados(__payload) {
   function detailHTML(d, estado = "") {
     const loc = LOCATARIO_INFO[d.placa], mod = MODELO_INFO[d.placa], foto = LOCATARIO_FOTO_BY_PLACA[d.placa], ct = LOCATARIO_CONTATO_BY_PLACA[d.placa] || {};
     const fact = (icon, v, pend) => `<div class="${pend ? "pend" : ""}">${ic(icon)}${v}</div>`;
-    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div><div class="who-sub">Foto: FaceMatch ok mais recente${foto ? " · " + esc(foto.data) : ""}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `CPF <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemFalso ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
+    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div><div class="who-sub">Foto: FaceMatch ok mais recente${foto ? " · " + esc(foto.data) : ""}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemFalso ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
   }
   const disclosureAberto = new Set;
   function timelineHTML(id, label, itens) {
@@ -2192,7 +2619,7 @@ async function __iniciarAppComDados(__payload) {
       year: "numeric"
     }).format(new Date);
     $("#movSub").textContent = `Atualizado em ${new Date(DASHBOARD_UPDATED_AT).toLocaleDateString("pt-BR")}`;
-    const head = (placa, dias, uf, data) => `<div class="mv-head"><b class="mv-placa">${esc(placa)}</b><span class="mv-dias">${diasInad(dias)}</span><span class="uf">${esc(uf || "")}</span><span class="mv-dt">${esc(data)}</span></div>`;
+    const head = (placa, dias, uf, data) => `<div class="mv-head"><b class="mv-placa">${esc(placa)}</b><span class="mv-dias">${diasInad(dias)}</span><span class="uf">${esc(uf || "")}${ufMxTag(uf)}</span><span class="mv-dt">${esc(data)}</span></div>`;
     const motivo = (titulo, texto) => `<div class="mv-mot"><small>Motivo${titulo ? ` · <b>${esc(titulo)}</b>` : ""}</small><p>${esc(texto)}</p></div>`;
     const fluxo = (de, para) => `<div class="mv-flow"><span class="de">${esc(de || "Apropriação Indébita")}</span>${ic("arrowRight")}<span class="para">${esc(para || "—")}</span></div>`;
     const sec = (id, cor, icon, titulo, sub, lista, card, vazio, extra = "") => {
@@ -2248,6 +2675,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function closePop() {
     if (!popCtx) return;
+    if (popCtx.menuKey === "export") pop.classList.remove("xp-pop");
     if (popCtx.menuBtn) popCtx.menuBtn.setAttribute("aria-expanded", "false");
     document.querySelectorAll(".sig.pinned").forEach((x => x.classList.remove("pinned")));
     pop.classList.remove("open");
@@ -2266,6 +2694,12 @@ async function __iniciarAppComDados(__payload) {
     capture: true
   });
   addEventListener("resize", (() => popCtx && positionPop()));
+  pop.addEventListener("keydown", (e => {
+    if (e.key === "Enter" && e.target.id === "xpNome") {
+      e.preventDefault();
+      baixarXls();
+    }
+  }));
   function prioMenuHTML() {
     const l = escopo();
     const opt = (k, lb, c, icon, ativo, n) => `<button class="opt ai" type="button" style="--sc:${c}" data-opt-prio="${k}" aria-pressed="${ativo}"><span class="oi">${ic(icon)}</span><b class="olb">${lb}</b><span class="n pn">(${n})</span>${ic("check", "ck")}</button>`;
@@ -2294,7 +2728,9 @@ async function __iniciarAppComDados(__payload) {
     apreendida: "🔒",
     aguardando_bo: "📋",
     processo_judicial: "⚖️",
+    sem_previa_pr: "🚫",
     finalizar_card: "🏁",
+    pago: "💰",
     recuperada: "✅"
   };
   const faixaContagemTag = n => n === 0 ? "zero" : n <= 10 ? "baixo" : n <= 30 ? "medio" : n <= 60 ? "alto" : "critico";
@@ -2606,7 +3042,7 @@ async function __iniciarAppComDados(__payload) {
     const d = DATA_BY_PLACA[placa] || {}, loc = LOCATARIO_INFO[placa], ct = LOCATARIO_CONTATO_BY_PLACA[placa] || {}, mod = MODELO_INFO[placa], draft = draftDe(placa);
     const qth = draft.qthSelections.length ? `QTH DE CONSULTA:\n${draft.qthSelections.map(((x, i) => `${i + 1}. ${x.label}\nQTH: ${x.url}`)).join("\n\n")}` : `QTH DE CONSULTA: ${draft.qth.trim() || "—"}`;
     const mymaps = draft.mymapsUrl.trim() ? `\n🗺️ MyMaps: ${draft.mymapsUrl.trim()}\n` : "";
-    return `👤 ${loc ? loc[0] : "—"}\n🪪 CPF: ${ct.cpf || "—"}\n📱 Celular: ${ct.celular || "—"}\n🏍️ Situação do veículo: ${SITUACAO_VEICULO}\n🛵 Modelo: ${mod ? mod[0] : "—"}\n🔖 ${placa}\n📅 ${d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias de inadimplência` : "—"}\n🏢 Filial: ${loc ? loc[1] : "—"}\n🕒 Última atualização: ${ultimaAtualizacaoTexto(placa)}\n\n${qth}\n${mymaps}\nRelato:\n${draft.relato.trim() || "(sem relato preenchido)"}`;
+    return `👤 ${loc ? loc[0] : "—"}\n🪪 ${ehMxUf(d.uf) ? "Documento" : "CPF"}: ${ct.cpf || "—"}\n📱 Celular: ${ct.celular || "—"}\n🏍️ Situação do veículo: ${SITUACAO_VEICULO}\n🛵 Modelo: ${mod ? mod[0] : "—"}\n🔖 ${placa}\n📅 ${d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias de inadimplência` : "—"}\n🏢 Filial: ${loc ? loc[1] : "—"}\n🕒 Última atualização: ${ultimaAtualizacaoTexto(placa)}\n\n${qth}\n${mymaps}\nRelato:\n${draft.relato.trim() || "(sem relato preenchido)"}`;
   }
   function qthHTML(placa) {
     const draft = draftDe(placa), kml = draft.kml;
@@ -2842,7 +3278,7 @@ async function __iniciarAppComDados(__payload) {
     const loc = LOCATARIO_INFO[placa], mod = MODELO_INFO[placa], ct = LOCATARIO_CONTATO_BY_PLACA[placa] || {}, d = DATA_BY_PLACA[placa], draft = draftDe(placa), foto = LOCATARIO_FOTO_BY_PLACA[placa];
     const fact = (icon, k, v, cor, pend) => `<div class="loc-fact ${pend ? "pend" : ""}" style="--fc:${cor}">${ic(icon)}<span><span class="k">${k}</span><span class="v">${esc(v)}</span></span></div>`;
     const head = (icon, cor, titulo, sub, id) => `<div class="sol-h ai" style="--hc:${cor}"><span class="ic">${ic(icon)}</span><b>${titulo}</b><span ${id ? `id="${id}"` : ""}>${sub}</span></div>`;
-    $("#modal").innerHTML = `\n    <div class="modal-head"><span class="mic">${ic("send", "live")}</span><h2 class="modal-title" id="modalTitle">Solicitação de acionamento<small>${placa}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="modal-body">\n      <div class="modal-form">\n        <div class="sol-sec">${head("user", "var(--mottu-green-70)", "Dados do locatário", "auto-preenchido")}\n          <div class="loc-card">\n            ${foto ? `<img class="loc-photo" src="${esc(foto.url)}" alt="Foto do locatário" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}" title="Foto do FaceMatch ok mais recente · ${esc(foto.data)} — clique para ampliar">` : `<div class="loc-photo none">${ic("user")}<span>sem foto</span></div>`}\n            <div class="loc-main">\n              <div class="loc-name">${esc(loc ? loc[0] : "—")}<small>${esc(loc ? loc[1] : "—")}${foto ? ` · foto de ${esc(foto.data)}` : ""}</small></div>\n              <div class="loc-facts">\n                ${fact("idcard", "CPF", ct.cpf || "aguardando endpoint", "var(--status-info)", !ct.cpf)}\n                ${fact("phone", "Celular", ct.celular || "aguardando endpoint", "var(--sig-cel)", !ct.celular)}\n                ${fact("bike", "Modelo", mod ? mod[0] : "—", "var(--mottu-lime)")}\n                ${fact("hourglass", "Inadimplência", d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias` : "—", corInad(d.dias_inadimplencia))}\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="sol-sec">${head("pin", "var(--sig-cel)", "QTH de consulta", "", "qthCount")}\n          <div class="qth-row"><input type="file" id="kmlFile" accept=".kml" hidden>\n            <button class="btn kml ai" type="button" data-kml-pick>${ic("upload")}Importar KML</button>\n            <input class="input" id="qthLivre" placeholder="QTH livre — escreva o endereço ou referência" value="${esc(draft.qth)}"></div>\n          <div id="qthWrap">${qthHTML(placa)}</div>\n        </div>\n        <div class="sol-sec">${head("mapPinPlus", "var(--mottu-lime)", "MyMaps", "opcional")}\n          <input class="input" id="mymapsInput" placeholder="Cole o link do MyMaps" value="${esc(draft.mymapsUrl)}"></div>\n        <div class="sol-sec">${head("file", "var(--sig-ticket)", "Relato", "texto livre + importar dados da placa")}\n          <textarea class="textarea" id="relatoInput" placeholder="Descreva o contexto para a empresa parceira">${esc(draft.relato)}</textarea>\n          <div class="inject" id="injectWrap">${injectsHTML(placa)}</div></div>\n      </div>\n      <div class="modal-preview"><div class="modal-preview-inner">\n        ${head("monitorCheck", "var(--mottu-green-70)", "Pré-visualização", "exatamente o que será copiado")}\n        <pre class="preview-box v2" id="solicitPreview"></pre>\n        <div class="modal-foot"><button class="btn cancel" type="button" data-action="close-modal">Cancelar</button><button class="btn pri ai" type="button" id="copySolicit">${ic("copy")}Copiar solicitação</button></div>\n      </div></div>\n    </div>`;
+    $("#modal").innerHTML = `\n    <div class="modal-head"><span class="mic">${ic("send", "live")}</span><h2 class="modal-title" id="modalTitle">Solicitação de acionamento<small>${placa}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="modal-body">\n      <div class="modal-form">\n        <div class="sol-sec">${head("user", "var(--mottu-green-70)", "Dados do locatário", "auto-preenchido")}\n          <div class="loc-card">\n            ${foto ? `<img class="loc-photo" src="${esc(foto.url)}" alt="Foto do locatário" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}" title="Foto do FaceMatch ok mais recente · ${esc(foto.data)} — clique para ampliar">` : `<div class="loc-photo none">${ic("user")}<span>sem foto</span></div>`}\n            <div class="loc-main">\n              <div class="loc-name">${esc(loc ? loc[0] : "—")}<small>${esc(loc ? loc[1] : "—")}${foto ? ` · foto de ${esc(foto.data)}` : ""}</small></div>\n              <div class="loc-facts">\n                ${fact("idcard", ehMxUf(d.uf) ? "Documento" : "CPF", ct.cpf || "aguardando endpoint", "var(--status-info)", !ct.cpf)}\n                ${fact("phone", "Celular", ct.celular || "aguardando endpoint", "var(--sig-cel)", !ct.celular)}\n                ${fact("bike", "Modelo", mod ? mod[0] : "—", "var(--mottu-lime)")}\n                ${fact("hourglass", "Inadimplência", d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias` : "—", corInad(d.dias_inadimplencia))}\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="sol-sec">${head("pin", "var(--sig-cel)", "QTH de consulta", "", "qthCount")}\n          <div class="qth-row"><input type="file" id="kmlFile" accept=".kml" hidden>\n            <button class="btn kml ai" type="button" data-kml-pick>${ic("upload")}Importar KML</button>\n            <input class="input" id="qthLivre" placeholder="QTH livre — escreva o endereço ou referência" value="${esc(draft.qth)}"></div>\n          <div id="qthWrap">${qthHTML(placa)}</div>\n        </div>\n        <div class="sol-sec">${head("mapPinPlus", "var(--mottu-lime)", "MyMaps", "opcional")}\n          <input class="input" id="mymapsInput" placeholder="Cole o link do MyMaps" value="${esc(draft.mymapsUrl)}"></div>\n        <div class="sol-sec">${head("file", "var(--sig-ticket)", "Relato", "texto livre + importar dados da placa")}\n          <textarea class="textarea" id="relatoInput" placeholder="Descreva o contexto para a empresa parceira">${esc(draft.relato)}</textarea>\n          <div class="inject" id="injectWrap">${injectsHTML(placa)}</div></div>\n      </div>\n      <div class="modal-preview"><div class="modal-preview-inner">\n        ${head("monitorCheck", "var(--mottu-green-70)", "Pré-visualização", "exatamente o que será copiado")}\n        <pre class="preview-box v2" id="solicitPreview"></pre>\n        <div class="modal-foot"><button class="btn cancel" type="button" data-action="close-modal">Cancelar</button><button class="btn pri ai" type="button" id="copySolicit">${ic("copy")}Copiar solicitação</button></div>\n      </div></div>\n    </div>`;
     const upd = () => {
       $("#solicitPreview").textContent = buildSolicitText(placa);
       const c = $("#qthCount");
@@ -2941,6 +3377,7 @@ async function __iniciarAppComDados(__payload) {
     state.ufs = [];
     state.expandedPlaca = null;
     movIdx = -1;
+    ufPainel.aberto = null;
     store.set("recops_hub_carteira", state.carteira);
     closePop();
     renderAll();
@@ -2950,6 +3387,7 @@ async function __iniciarAppComDados(__payload) {
   function maskPlacaBusca(raw) {
     const chars = raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
     let out = "";
+    if (/^[0-9]/.test(chars)) return chars.slice(0, 7);
     for (let i = 0, p = 0; i < chars.length && p < PLACA_MASK_PATTERN.length; i++) {
       const c = chars[i], ok = PLACA_MASK_PATTERN[p] === "L" ? /[A-Z]/.test(c) : p === 4 ? /[A-Z0-9]/.test(c) : /[0-9]/.test(c);
       if (!ok) continue;
@@ -2993,6 +3431,43 @@ async function __iniciarAppComDados(__payload) {
           copyBtn.classList.remove("copied");
           copyBtn.innerHTML = ic("copy");
         }), 1200);
+      }
+      return;
+    }
+    if (t.closest("#expBtn")) {
+      e.stopPropagation();
+      abrirExport($("#expBtn"));
+      return;
+    }
+    if (popCtx && popCtx.menuKey === "export" && pop.contains(t)) {
+      const pr = t.closest("[data-xp-preset]"), col = t.closest("[data-xp-col]"), blk = t.closest("[data-xp-blk]");
+      if (pr) {
+        xp.preset = pr.dataset.xpPreset;
+        xp.sel = new Set(XLS_PRESETS[xp.preset].cols);
+        exportRefresh();
+        return;
+      }
+      if (col) {
+        const k = col.dataset.xpCol;
+        xp.sel.has(k) ? xp.sel.delete(k) : xp.sel.add(k);
+        xp.preset = null;
+        exportRefresh();
+        return;
+      }
+      if (blk) {
+        const ks = XLS_COLUNAS.filter((c => c.b === blk.dataset.xpBlk)).map((c => c.k)), todas = ks.every((k => xp.sel.has(k)));
+        ks.forEach((k => todas ? xp.sel.delete(k) : xp.sel.add(k)));
+        xp.preset = null;
+        exportRefresh();
+        return;
+      }
+      if (t.closest("[data-xp-cancel]")) {
+        closePop();
+        return;
+      }
+      if (t.closest("[data-xp-go]")) {
+        baixarXls();
+        return;
       }
       return;
     }
@@ -3052,11 +3527,22 @@ async function __iniciarAppComDados(__payload) {
       return;
     }
     const uf = t.closest("[data-uf]");
+    const ufx = t.closest("[data-ufx]");
+    if (ufx) {
+      ufPainel.aberto = ufPainel.aberto === ufx.dataset.ufx ? null : ufx.dataset.ufx;
+      renderUfChips();
+      return;
+    }
     if (uf) {
       const k = uf.dataset.uf;
-      state.ufs = k === "__all__" ? [] : state.ufs.includes(k) ? state.ufs.filter((x => x !== k)) : [ ...state.ufs, k ];
+      if (k.startsWith("__pais__")) selecionarPais(k.slice(8)); else state.ufs = k === "__all__" ? [] : state.ufs.includes(k) ? state.ufs.filter((x => x !== k)) : [ ...state.ufs, k ];
       renderUfChips();
       renderTable();
+      return;
+    }
+    if (t.closest("[data-ov-mx]")) {
+      e.stopPropagation();
+      verMexico();
       return;
     }
     const kpi = t.closest("[data-kpi]");
@@ -3342,7 +3828,9 @@ async function __iniciarAppComDados(__payload) {
       return;
     }
     const card = e.target.closest(".ov[data-ov]");
-    if (card && !e.target.closest("a, .ov-uf")) location.hash = `#/${card.dataset.ov}`;
+    if (card && !e.target.closest("a, .ov-uf, [data-ov-mx]")) {
+      if (card.dataset.ov === "mexico") verMexico(); else location.hash = `#/${card.dataset.ov}`;
+    }
   }));
   document.addEventListener("click", (e => {
     const b = e.target.closest("[data-comp-filtro]");
