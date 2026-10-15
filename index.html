@@ -265,6 +265,12 @@ main{ max-width:1520px; margin:0 auto; padding:28px 28px 110px; }
 .vb-top i{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:11px; color:var(--c); }
 .vb-nome{ white-space:nowrap; font-family:var(--font-display); font-style:italic; font-weight:700; font-size:11px; letter-spacing:.3px; text-transform:uppercase; color:var(--text-primary); }
 .vb-sub{ white-space:nowrap; font-size:10px; color:var(--text-muted); }
+.vb-mx{ position:absolute; left:0; right:0; bottom:0; min-height:3px; border-radius:0 0 2px 2px; border-top:1.5px solid rgba(255,255,255,.85); background:repeating-linear-gradient(135deg, rgba(255,255,255,.42) 0 3px, rgba(255,255,255,.08) 3px 7px); pointer-events:none; }
+.vb-mxl{ display:inline-flex; align-items:center; gap:4px; margin-top:4px; padding:2px 7px 2px 3px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.04); white-space:nowrap; font-family:var(--font-display); font-style:italic; font-weight:700; font-size:10.5px; color:var(--text-secondary); font-variant-numeric:tabular-nums; }
+.vb-mxl .flag-mx{ width:13px; height:13px; }
+.vb-mxl b{ font-weight:800; font-size:12px; color:var(--text-primary); }
+.vb-mxl i{ font-style:italic; font-size:10px; color:var(--c); }
+.vb-mxl.zero{ opacity:.45; }
 .rg-list{ flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:4px; }
 .rg{ display:grid; grid-template-columns:44px minmax(0,1fr); grid-template-rows:auto auto; column-gap:10px; row-gap:5px; align-items:center; padding:5px 8px; border-radius:var(--radius-md); border:1px solid transparent; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer; transition:background .2s, border-color .2s; }
 .rg:hover{ background:rgba(255,255,255,.03); border-color:color-mix(in srgb, var(--c) 35%, transparent); }
@@ -482,6 +488,23 @@ tr.row.flip.out{ transition-duration:.32s; }
 .tl .m b{ color:var(--text-primary); font-weight:500; }
 .tl .m .tx{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:pre-line; cursor:pointer; }
 .tl .m .tx.full{ display:block; }
+.cms{ list-style:none; margin:0; padding:2px 4px 2px 0; display:flex; flex-direction:column; gap:10px; max-height:480px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line-2) transparent; }
+.cm{ position:relative; padding:11px 13px 12px 15px; border-radius:12px; border:1px solid var(--line-2); background:linear-gradient(160deg, rgba(255,255,255,.045), rgba(0,0,0,.25)); }
+.cm::before{ content:""; position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:0 3px 3px 0; background:var(--ca, var(--cc)); }
+.cm-h{ display:flex; align-items:center; gap:9px; min-width:0; }
+.cm-av{ display:grid; place-items:center; flex:none; width:26px; height:26px; border-radius:50%; font-family:var(--font-display); font-weight:800; font-size:10.5px; color:#0B0C0B; background:var(--ca); }
+.cm-who{ min-width:0; flex:1; font-size:12.5px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cm-when{ flex:none; display:flex; flex-direction:column; align-items:flex-end; line-height:1.2; font-variant-numeric:tabular-nums; }
+.cm-when b{ font-size:11.5px; font-weight:600; color:var(--text-primary); }
+.cm-when small{ font-size:10.5px; color:var(--text-muted); }
+.cm-t{ margin:9px 0 0; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:13.5px; letter-spacing:.2px; color:var(--text-primary); overflow-wrap:anywhere; }
+.cm-t.tag{ display:inline-flex; padding:2px 9px; border-radius:6px; font-size:12px; color:var(--tc); background:color-mix(in srgb, var(--tc) 14%, transparent); border:1px solid color-mix(in srgb, var(--tc) 45%, transparent); }
+.cm-t.vazio{ font-weight:600; color:var(--text-muted); }
+.cm-b{ margin-top:7px; font-size:12.5px; line-height:1.55; color:var(--text-secondary); white-space:pre-line; overflow-wrap:anywhere; }
+.cm-b b{ color:var(--text-primary); font-weight:600; }
+.cm.longo:not(.full) .cm-b{ display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+.cm-more{ margin-top:6px; padding:0; border:0; background:none; font:inherit; font-size:11.5px; font-weight:600; color:var(--mottu-green-70); cursor:pointer; }
+.cm-more:hover{ text-decoration:underline; }
 .tl .m a{ display:inline-flex; align-items:center; gap:4px; margin-top:4px; font-size:11px; color:var(--mottu-green-70); text-decoration:none; --is:12px; }
 .empty-note{ padding:16px; border-radius:10px; border:1px dashed var(--line-2); font-size:12.5px; color:var(--text-muted); text-align:center; }
 .acts{ display:flex; gap:8px; flex-wrap:wrap; }
@@ -1965,11 +1988,19 @@ async function __iniciarAppComDados(__payload) {
   } ];
   let compAnimado = false;
   function compContagens(l) {
+    const m = carteiraAtual() ? [] : l.filter(ehMx);
     return {
       total: l.length,
       nat: l.filter((d => d.ainda_nao_atuada)).length,
       v150: l.filter(vence150).length,
-      ping: l.filter((d => d.evt_ping)).length
+      ping: l.filter((d => d.evt_ping)).length,
+      temMx: m.length > 0,
+      mx: {
+        total: m.length,
+        nat: m.filter((d => d.ainda_nao_atuada)).length,
+        v150: m.filter(vence150).length,
+        ping: m.filter((d => d.evt_ping)).length
+      }
     };
   }
   const compFlags = d => ({
@@ -1992,8 +2023,9 @@ async function __iniciarAppComDados(__payload) {
   function compBarrasHTML(c) {
     const anima = !compAnimado, mx = Math.max(c.nat, c.v150, c.ping, 1);
     const col = (k, f, cor, nome, sub, ativo) => {
-      const h = Math.max(4, c[k] / mx * 100);
-      return `<button class="vb" type="button" data-comp-filtro="${f}" style="--c:${cor}" aria-pressed="${ativo}" title="${c[k]} de ${c.total} placas · ${pct(c[k], c.total)}% da carteira">\n      <span class="vb-area"><span class="vb-bar" ${anima ? `data-h="${h}"` : `style="height:${h}%"`}><span class="vb-top"><b>${c[k]}</b><i>${pct(c[k], c.total)}%</i></span></span></span>\n      <span class="vb-nome">${nome}</span><span class="vb-sub">${sub}</span></button>`;
+      const h = Math.max(4, c[k] / mx * 100), nMx = c.temMx ? c.mx[k] : 0, hMx = c[k] ? nMx / c[k] * 100 : 0;
+      const dica = `${c[k]} de ${c.total} placas · ${pct(c[k], c.total)}% da carteira` + (c.temMx ? ` · Brasil ${c[k] - nMx} · México ${nMx}` : "");
+      return `<button class="vb" type="button" data-comp-filtro="${f}" style="--c:${cor}" aria-pressed="${ativo}" title="${dica}">\n      <span class="vb-area"><span class="vb-bar" ${anima ? `data-h="${h}"` : `style="height:${h}%"`}>${nMx ? `<span class="vb-mx" style="height:${hMx}%"></span>` : ""}<span class="vb-top"><b>${c[k]}</b><i>${pct(c[k], c.total)}%</i></span></span></span>\n      <span class="vb-nome">${nome}</span><span class="vb-sub">${sub}</span>${c.temMx ? `<span class="vb-mxl ${nMx ? "" : "zero"}">${flagMx()}<b>${nMx}</b> MX<i>${pct(nMx, c[k] || 1)}%</i></span>` : ""}</button>`;
     };
     if (anima) requestAnimationFrame((() => requestAnimationFrame((() => document.querySelectorAll(".vb-bar[data-h]").forEach((e => {
       e.style.height = e.dataset.h + "%";
@@ -2552,12 +2584,50 @@ async function __iniciarAppComDados(__payload) {
   function detailHTML(d, estado = "") {
     const loc = LOCATARIO_INFO[d.placa], mod = MODELO_INFO[d.placa], foto = LOCATARIO_FOTO_BY_PLACA[d.placa], ct = LOCATARIO_CONTATO_BY_PLACA[d.placa] || {};
     const fact = (icon, v, pend) => `<div class="${pend ? "pend" : ""}">${ic(icon)}${v}</div>`;
-    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div><div class="who-sub">Foto: FaceMatch ok mais recente${foto ? " · " + esc(foto.data) : ""}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemFalso ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
+    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemFalso ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
   }
   const disclosureAberto = new Set;
   function timelineHTML(id, label, itens) {
     const aberto = disclosureAberto.has(id);
     return `<div><button class="disclosure" type="button" data-disclosure="${id}" aria-expanded="${aberto}">${ic("chevRight")}${label}<span class="n">${itens.length}</span></button>\n    <ul class="tl" ${aberto ? "" : "hidden"}>${itens.map((x => `<li><span class="d">${esc(x.data)}<small>${esc(x.rel)}</small></span><span class="m">${x.titulo ? `<b>${esc(x.titulo)}</b>` : ""}${x.texto ? `<span class="tx" data-clamp title="Clique para expandir">${esc(x.texto)}</span>` : ""}${x.link ? `<a href="${x.link}" target="_blank" rel="noopener">${ic("pin")}Ver no mapa</a>` : ""}</span></li>`)).join("")}</ul></div>`;
+  }
+  const COM_CORES = [ "#6FA8FF", "#2DD4BF", "#FACC15", "#FF9F40", "#A78BFA", "#F472B6", "#A2FF00", "#38BDF8" ];
+  function corAutor(nome) {
+    let h = 0;
+    for (const ch of String(nome || "")) h = h * 31 + ch.charCodeAt(0) >>> 0;
+    return COM_CORES[h % COM_CORES.length];
+  }
+  const iniciais = nome => String(nome || "?").trim().split(/\s+/).filter(Boolean).map((p => p[0])).filter(((_, i, a) => i === 0 || i === a.length - 1)).join("").toUpperCase() || "?";
+  const negritoZap = s => esc(s).replace(/\*([^*\n]+)\*/g, "<b>$1</b>");
+  function partesComentario(texto) {
+    const linhas = String(texto || "").replace(/\r\n?/g, "\n").split("\n");
+    while (linhas.length && !/[0-9A-Za-zÀ-ÿ]/.test(linhas[0])) linhas.shift();
+    const primeira = (linhas[0] || "").trim().replace(/^\*+|\*+$/g, "").trim();
+    if (primeira && primeira.length <= 80) return {
+      titulo: primeira,
+      corpo: linhas.slice(1).join("\n").replace(/^\s*\n/, "").trimEnd()
+    };
+    return {
+      titulo: "",
+      corpo: linhas.join("\n").trim()
+    };
+  }
+  function tomTitulo(t) {
+    const u = t.toUpperCase();
+    if (u.startsWith("#RECOPS ENTRADA")) return "var(--mottu-green-70)";
+    if (u.startsWith("#")) return "#38BDF8";
+    if (u.includes("NÃO RECUPERADO") || u.includes("NAO RECUPERADO")) return "#FF9F40";
+    if (u.includes("RECUPERAD")) return "var(--mottu-green-70)";
+    return "";
+  }
+  function comentariosHTML(id, coms) {
+    const aberto = disclosureAberto.has(id);
+    return `<div><button class="disclosure" type="button" data-disclosure="${id}" aria-expanded="${aberto}">${ic("chevRight")}Histórico de comentários<span class="n">${coms.length}</span></button>\n    <ul class="cms" ${aberto ? "" : "hidden"}>${coms.map((c => {
+      const {titulo, corpo} = partesComentario(c.texto), cor = corAutor(c.autor), tom = titulo ? tomTitulo(titulo) : "";
+      const longo = corpo.length > 260 || corpo.split("\n").length > 5;
+      const [dia, hora] = String(c.data || "").split(" ");
+      return `<li class="cm ${longo ? "longo" : ""}" style="--ca:${cor}">\n        <div class="cm-h"><span class="cm-av" aria-hidden="true">${esc(iniciais(c.autor))}</span><span class="cm-who" title="${esc(c.autor || "")}">${esc(c.autor || "Autor não informado")}</span>\n          <span class="cm-when"><b>${esc(dia || "—")}${hora ? ` · ${esc(hora)}` : ""}</b><small>${esc(relativoDe(c.data))}</small></span></div>\n        ${titulo ? `<div class="cm-t ${tom ? "tag" : ""}" ${tom ? `style="--tc:${tom}"` : ""}>${esc(titulo)}</div>` : `<div class="cm-t vazio">Comentário</div>`}\n        ${corpo ? `<div class="cm-b">${negritoZap(corpo)}</div>` : ""}\n        ${longo ? `<button class="cm-more" type="button" data-cm-more aria-expanded="false">Ver comentário completo</button>` : ""}</li>`;
+    })).join("")}</ul></div>`;
   }
   function fieldColHTML(d) {
     const r = RECUSAS_BY_PLACA[d.placa], rec = r && r.recusas ? [ ...r.recusas ].reverse() : [];
@@ -2571,12 +2641,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function recopsColHTML(d) {
     const ro = RECOPS_OCORRENCIA_BY_PLACA[d.placa], coms = ro && ro.comentarios ? [ ...ro.comentarios ].reverse() : [];
-    return `<section class="col" style="--cc:var(--mottu-green-70)"><h4>${ic("clipboard")}RecOps<span>${coms.length} comentário${coms.length === 1 ? "" : "s"}</span></h4>\n    ${ro && ro.interpretacao ? `<div class="interp"><b>Relatório consolidado</b>${esc(ro.interpretacao)}</div>` : ""}\n    ${coms.length ? timelineHTML("r-" + d.placa, "Histórico de comentários", coms.map((c => ({
-      data: c.data,
-      rel: relativoDe(c.data),
-      titulo: c.autor,
-      texto: c.texto
-    })))) : `<div class="empty-note">Nenhum histórico de tratativa RecOps registrado.</div>`}</section>`;
+    return `<section class="col" style="--cc:var(--mottu-green-70)"><h4>${ic("clipboard")}RecOps<span>${coms.length} comentário${coms.length === 1 ? "" : "s"}</span></h4>\n    ${ro && ro.interpretacao ? `<div class="interp"><b>Relatório consolidado</b>${esc(ro.interpretacao)}</div>` : ""}\n    ${coms.length ? comentariosHTML("r-" + d.placa, coms) : `<div class="empty-note">Nenhum histórico de tratativa RecOps registrado.</div>`}</section>`;
   }
   const movAberto = new Set;
   const TZ_SP = "America/Sao_Paulo";
@@ -3673,6 +3738,14 @@ async function __iniciarAppComDados(__payload) {
       aberto ? disclosureAberto.add(id) : disclosureAberto.delete(id);
       disc.setAttribute("aria-expanded", aberto);
       disc.nextElementSibling.hidden = !aberto;
+      return;
+    }
+    const cmMore = t.closest("[data-cm-more]");
+    if (cmMore) {
+      e.stopPropagation();
+      const li = cmMore.closest(".cm"), on = li.classList.toggle("full");
+      cmMore.setAttribute("aria-expanded", on);
+      cmMore.textContent = on ? "Mostrar menos" : "Ver comentário completo";
       return;
     }
     const clamp = t.closest("[data-clamp]");
