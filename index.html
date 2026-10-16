@@ -2157,6 +2157,16 @@ async function __iniciarAppComDados(__payload) {
     b: "id",
     get: d => (LOCATARIO_INFO[d.placa] || [])[0] || ""
   }, {
+    k: "cpf",
+    l: "CPF / Documento",
+    b: "id",
+    get: d => (LOCATARIO_CONTATO_BY_PLACA[d.placa] || {}).cpf || ""
+  }, {
+    k: "celular",
+    l: "Celular",
+    b: "id",
+    get: d => (LOCATARIO_CONTATO_BY_PLACA[d.placa] || {}).celular || ""
+  }, {
     k: "modelo",
     l: "Modelo",
     b: "id",
