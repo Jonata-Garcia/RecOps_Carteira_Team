@@ -422,6 +422,16 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .sig .lb{ font-size:8px; letter-spacing:.3px; text-transform:uppercase; line-height:1; }
 .sig .t{ font-size:8.5px; letter-spacing:.2px; line-height:1.1; color:var(--sig-time); white-space:nowrap; font-variant-numeric:tabular-nums; }
 .sig.face.descartado{ color:var(--text-muted); background:rgba(255,255,255,.05); border-color:var(--border); box-shadow:none; }
+.sig.descartado{ color:var(--text-muted); background:rgba(255,255,255,.05); border-color:var(--border); box-shadow:none; }
+.sig.descartado .lb, .sig.descartado .t{ text-decoration:line-through; text-decoration-color:rgba(255,255,255,.35); }
+.pop-img{ display:block; position:relative; width:100%; margin:0 0 10px; padding:0; border:1px solid var(--line-2); border-radius:var(--radius-md); overflow:hidden; background:#0B0C0B; cursor:zoom-in; }
+.pop-img img{ display:block; width:100%; max-height:190px; object-fit:cover; }
+.pop-img .pop-img-fail{ display:none; padding:22px 10px; font-size:12px; color:var(--text-muted); text-align:center; }
+.pop-img.erro{ cursor:default; }
+.pop-img.erro .pop-img-fail{ display:block; }
+.cbd-acoes .btn{ flex:1; justify-content:center; }
+.cbd-acoes .cbd-ok.ativo{ background:rgba(0,177,49,.18); border-color:var(--mottu-green); color:var(--mottu-green-70); }
+.cbd-acoes .cbd-no.ativo{ background:rgba(255,84,73,.14); border-color:rgba(255,84,73,.6); color:#ff8a82; }
 .sig.face.pend::after{ content:""; position:absolute; top:-3px; right:-3px; width:8px; height:8px; border-radius:50%; background:var(--sig-face); box-shadow:0 0 0 2px var(--bg); animation:breathe 1.6s ease-in-out infinite; }
 @keyframes breathe{ 50%{ opacity:.35; } }
 .sig.pinned{ outline:2px solid var(--mottu-green-70); outline-offset:2px; }
@@ -1328,6 +1338,23 @@ async function __iniciarAppComDados(__payload) {
       el.removeAttribute("data-icon");
     }));
   }
+  const lerLocal = (k, f) => {
+    try {
+      const v = localStorage.getItem(k);
+      return v == null ? f : JSON.parse(v);
+    } catch (e) {
+      return f;
+    }
+  };
+  const cbdIdCaptura = i => String(i.captureId || i.ultimaCaptura || "sem-id");
+  function cbdDecisao(placa) {
+    const i = CBD_INFO[placa];
+    if (!i) return null;
+    const id = cbdIdCaptura(i);
+    if (lerLocal("cbd_confirmado", {})[placa] === id) return "confirmado";
+    if (lerLocal("cbd_descartado", {})[placa] === id) return "descartado";
+    return null;
+  }
   function pesoInadimplencia(dias) {
     if (dias == null) return 0;
     if (dias <= 30) return 0;
@@ -1340,10 +1367,11 @@ async function __iniciarAppComDados(__payload) {
     if (dias <= 30) return 1;
     return 2;
   }
-  DATA.forEach((d => {
+  function motorPrioridade(d) {
     d.evt_gps = d.horas_desde_gps != null && d.horas_desde_gps <= JANELA_EVENTO.gps;
     d.evt_ping = d.horas_desde_ping != null && d.horas_desde_ping <= JANELA_EVENTO.ping;
-    d.evt_cbd = d.horas_desde_cbd != null && d.horas_desde_cbd <= JANELA_EVENTO.cbd;
+    d.cbdDecisao = cbdDecisao(d.placa);
+    d.evt_cbd = d.cbdDecisao !== "descartado" && d.horas_desde_cbd != null && d.horas_desde_cbd <= JANELA_EVENTO.cbd;
     d.evt_multa = d.horas_desde_multa != null && d.horas_desde_multa <= JANELA_EVENTO.multa;
     const pingCelInfo = PING_CELULAR_INFO[d.placa];
     d.horas_desde_ping_celular = pingCelInfo ? pingCelInfo.horasDesde : null;
@@ -1376,7 +1404,8 @@ async function __iniciarAppComDados(__payload) {
     d.altaBase = d.alta;
     d.atencaoBase = d.atencao;
     d.prioRankBase = d.prioRank;
-  }));
+  }
+  DATA.forEach(motorPrioridade);
   const DATA_BY_PLACA = {};
   DATA.forEach((d => {
     DATA_BY_PLACA[d.placa] = d;
@@ -1802,12 +1831,20 @@ async function __iniciarAppComDados(__payload) {
         nome: "CarBigData",
         janela: "≤30 dias",
         recente: d.evt_cbd,
-        rows: [ [ "Sinal", tempo(d.horas_desde_cbd), "hl" ], [ "Captura", fmtDataHora(i.ultimaCaptura) ], [ "Endereço", i.endereco ], [ "Passagens", `${i.totalPassagens} no local` ] ]
+        img: i.imageUrl ? {
+          url: i.imageUrl,
+          legenda: `${d.placa} · CarBigData · ${fmtDataHora(i.ultimaCaptura) || ""}`
+        } : null,
+        rows: [ [ "Data", fmtDataHora(i.ultimaCaptura) ] ],
+        cbd: {
+          placa: d.placa,
+          decisao: d.cbdDecisao
+        }
       } : {
         ...base,
         nome: "CarBigData",
         janela: "≤30 dias",
-        empty: "Sem captura válida (≤30km do ping/endereço mais próximo)."
+        empty: "Sem captura nos últimos 30 dias."
       };
     }
     if (key === "ping") return d.horas_desde_ping != null ? {
@@ -1839,12 +1876,14 @@ async function __iniciarAppComDados(__payload) {
   }
   function sinalPopHTML(p) {
     if (!p) return "";
-    const badge = p.janela ? `<span class="pop-badge ${p.recente ? "recente" : "expirado"}">${p.recente ? "Recente" : "Fora da janela"} · ${p.janela}</span>` : "";
+    const badge = p.cbd && p.cbd.decisao === "descartado" ? `<span class="pop-badge expirado">Hit descartado</span>` : p.janela ? `<span class="pop-badge ${p.recente ? "recente" : "expirado"}">${p.recente ? p.cbd && p.cbd.decisao === "confirmado" ? "Hit confirmado" : "Recente" : "Fora da janela"} · ${p.janela}</span>` : "";
     const body = p.empty ? `<div class="pop-empty">${esc(p.empty)}</div>` : `<dl class="pop-rows">${p.rows.filter((r => r[1] != null)).map((r => `<dt>${esc(r[0])}</dt><dd class="${r[2] || ""}">${esc(r[1])}</dd>`)).join("")}</dl>`;
+    const foto = p.img ? `<button class="pop-img ai" type="button" data-cbd-foto="${esc(p.cbd ? p.cbd.placa : "")}" title="Ampliar a foto"><img src="${esc(p.img.url)}" alt="Captura CarBigData" loading="lazy" onerror="this.parentNode.classList.add('erro');this.remove();"><span class="pop-img-fail">Foto indisponível</span></button>` : "";
+    const cbd = p.cbd ? `<div class="pop-foot cbd-acoes"><button class="btn sm ai cbd-ok${p.cbd.decisao === "confirmado" ? " ativo" : ""}" type="button" data-cbd="confirmar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "confirmado"}">${ic("check")}Confirmar Hit</button><button class="btn sm ai cbd-no${p.cbd.decisao === "descartado" ? " ativo" : ""}" type="button" data-cbd="descartar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "descartado"}">${ic("x")}Descartar Hit</button></div>` : "";
     const bo = p.baixarBo ? `<button class="btn sm ai" type="button" data-bo-baixar="${esc(p.baixarBo)}">${ic("download")}Baixar B.O.</button>` : "";
     const lk = p.link ? `<a class="btn sm ai" href="${p.link.url}" target="_blank" rel="noopener">${esc(p.link.label)}${ic("external")}</a>` : "";
     const foot = bo || lk ? `<div class="pop-foot">${bo}${lk}</div>` : "";
-    return `<div class="pop-title ai live-hover" style="--sc:${p.cor}">${ic(p.icon, "live")}${esc(p.nome)}${badge}</div>${body}${foot}`;
+    return `<div class="pop-title ai live-hover" style="--sc:${p.cor}">${ic(p.icon, "live")}${esc(p.nome)}${badge}</div>${foto}${body}${cbd}${foot}`;
   }
   const plateHTML = d => `<span class="plate${ehMx(d) ? " mx" : ""}"><span class="plate-bar"></span><span class="plate-body"><span class="plate-number">${d.placa}</span><span class="plate-uf">${d.uf}${ufMxTag(d.uf)}</span></span><button class="plate-copy ai" type="button" data-copy="${d.placa}" title="Copiar placa" aria-label="Copiar placa ${d.placa}">${ic("copy")}</button></span>`;
   function prioHTML(d) {
@@ -1888,7 +1927,9 @@ async function __iniciarAppComDados(__payload) {
       const h = d[s.horas], on = !!d[s.evt], fresh = on && h <= s.janela / 2;
       const title = on ? `${s.label} há ${formatHoras(h)}` : h != null ? `${s.label}: último há ${formatHoras(h)} (fora da janela)` : `${s.label}: sem registro`;
       const t = h != null ? `Há ${formatHoras(h)}` : s.key === "cel" ? "sem sinal" : null;
-      return chip(s, `${on ? "on" : ""} ${fresh ? "fresh" : ""}`, title, t);
+      const desc = s.key === "cbd" && d.cbdDecisao === "descartado" && h != null && h <= s.janela;
+      if (desc) return chip(s, "descartado", `CBD há ${formatHoras(h)} · hit descartado`, t);
+      return chip(s, `${on ? "on" : ""} ${fresh ? "fresh" : ""}${s.key === "cbd" && d.cbdDecisao === "confirmado" && on ? " confirmado" : ""}`, s.key === "cbd" && d.cbdDecisao === "confirmado" && on ? `${title} · hit confirmado` : title, t);
     }));
     const def = k => SINAIS_FILTRO.find((s => s.key === k));
     chips.push(chip(def("ping"), d.evt_ping ? "on" : "", d.evt_ping ? `Ping ativo há ${formatHoras(d.horas_desde_ping)}` : d.horas_desde_ping != null ? `Ping: último há ${formatHoras(d.horas_desde_ping)} (fora da janela)` : "Ping: sem sinal", null));
@@ -3223,7 +3264,9 @@ async function __iniciarAppComDados(__payload) {
     }
     if (tipo === "cbd") {
       const c = CBD_INFO[placa];
-      return c ? `- CarBigData: ${c.totalPassagens} passagem(ns) em ${c.endereco} (última captura ${fmtDataHora(c.ultimaCaptura)})` : "";
+      if (!c || cbdDecisao(placa) === "descartado") return "";
+      const local = c.endereco || [ c.cidade, c.uf ].filter(Boolean).join(" - ");
+      return `- CarBigData: última captura ${fmtDataHora(c.ultimaCaptura)}${local ? ` em ${local}` : ""}`;
     }
     if (tipo === "multa") {
       const m = MULTA_INFO[placa];
@@ -3840,6 +3883,37 @@ async function __iniciarAppComDados(__payload) {
       renderAll();
       openFacematch(placa);
       toast(acao === "confirmar" ? "Suspeita confirmada — placa forçada para Alta" : acao === "descartar" ? "FaceMatch descartado" : "Decisão removida");
+      return;
+    }
+    const cbdFoto = t.closest("[data-cbd-foto]");
+    if (cbdFoto) {
+      e.stopPropagation();
+      const i = CBD_INFO[cbdFoto.dataset.cbdFoto];
+      if (i && i.imageUrl) openLightbox(i.imageUrl, `${cbdFoto.dataset.cbdFoto} · CarBigData · ${fmtDataHora(i.ultimaCaptura) || ""}`);
+      return;
+    }
+    const cbdBtn = t.closest("[data-cbd]");
+    if (cbdBtn) {
+      e.stopPropagation();
+      const placa = cbdBtn.dataset.placa, acao = cbdBtn.dataset.cbd, i = CBD_INFO[placa], d = DATA_BY_PLACA[placa];
+      if (!i || !d) return;
+      const id = cbdIdCaptura(i), conf = store.get("cbd_confirmado", {}), desc = store.get("cbd_descartado", {});
+      const desfazer = acao === "confirmar" && conf[placa] === id || acao === "descartar" && desc[placa] === id;
+      delete conf[placa];
+      delete desc[placa];
+      if (!desfazer) {
+        if (acao === "confirmar") conf[placa] = id; else desc[placa] = id;
+      }
+      store.set("cbd_confirmado", conf);
+      store.set("cbd_descartado", desc);
+      motorPrioridade(d);
+      aplicarFacematchOverride();
+      renderAll();
+      const novoSig = document.querySelector(`[data-sig="cbd"][data-placa="${placa}"]`);
+      if (novoSig) openPop(novoSig, sinalPopHTML(sinalPayload(DATA_BY_PLACA[placa], "cbd")), {
+        pinned: true
+      }); else closePop();
+      toast(desfazer ? "Decisão do hit removida" : acao === "confirmar" ? "Hit do CarBigData confirmado" : "Hit do CarBigData descartado");
       return;
     }
     const sig = t.closest("[data-sig]");
