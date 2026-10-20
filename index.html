@@ -429,9 +429,14 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .pop-img .pop-img-fail{ display:none; padding:22px 10px; font-size:12px; color:var(--text-muted); text-align:center; }
 .pop-img.erro{ cursor:default; }
 .pop-img.erro .pop-img-fail{ display:block; }
-.cbd-acoes .btn{ flex:1; justify-content:center; }
-.cbd-acoes .cbd-ok.ativo{ background:rgba(0,177,49,.18); border-color:var(--mottu-green); color:var(--mottu-green-70); }
-.cbd-acoes .cbd-no.ativo{ background:rgba(255,84,73,.14); border-color:rgba(255,84,73,.6); color:#ff8a82; }
+.cbd-acoes .btn{ flex:1; justify-content:center; font-weight:600; }
+.pop-badge.hit-ok{ color:#3ee06a; background:rgba(0,177,49,.14); border:1px solid rgba(0,177,49,.45); }
+.cbd-acoes .btn.cbd-ok{ background:rgba(0,177,49,.14); border-color:rgba(0,177,49,.6); color:#3ee06a; }
+.cbd-acoes .btn.cbd-ok:hover{ background:rgba(0,177,49,.26); border-color:var(--mottu-green); }
+.cbd-acoes .btn.cbd-ok.ativo{ background:linear-gradient(180deg, #1BD60B, #00B131); border-color:transparent; color:#04210C; font-weight:700; box-shadow:0 8px 22px -10px rgba(0,177,49,.8); }
+.cbd-acoes .btn.cbd-no{ background:rgba(255,84,73,.12); border-color:rgba(255,84,73,.55); color:#ff8a82; }
+.cbd-acoes .btn.cbd-no:hover{ background:rgba(255,84,73,.24); border-color:#ff5449; }
+.cbd-acoes .btn.cbd-no.ativo{ background:linear-gradient(180deg, #ff6b61, #e53b30); border-color:transparent; color:#fff; font-weight:700; box-shadow:0 8px 22px -10px rgba(255,84,73,.8); }
 .sig.face.pend::after{ content:""; position:absolute; top:-3px; right:-3px; width:8px; height:8px; border-radius:50%; background:var(--sig-face); box-shadow:0 0 0 2px var(--bg); animation:breathe 1.6s ease-in-out infinite; }
 @keyframes breathe{ 50%{ opacity:.35; } }
 .sig.pinned{ outline:2px solid var(--mottu-green-70); outline-offset:2px; }
@@ -702,6 +707,13 @@ tr.row.flip.out{ transition-duration:.32s; }
 .lb-col .cap{ font-size:12px; color:var(--text-muted); }
 .lb-col .cap b{ color:var(--text-primary); font-weight:500; }
 .lb-col img{ width:100%; max-height:60vh; object-fit:contain; border-radius:10px; background:#0a0a0a; }
+.lb-zoom{ position:relative; align-self:center; max-width:100%; line-height:0; overflow:hidden; border-radius:10px; cursor:crosshair; touch-action:none; user-select:none; -webkit-user-select:none; }
+.lb-zoom.zoom{ cursor:zoom-out; }
+.lb-col .lb-zoom img{ display:block; width:auto; max-width:100%; max-height:70vh; border-radius:0; transform-origin:0 0; transition:transform .28s cubic-bezier(.2,.8,.2,1); -webkit-user-drag:none; pointer-events:none; }
+.lb-sel{ position:absolute; border:1.5px dashed #fff; background:rgba(255,255,255,.08); box-shadow:0 0 0 9999px rgba(0,0,0,.35); pointer-events:none; }
+.lb-sel[hidden]{ display:none; }
+.lb-dica{ display:flex; align-items:center; justify-content:center; gap:6px; font-size:11.5px; color:var(--text-muted); text-align:center; }
+.lb-dica .li{ --is:13px; }
 .lb-fail{ display:grid; place-items:center; min-height:260px; border-radius:10px; border:1px dashed var(--line-2); font-size:12.5px; color:var(--text-muted); text-align:center; padding:16px; }
 .lb-fail a{ color:var(--mottu-green-70); }
 
@@ -1876,7 +1888,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function sinalPopHTML(p) {
     if (!p) return "";
-    const badge = p.cbd && p.cbd.decisao === "descartado" ? `<span class="pop-badge expirado">Hit descartado</span>` : p.janela ? `<span class="pop-badge ${p.recente ? "recente" : "expirado"}">${p.recente ? p.cbd && p.cbd.decisao === "confirmado" ? "Hit confirmado" : "Recente" : "Fora da janela"} · ${p.janela}</span>` : "";
+    const badge = p.cbd && p.cbd.decisao === "descartado" ? `<span class="pop-badge expirado">Hit descartado</span>` : p.janela ? `<span class="pop-badge ${p.recente ? "recente" : "expirado"}">${p.recente ? p.cbd && p.cbd.decisao === "confirmado" ? "Hit confirmado" : "Recente" : "Fora da janela"} · ${p.janela}</span>`.replace('class="pop-badge recente"', p.cbd && p.cbd.decisao === "confirmado" ? 'class="pop-badge hit-ok"' : 'class="pop-badge recente"') : "";
     const body = p.empty ? `<div class="pop-empty">${esc(p.empty)}</div>` : `<dl class="pop-rows">${p.rows.filter((r => r[1] != null)).map((r => `<dt>${esc(r[0])}</dt><dd class="${r[2] || ""}">${esc(r[1])}</dd>`)).join("")}</dl>`;
     const foto = p.img ? `<button class="pop-img ai" type="button" data-cbd-foto="${esc(p.cbd ? p.cbd.placa : "")}" title="Ampliar a foto"><img src="${esc(p.img.url)}" alt="Captura CarBigData" loading="lazy" onerror="this.parentNode.classList.add('erro');this.remove();"><span class="pop-img-fail">Foto indisponível</span></button>` : "";
     const cbd = p.cbd ? `<div class="pop-foot cbd-acoes"><button class="btn sm ai cbd-ok${p.cbd.decisao === "confirmado" ? " ativo" : ""}" type="button" data-cbd="confirmar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "confirmado"}">${ic("check")}Confirmar Hit</button><button class="btn sm ai cbd-no${p.cbd.decisao === "descartado" ? " ativo" : ""}" type="button" data-cbd="descartar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "descartado"}">${ic("x")}Descartar Hit</button></div>` : "";
@@ -3055,16 +3067,16 @@ async function __iniciarAppComDados(__payload) {
     $("#modal").innerHTML = `\n    <div class="modal-head" style="--mc:var(--sig-face)"><span class="mic">${ic("face", "live")}</span><h2 class="modal-title" id="modalTitle">FaceMatch<small>${placa} · ${estado}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="fm-body">\n      <div class="fm-tabs" role="tablist" aria-label="Tentativas de FaceMatch">\n        <button class="fm-tab ai" type="button" role="tab" id="fmTabRep" aria-controls="fmPanelRep" aria-selected="true" data-fm-tab="reprovados" style="--tc:var(--status-critical)">Reprovados<b>${falhas.length}</b></button>\n        <button class="fm-tab ai" type="button" role="tab" id="fmTabApr" aria-controls="fmPanelApr" aria-selected="false" data-fm-tab="aprovados" style="--tc:var(--mottu-green-70)" ${aprovados.length ? "" : `disabled title="Sem tentativas aprovadas registradas para este locatário"`}>Aprovados<b>${aprovados.length}</b></button>\n      </div>\n      <div class="fm-panel" role="tabpanel" id="fmPanelRep" aria-labelledby="fmTabRep" data-fm-panel="reprovados">\n        <div class="fm-ref">${ref ? `<img src="${esc(ref.url)}" alt="Foto de referência do locatário" data-lb-ref="${placa}">` : `<div class="noimg">sem foto de referência</div>`}\n          <div><b>Foto de referência do locatário</b><span>${ref ? `FaceMatch com sucesso mais recente · ${esc(ref.data)} — clique para ampliar` : "Nenhum FaceMatch com sucesso para comparar"}</span></div></div>\n        <div class="fm-kpis">\n          <div class="fm-kpi bad"><span class="lb">Tentativas sem sucesso</span><b>${falhas.length}</b></div>\n          <div class="fm-kpi ${k0km > 0 ? "ok" : "bad"}"><span class="lb">Ping ativo + 0 km</span><b>${k0km}</b></div>\n          <div class="fm-kpi ${kApos > 0 ? "ok" : "bad"}"><span class="lb">Sucesso após a última falha</span><b>${kApos}</b></div>\n        </div>\n        <div class="fm-note">Candidatos a validação humana, não fatos consumados. Compare a foto de referência com a foto de cada tentativa antes de decidir.</div>\n        <div class="field-k">Tentativas sem sucesso <span>${falhas.length} · mais recentes primeiro</span></div>\n        <div class="fm-list">${falhas.slice().reverse().map(((e, i) => fmItemHTML(e, i, placa, ref, false))).join("") || `<div class="empty-note">Nenhuma tentativa sem sucesso no histórico.</div>`}</div>\n      </div>\n      <div class="fm-panel" role="tabpanel" id="fmPanelApr" aria-labelledby="fmTabApr" data-fm-panel="aprovados" hidden>\n        <div class="fm-note">Onde e como o locatário costuma validar o rosto com sucesso. Use para julgar se as falhas fazem sentido.</div>\n        <div class="field-k">Tentativas aprovadas <span>${aprovados.length} · mais recentes primeiro</span></div>\n        <div class="fm-list">${aprovados.map(((e, i) => fmItemHTML(e, i, placa, ref, true))).join("") || `<div class="empty-note">Nenhuma tentativa aprovada no histórico.</div>`}</div>\n      </div>\n    </div>\n    <div class="fm-foot">${decidido ? `<span></span><button class="btn ai" type="button" data-fm="editar" data-placa="${placa}">${ic("refresh")}Editar decisão</button>` : `<button class="btn ghost ai" type="button" data-fm="descartar" data-placa="${placa}">${ic("check")}Descartar (não é fraude)</button><button class="btn danger ai" type="button" data-fm="confirmar" data-placa="${placa}">${ic("shieldAlert")}Confirmar suspeita de fraude</button>`}</div>`;
     openModal("fm");
   }
-  function openLightbox(tentativaUrl, tentativaLabel, ref) {
+  function openLightbox(tentativaUrl, tentativaLabel, ref, titulo) {
     const body = $("#lbBody");
-    const img = (url, label) => `<img src="${esc(url)}" alt="${esc(label)}" onerror="this.outerHTML='<div class=&quot;lb-fail&quot;>Não foi possível carregar aqui (o storage pode exigir sessão autenticada).<br><a href=&quot;${esc(url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Abrir em nova aba</a></div>'">`;
+    const img = (url, label) => `<div class="lb-zoom" data-zoom title="Arraste para recortar e ampliar"><img src="${esc(url)}" alt="${esc(label)}" draggable="false" onerror="this.parentNode.outerHTML='<div class=&quot;lb-fail&quot;>Não foi possível carregar aqui (o storage pode exigir sessão autenticada).<br><a href=&quot;${esc(url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Abrir em nova aba</a></div>'"><div class="lb-sel" hidden></div></div><div class="lb-dica">${ic("search")}Arraste sobre a foto para recortar e ampliar · clique para voltar</div>`;
     if (ref && tentativaUrl) {
       $("#lbTitle").textContent = "Comparação: referência × tentativa";
       body.className = "lb-body";
       body.innerHTML = `<div class="lb-col"><div class="cap"><b>Referência</b> · sucesso mais recente (${esc(ref.data || "")})</div>${img(ref.url, "Foto de referência")}</div>\n      <div class="lb-col"><div class="cap"><b>Tentativa</b> · ${esc(tentativaLabel)}</div>${img(tentativaUrl, "Foto da tentativa")}</div>`;
     } else {
       const url = tentativaUrl || ref.url;
-      $("#lbTitle").textContent = tentativaUrl ? `Tentativa · ${tentativaLabel}` : "Foto de referência";
+      $("#lbTitle").textContent = titulo || (tentativaUrl ? `Tentativa · ${tentativaLabel}` : "Foto de referência");
       body.className = "lb-body single";
       body.innerHTML = `<div class="lb-col">${img(url, "Foto")}</div>`;
     }
@@ -3076,6 +3088,65 @@ async function __iniciarAppComDados(__payload) {
     $("#lightbox").classList.remove("open");
     unlockScroll();
   }
+  const lbZoom = {
+    el: null,
+    x0: 0,
+    y0: 0,
+    moveu: false
+  };
+  function lbZoomReset(box) {
+    const im = box.querySelector("img");
+    if (im) im.style.transform = "";
+    box.classList.remove("zoom");
+  }
+  document.addEventListener("pointerdown", (e => {
+    const box = e.target.closest("[data-zoom]");
+    if (!box || e.button > 0) return;
+    e.preventDefault();
+    const r = box.getBoundingClientRect();
+    lbZoom.el = box;
+    lbZoom.x0 = e.clientX - r.left;
+    lbZoom.y0 = e.clientY - r.top;
+    lbZoom.moveu = false;
+    try {
+      box.setPointerCapture(e.pointerId);
+    } catch (err) {}
+  }));
+  document.addEventListener("pointermove", (e => {
+    const box = lbZoom.el;
+    if (!box || box.classList.contains("zoom")) return;
+    const r = box.getBoundingClientRect(), sel = box.querySelector(".lb-sel");
+    const x = Math.max(0, Math.min(r.width, e.clientX - r.left)), y = Math.max(0, Math.min(r.height, e.clientY - r.top));
+    if (!lbZoom.moveu && Math.abs(x - lbZoom.x0) < 4 && Math.abs(y - lbZoom.y0) < 4) return;
+    lbZoom.moveu = true;
+    sel.hidden = false;
+    Object.assign(sel.style, {
+      left: Math.min(x, lbZoom.x0) + "px",
+      top: Math.min(y, lbZoom.y0) + "px",
+      width: Math.abs(x - lbZoom.x0) + "px",
+      height: Math.abs(y - lbZoom.y0) + "px"
+    });
+  }));
+  document.addEventListener("pointerup", (e => {
+    const box = lbZoom.el;
+    if (!box) return;
+    lbZoom.el = null;
+    const sel = box.querySelector(".lb-sel"), im = box.querySelector("img");
+    if (box.classList.contains("zoom") || !lbZoom.moveu) {
+      sel.hidden = true;
+      lbZoomReset(box);
+      return;
+    }
+    const W = box.clientWidth, H = box.clientHeight;
+    const rx = parseFloat(sel.style.left), ry = parseFloat(sel.style.top), rw = parseFloat(sel.style.width), rh = parseFloat(sel.style.height);
+    sel.hidden = true;
+    if (!im || rw < 12 || rh < 12) return;
+    const s = Math.min(W / rw, H / rh, 12);
+    const tx = -rx * s + (W - rw * s) / 2, ty = -ry * s + (H - rh * s) / 2;
+    im.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+    box.classList.add("zoom");
+    box.title = "Clique para voltar ao tamanho original";
+  }));
   const SOLICIT_DRAFTS = {};
   const draftDe = placa => SOLICIT_DRAFTS[placa] || (SOLICIT_DRAFTS[placa] = {
     qth: "",
@@ -3889,7 +3960,7 @@ async function __iniciarAppComDados(__payload) {
     if (cbdFoto) {
       e.stopPropagation();
       const i = CBD_INFO[cbdFoto.dataset.cbdFoto];
-      if (i && i.imageUrl) openLightbox(i.imageUrl, `${cbdFoto.dataset.cbdFoto} · CarBigData · ${fmtDataHora(i.ultimaCaptura) || ""}`);
+      if (i && i.imageUrl) openLightbox(i.imageUrl, "Captura CarBigData", null, `CarBigData · ${cbdFoto.dataset.cbdFoto} · ${fmtDataHora(i.ultimaCaptura) || ""}`);
       return;
     }
     const cbdBtn = t.closest("[data-cbd]");
