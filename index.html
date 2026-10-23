@@ -1080,6 +1080,7 @@ async function __iniciarAppComDados(__payload) {
   const __obj = v => v && typeof v === "object" && !Array.isArray(v) ? v : {};
   const __arr = v => Array.isArray(v) ? v : [];
   const SOLICITACAO_GESTORES_MOTIVO = __obj(__payload.SOLICITACAO_GESTORES_MOTIVO);
+  const NAO_DESVINCULADA_BY_PLACA = __obj(__payload.NAO_DESVINCULADA_BY_PLACA);
   const DATA = __arr(__payload.DATA).map((r => ({
     placa: r[0],
     uf: r[1],
@@ -1089,7 +1090,8 @@ async function __iniciarAppComDados(__payload) {
     horas_desde_multa: r[5],
     dias_sem_atuacao: r[6],
     aprovadaViaSolicitacaoGestores: !!SOLICITACAO_GESTORES_MOTIVO[r[0]],
-    motivoSolicitacao: SOLICITACAO_GESTORES_MOTIVO[r[0]] || ""
+    motivoSolicitacao: SOLICITACAO_GESTORES_MOTIVO[r[0]] || "",
+    naoDesvinculada: NAO_DESVINCULADA_BY_PLACA[r[0]] || null
   })));
   const CBD_INFO = __obj(__payload.CBD_INFO);
   const MULTA_INFO = __obj(__payload.MULTA_INFO);
@@ -1229,6 +1231,11 @@ async function __iniciarAppComDados(__payload) {
       cor: "#7E6FF0",
       categoria: "PENDÊNCIA"
     },
+    nao_desvinculada: {
+      label: "Não Desvinculada",
+      cor: "#F97316",
+      categoria: "PENDÊNCIA"
+    },
     sem_previa_pr: {
       label: "Sem Prévia de PR",
       cor: "#E5484D",
@@ -1247,6 +1254,11 @@ async function __iniciarAppComDados(__payload) {
     recuperada: {
       label: "Recuperada",
       cor: "#00B131",
+      categoria: "FINALIZAÇÃO"
+    },
+    perdida: {
+      label: "Perdida",
+      cor: "#9F1239",
       categoria: "FINALIZAÇÃO"
     }
   };
@@ -1484,35 +1496,54 @@ async function __iniciarAppComDados(__payload) {
     store.set("recops_tags", migrado);
     return migrado;
   }
+  const TAGS_AUTO = [ "nao_desvinculada" ];
+  const tagTravada = (d, k) => k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores || TAGS_AUTO.includes(k);
+  const tituloTagAuto = (d, k) => {
+    if (k === "solicitacao_gestores") return "Aplicada automaticamente — placa entrou via Solicitação de Gestores";
+    if (k === "nao_desvinculada") {
+      const n = d.naoDesvinculada || {};
+      return `Aplicada automaticamente — ocorrência${n.ocorrenciaId ? ` #${n.ocorrenciaId}` : ""} Recuperada${n.data ? ` em ${n.data}` : ""} e a moto segue vinculada ao locatário`;
+    }
+    return "";
+  };
+  const comAuto = (d, lista) => {
+    const base = lista.filter((t => !TAGS_AUTO.includes(t)));
+    return d.naoDesvinculada ? [ ...base, "nao_desvinculada" ] : base;
+  };
   function aplicarTags() {
     const tags = lerTags();
     let mudou = false;
     DATA.forEach((d => {
       let atuais = tags[d.placa] || [];
+      if (atuais.some((t => TAGS_AUTO.includes(t)))) {
+        atuais = atuais.filter((t => !TAGS_AUTO.includes(t)));
+        tags[d.placa] = atuais;
+        mudou = true;
+      }
       if (d.aprovadaViaSolicitacaoGestores && !atuais.includes("solicitacao_gestores")) {
         atuais = [ ...atuais, "solicitacao_gestores" ];
         tags[d.placa] = atuais;
         mudou = true;
       }
-      d.tags = atuais;
+      d.tags = comAuto(d, atuais);
     }));
     if (mudou) store.set("recops_tags", tags);
   }
   function toggleTag(placa, key) {
     const d = DATA_BY_PLACA[placa];
-    if (key === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores) return;
+    if (tagTravada(d, key)) return;
     const tags = lerTags();
-    const atuais = tags[placa] || [];
+    const atuais = (tags[placa] || []).filter((t => !TAGS_AUTO.includes(t)));
     tags[placa] = atuais.includes(key) ? atuais.filter((t => t !== key)) : [ ...atuais, key ];
     store.set("recops_tags", tags);
-    d.tags = tags[placa];
+    d.tags = comAuto(d, tags[placa]);
   }
   function limparTags(placa) {
     const d = DATA_BY_PLACA[placa];
     const tags = lerTags();
     tags[placa] = d.aprovadaViaSolicitacaoGestores ? [ "solicitacao_gestores" ] : [];
     store.set("recops_tags", tags);
-    d.tags = tags[placa];
+    d.tags = comAuto(d, tags[placa]);
   }
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, (c => ({
@@ -2005,8 +2036,8 @@ async function __iniciarAppComDados(__payload) {
     const pills = (d.tags || []).map((k => {
       const t = TAG_OPCOES[k];
       if (!t) return "";
-      const lock = k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores;
-      return `<span class="tag ${lock ? "lock" : ""}" style="--tc:${t.cor}" ${lock ? `title="Aplicada automaticamente — placa entrou via Solicitação de Gestores"` : ""}><span class="te">${TAG_ICONE[k] || ""}</span>${esc(t.label)}</span>`;
+      const lock = tagTravada(d, k);
+      return `<span class="tag ${lock ? "lock" : ""}" style="--tc:${t.cor}" ${lock ? `title="${esc(tituloTagAuto(d, k))}"` : ""}><span class="te">${TAG_ICONE[k] || ""}</span>${esc(t.label)}</span>`;
     })).join("");
     return `<div class="tags" data-tags="${d.placa}">${pills}<button class="tag-add ai" type="button" data-tagmenu="${d.placa}" title="Editar tags" aria-label="Editar tags de ${d.placa}">${ic(pills ? "tag" : "plus")}</button></div>`;
   }
@@ -3023,10 +3054,12 @@ async function __iniciarAppComDados(__payload) {
     apreendida: "🔒",
     aguardando_bo: "📋",
     processo_judicial: "⚖️",
+    nao_desvinculada: "🔗",
     sem_previa_pr: "🚫",
     finalizar_card: "🏁",
     pago: "💰",
-    recuperada: "✅"
+    recuperada: "✅",
+    perdida: "❌"
   };
   const faixaContagemTag = n => n === 0 ? "zero" : n <= 10 ? "baixo" : n <= 30 ? "medio" : n <= 60 ? "alto" : "critico";
   function tagsFiltroMenuHTML() {
@@ -3038,8 +3071,8 @@ async function __iniciarAppComDados(__payload) {
   function rowTagsMenuHTML(placa) {
     const d = DATA_BY_PLACA[placa], atuais = d.tags || [];
     const grupos = TAG_CATEGORIAS.map((cat => `<div class="tf-cluster"><div class="tf-cat">${cat}</div><div class="tf-box">${Object.entries(TAG_OPCOES).filter((([, t]) => t.categoria === cat)).map((([k, t]) => {
-      const travada = k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores;
-      return `<button class="tf-chip" type="button" data-rowtag="${k}" data-placa="${placa}" aria-pressed="${atuais.includes(k)}" ${travada ? `disabled title="Aplicada automaticamente pela Solicitação de Gestores"` : ""}><span>${TAG_ICONE[k] || ""}</span>${t.label}${ic("check", "ck")}</button>`;
+      const travada = tagTravada(d, k);
+      return `<button class="tf-chip" type="button" data-rowtag="${k}" data-placa="${placa}" aria-pressed="${atuais.includes(k)}" ${travada ? `disabled title="${esc(k === "nao_desvinculada" && !d.naoDesvinculada ? "Automática — entra quando há ocorrência Recuperada e a moto segue vinculada ao locatário" : tituloTagAuto(d, k))}"` : ""}><span>${TAG_ICONE[k] || ""}</span>${t.label}${ic("check", "ck")}</button>`;
     })).join("")}</div></div>`)).join("");
     return `<div class="sf-head">Tags · ${placa}</div>${grupos}<button class="tf-clear" type="button" data-rowtag="__clear__" data-placa="${placa}">${ic("x")}Remover todas</button>`;
   }
@@ -3116,9 +3149,11 @@ async function __iniciarAppComDados(__payload) {
     $("#modal").innerHTML = `\n    <div class="modal-head" style="--mc:var(--sig-face)"><span class="mic">${ic("face", "live")}</span><h2 class="modal-title" id="modalTitle">FaceMatch<small>${placa} · ${estado}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="fm-body">\n      <div class="fm-tabs" role="tablist" aria-label="Tentativas de FaceMatch">\n        <button class="fm-tab ai" type="button" role="tab" id="fmTabRep" aria-controls="fmPanelRep" aria-selected="true" data-fm-tab="reprovados" style="--tc:var(--status-critical)">Reprovados<b>${falhas.length}</b></button>\n        <button class="fm-tab ai" type="button" role="tab" id="fmTabApr" aria-controls="fmPanelApr" aria-selected="false" data-fm-tab="aprovados" style="--tc:var(--mottu-green-70)" ${aprovados.length ? "" : `disabled title="Sem tentativas aprovadas registradas para este locatário"`}>Aprovados<b>${aprovados.length}</b></button>\n      </div>\n      <div class="fm-panel" role="tabpanel" id="fmPanelRep" aria-labelledby="fmTabRep" data-fm-panel="reprovados">\n        <div class="fm-ref">${ref ? `<img src="${esc(ref.url)}" alt="Foto de referência do locatário" data-lb-ref="${placa}">` : `<div class="noimg">sem foto de referência</div>`}\n          <div><b>Foto de referência do locatário</b><span>${ref ? `FaceMatch com sucesso mais recente · ${esc(ref.data)} — clique para ampliar` : "Nenhum FaceMatch com sucesso para comparar"}</span></div></div>\n        <div class="fm-kpis">\n          <div class="fm-kpi bad"><span class="lb">Tentativas sem sucesso</span><b>${falhas.length}</b></div>\n          <div class="fm-kpi ${k0km > 0 ? "ok" : "bad"}"><span class="lb">Ping ativo + 0 km</span><b>${k0km}</b></div>\n          <div class="fm-kpi ${kApos > 0 ? "ok" : "bad"}"><span class="lb">Sucesso após a última falha</span><b>${kApos}</b></div>\n        </div>\n        <div class="fm-note">Candidatos a validação humana, não fatos consumados. Compare a foto de referência com a foto de cada tentativa antes de decidir.</div>\n        <div class="field-k">Tentativas sem sucesso <span>${falhas.length} · mais recentes primeiro</span></div>\n        <div class="fm-list">${falhas.slice().reverse().map(((e, i) => fmItemHTML(e, i, placa, ref, false))).join("") || `<div class="empty-note">Nenhuma tentativa sem sucesso no histórico.</div>`}</div>\n      </div>\n      <div class="fm-panel" role="tabpanel" id="fmPanelApr" aria-labelledby="fmTabApr" data-fm-panel="aprovados" hidden>\n        <div class="fm-note">Onde e como o locatário costuma validar o rosto com sucesso. Use para julgar se as falhas fazem sentido.</div>\n        <div class="field-k">Tentativas aprovadas <span>${aprovados.length} · mais recentes primeiro</span></div>\n        <div class="fm-list">${aprovados.map(((e, i) => fmItemHTML(e, i, placa, ref, true))).join("") || `<div class="empty-note">Nenhuma tentativa aprovada no histórico.</div>`}</div>\n      </div>\n    </div>\n    <div class="fm-foot">${decidido ? `<span></span><button class="btn ai" type="button" data-fm="editar" data-placa="${placa}">${ic("refresh")}Editar decisão</button>` : `<button class="btn ghost ai" type="button" data-fm="descartar" data-placa="${placa}">${ic("check")}Descartar (não é fraude)</button><button class="btn danger ai" type="button" data-fm="confirmar" data-placa="${placa}">${ic("shieldAlert")}Confirmar suspeita de fraude</button>`}</div>`;
     openModal("fm");
   }
-  function openLightbox(tentativaUrl, tentativaLabel, ref, titulo) {
+  function openLightbox(tentativaUrl, tentativaLabel, ref, titulo, recorte) {
     const body = $("#lbBody");
-    const img = (url, label) => `<div class="lb-zoom" data-zoom title="Arraste para recortar e ampliar"><img src="${esc(url)}" alt="${esc(label)}" draggable="false" onerror="this.parentNode.outerHTML='<div class=&quot;lb-fail&quot;>Não foi possível carregar aqui (o storage pode exigir sessão autenticada).<br><a href=&quot;${esc(url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Abrir em nova aba</a></div>'"><div class="lb-sel" hidden></div></div><div class="lb-dica">${ic("search")}Arraste sobre a foto para recortar e ampliar · clique para voltar</div>`;
+    const imgSimples = (url, label) => `<img src="${esc(url)}" alt="${esc(label)}" onerror="this.outerHTML='<div class=&quot;lb-fail&quot;>Não foi possível carregar aqui (o storage pode exigir sessão autenticada).<br><a href=&quot;${esc(url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Abrir em nova aba</a></div>'">`;
+    const imgRecorte = (url, label) => `<div class="lb-zoom" data-zoom title="Arraste para recortar e ampliar"><img src="${esc(url)}" alt="${esc(label)}" draggable="false" onerror="this.parentNode.outerHTML='<div class=&quot;lb-fail&quot;>Não foi possível carregar aqui (o storage pode exigir sessão autenticada).<br><a href=&quot;${esc(url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;>Abrir em nova aba</a></div>'"><div class="lb-sel" hidden></div></div><div class="lb-dica">${ic("search")}Arraste sobre a foto para recortar e ampliar · clique para voltar</div>`;
+    const img = recorte ? imgRecorte : imgSimples;
     if (ref && tentativaUrl) {
       $("#lbTitle").textContent = "Comparação: referência × tentativa";
       body.className = "lb-body";
@@ -4010,7 +4045,7 @@ async function __iniciarAppComDados(__payload) {
       e.stopPropagation();
       const i = CBD_INFO[cbdFoto.dataset.cbdFoto];
       if (cbdFoto.classList.contains("erro") || cbdFoto.classList.contains("carregando")) return;
-      if (i && i.imageUrl) openLightbox(CBD_URL_FRESCA[cbdFoto.dataset.cbdFoto] || i.imageUrl, "Captura CarBigData", null, `CarBigData · ${cbdFoto.dataset.cbdFoto} · ${fmtDataHora(i.ultimaCaptura) || ""}`);
+      if (i && i.imageUrl) openLightbox(CBD_URL_FRESCA[cbdFoto.dataset.cbdFoto] || i.imageUrl, "Captura CarBigData", null, `CarBigData · ${cbdFoto.dataset.cbdFoto} · ${fmtDataHora(i.ultimaCaptura) || ""}`, true);
       return;
     }
     const cbdBtn = t.closest("[data-cbd]");
