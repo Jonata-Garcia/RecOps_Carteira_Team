@@ -517,6 +517,8 @@ tr.row.flip.out{ transition-duration:.32s; }
 .cm-when small{ font-size:10.5px; color:var(--text-muted); }
 .cm-t{ margin:9px 0 0; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:13.5px; letter-spacing:.2px; color:var(--text-primary); overflow-wrap:anywhere; }
 .cm-t.tag{ display:inline-flex; padding:2px 9px; border-radius:6px; font-size:12px; color:var(--tc); background:color-mix(in srgb, var(--tc) 14%, transparent); border:1px solid color-mix(in srgb, var(--tc) 45%, transparent); }
+.cm-ac{ display:inline-flex; align-items:center; gap:5px; margin:8px 0 0; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:600; color:var(--mottu-green-70); background:rgba(0,177,49,.10); border:1px solid rgba(0,177,49,.35); --is:12px; }
+.cm-ac + .cm-t{ margin-top:6px; }
 .cm-t.vazio{ font-weight:600; color:var(--text-muted); }
 .cm-b{ margin-top:7px; font-size:12.5px; line-height:1.55; color:var(--text-secondary); white-space:pre-line; overflow-wrap:anywhere; }
 .cm-b b{ color:var(--text-primary); font-weight:600; }
@@ -877,6 +879,20 @@ button.ov-go:hover{ color:var(--text-primary); }
 .inj .li{ color:var(--ic); }
 .inj:hover{ background:color-mix(in srgb, var(--ic) 24%, transparent); transform:translateY(-1px); }
 .inj.used{ border-style:dashed; opacity:.75; }
+.inj .chev{ --is:13px; margin-left:-2px; transition:transform .2s var(--ease); }
+.inj.open .chev{ transform:rotate(180deg); }
+.inj-pick{ flex-basis:100%; margin-top:4px; border:1px solid var(--line-2); border-radius:10px; background:#0B0C0B; overflow:hidden; }
+.inj-pick-h{ display:flex; justify-content:space-between; padding:8px 12px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:var(--text-secondary); border-bottom:1px solid var(--line); }
+.inj-pick-l{ max-height:260px; overflow:auto; display:flex; flex-direction:column; }
+.inj-pick-i{ display:flex; flex-direction:column; gap:4px; padding:9px 12px; text-align:left; background:none; border:0; border-bottom:1px solid var(--line); color:var(--text-primary); cursor:pointer; font:inherit; }
+.inj-pick-i:last-child{ border-bottom:0; }
+.inj-pick-i:hover{ background:rgba(0,177,49,.08); }
+.inj-pick-i .ph{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:12px; }
+.inj-pick-i .ph span{ color:var(--text-secondary); }
+.inj-pick-i .ph em{ font-style:normal; font-size:10.5px; padding:1px 7px; border-radius:5px; color:var(--mottu-green-70); border:1px solid rgba(0,177,49,.35); background:rgba(0,177,49,.10); }
+.inj-pick-i .ph i{ display:inline-flex; align-items:center; gap:3px; margin-left:auto; font-style:normal; font-size:11px; color:var(--mottu-green-70); --is:12px; }
+.inj-pick-i .pt{ font-size:12px; line-height:1.4; color:var(--text-muted); }
+.inj-pick-i.used{ background:rgba(0,177,49,.05); }
 .inj-empty{ font-size:12px; color:var(--text-secondary); font-style:italic; }
 .preview-box.v2{ color:var(--text-primary); border-color:rgba(0,177,49,.3); background:linear-gradient(180deg, rgba(0,177,49,.06), rgba(0,0,0,.45) 30%); }
 .btn.cancel{ border-color:rgba(255,255,255,.22); color:var(--text-primary); }
@@ -2841,7 +2857,7 @@ async function __iniciarAppComDados(__payload) {
       const {titulo, corpo} = partesComentario(c.texto), cor = corAutor(c.autor), tom = titulo ? tomTitulo(titulo) : "";
       const longo = corpo.length > 260 || corpo.split("\n").length > 5;
       const [dia, hora] = String(c.data || "").split(" ");
-      return `<li class="cm ${longo ? "longo" : ""}" style="--ca:${cor}">\n        <div class="cm-h"><span class="cm-av" aria-hidden="true">${esc(iniciais(c.autor))}</span><span class="cm-who" title="${esc(c.autor || "")}">${esc(c.autor || "Autor não informado")}</span>\n          <span class="cm-when"><b>${esc(dia || "—")}${hora ? ` · ${esc(hora)}` : ""}</b><small>${esc(relativoDe(c.data))}</small></span></div>\n        ${titulo ? `<div class="cm-t ${tom ? "tag" : ""}" ${tom ? `style="--tc:${tom}"` : ""}>${esc(titulo)}</div>` : `<div class="cm-t vazio">Comentário</div>`}\n        ${corpo ? `<div class="cm-b">${negritoZap(corpo)}</div>` : ""}\n        ${longo ? `<button class="cm-more" type="button" data-cm-more aria-expanded="false">Ver comentário completo</button>` : ""}</li>`;
+      return `<li class="cm ${longo ? "longo" : ""}" style="--ca:${cor}">\n        <div class="cm-h"><span class="cm-av" aria-hidden="true">${esc(iniciais(c.autor))}</span><span class="cm-who" title="${esc(c.autor || "")}">${esc(c.autor || "Autor não informado")}</span>\n          <span class="cm-when"><b>${esc(dia || "—")}${hora ? ` · ${esc(hora)}` : ""}</b><small>${esc(relativoDe(c.data))}</small></span></div>\n        ${c.acionamento ? `<div class="cm-ac">${ic("guincho")}${esc([ "Acionamento", c.acionamento.empresa, c.acionamento.id != null ? "#" + c.acionamento.id : "" ].filter(Boolean).join(" · "))}</div><br>` : ""}\n        ${titulo ? `<div class="cm-t ${tom ? "tag" : ""}" ${tom ? `style="--tc:${tom}"` : ""}>${esc(titulo)}</div>` : `<div class="cm-t vazio">Comentário</div>`}\n        ${corpo ? `<div class="cm-b">${negritoZap(corpo)}</div>` : ""}\n        ${longo ? `<button class="cm-more" type="button" data-cm-more aria-expanded="false">Ver comentário completo</button>` : ""}</li>`;
     })).join("")}</ul></div>`;
   }
   const RECUSA_CORES = {
@@ -3238,7 +3254,9 @@ async function __iniciarAppComDados(__payload) {
     mymapsUrl: "",
     relato: "",
     kml: null,
-    usados: []
+    usados: [],
+    recopsUsados: [],
+    recopsAberto: false
   });
   function parseKmlHotSpot(styleEl) {
     const hs = styleEl.querySelector("IconStyle hotSpot");
@@ -3373,9 +3391,10 @@ async function __iniciarAppComDados(__payload) {
     cor: "var(--sig-cel)"
   }, {
     k: "recops",
-    l: "Último comentário RecOps",
+    l: "Comentário RecOps",
     icon: "clipboard",
-    cor: "var(--mottu-green-70)"
+    cor: "var(--mottu-green-70)",
+    pick: true
   }, {
     k: "recopsInterpretacao",
     l: "Interpretação RecOps",
@@ -3660,10 +3679,31 @@ async function __iniciarAppComDados(__payload) {
       mapa.marcadores = [];
     }), 220);
   }
+  const recopsComentarios = placa => {
+    const ro = RECOPS_OCORRENCIA_BY_PLACA[placa];
+    return ro && ro.comentarios ? ro.comentarios : [];
+  };
+  const chaveComentario = c => `${c.data}|${c.autor}|${String(c.texto || "").slice(0, 40)}`;
+  function recopsComentarioTexto(c) {
+    const ac = c.acionamento ? [ "Acionamento", c.acionamento.empresa, c.acionamento.id != null ? "#" + c.acionamento.id : "" ].filter(Boolean).join(" · ") : "";
+    const cab = [ c.data, c.autor, ac ].filter(Boolean).join(", ");
+    return `- Comentário RecOps (${cab}):\n${String(c.texto || "").replace(/\r\n?/g, "\n").trim()}`;
+  }
+  function recopsPickHTML(placa) {
+    const draft = draftDe(placa), coms = recopsComentarios(placa).map(((c, i) => ({
+      c,
+      i
+    }))).reverse();
+    return `<div class="inj-pick"><div class="inj-pick-h">Escolha o comentário RecOps para inserir no relato<span>${coms.length}</span></div><div class="inj-pick-l">${coms.map((({c, i}) => {
+      const {titulo, corpo} = partesComentario(c.texto), usado = draft.recopsUsados.includes(chaveComentario(c));
+      const prev = (titulo ? titulo + " — " : "") + corpo.replace(/\s+/g, " ");
+      return `<button class="inj-pick-i ${usado ? "used" : ""}" type="button" data-recops-idx="${i}" aria-pressed="${usado}"><span class="ph"><b>${esc(c.data || "—")}</b><span>${esc(c.autor || "")}</span>${c.acionamento ? `<em>${esc([ "Acionamento", c.acionamento.empresa, c.acionamento.id != null ? "#" + c.acionamento.id : "" ].filter(Boolean).join(" · "))}</em>` : ""}${usado ? `<i>${ic("check")}inserido</i>` : ""}</span><span class="pt">${esc(prev.slice(0, 220))}${prev.length > 220 ? "…" : ""}</span></button>`;
+    })).join("")}</div></div>`;
+  }
   function injectsHTML(placa) {
     const draft = draftDe(placa), disp = INJECTS.filter((x => solicitInjectTexto(placa, x.k)));
     if (!disp.length) return `<span class="inj-empty">Nenhuma informação disponível para importar desta placa.</span>`;
-    return disp.map((x => `<button class="inj ai ${draft.usados.includes(x.k) ? "used" : ""}" type="button" style="--ic:${x.cor}" data-inject="${x.k}" title="Anexa ao final do relato">${ic(x.icon)}${x.l}</button>`)).join("");
+    return disp.map((x => x.pick ? `<button class="inj ai ${draft.recopsUsados.length ? "used" : ""} ${draft.recopsAberto ? "open" : ""}" type="button" style="--ic:${x.cor}" data-inject-pick="${x.k}" aria-expanded="${draft.recopsAberto}" title="Escolher qual comentário entra no relato">${ic(x.icon)}${x.l}${draft.recopsUsados.length ? ` (${draft.recopsUsados.length})` : ""}${ic("chevDown", "chev")}</button>` : `<button class="inj ai ${draft.usados.includes(x.k) ? "used" : ""}" type="button" style="--ic:${x.cor}" data-inject="${x.k}" title="Anexa ao final do relato">${ic(x.icon)}${x.l}</button>`)).join("") + (draft.recopsAberto && recopsComentarios(placa).length ? recopsPickHTML(placa) : "");
   }
   function openSolicit(placa) {
     const loc = LOCATARIO_INFO[placa], mod = MODELO_INFO[placa], ct = LOCATARIO_CONTATO_BY_PLACA[placa] || {}, d = DATA_BY_PLACA[placa], draft = draftDe(placa), foto = LOCATARIO_FOTO_BY_PLACA[placa];
@@ -3737,6 +3777,24 @@ async function __iniciarAppComDados(__payload) {
       if (rm) {
         draft.qthSelections.splice(+rm.dataset.qthRemove, 1);
         refreshQth();
+        return;
+      }
+      if (e.target.closest("[data-inject-pick]")) {
+        draft.recopsAberto = !draft.recopsAberto;
+        $("#injectWrap").innerHTML = injectsHTML(placa);
+        return;
+      }
+      const pickI = e.target.closest("[data-recops-idx]");
+      if (pickI) {
+        const c = recopsComentarios(placa)[+pickI.dataset.recopsIdx];
+        if (!c) return;
+        const t = recopsComentarioTexto(c);
+        draft.relato = draft.relato ? `${draft.relato.replace(/\s+$/, "")}\n${t}` : t;
+        const k = chaveComentario(c);
+        if (!draft.recopsUsados.includes(k)) draft.recopsUsados.push(k);
+        $("#relatoInput").value = draft.relato;
+        $("#injectWrap").innerHTML = injectsHTML(placa);
+        upd();
         return;
       }
       const inj = e.target.closest("[data-inject]");
