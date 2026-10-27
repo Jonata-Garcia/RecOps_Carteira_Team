@@ -212,6 +212,18 @@ main{ max-width:1520px; margin:0 auto; padding:28px 28px 110px; }
 .ov-num{ display:flex; align-items:center; gap:10px; }
 .ov-num b{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:52px; line-height:.9; padding-right:.06em; background:linear-gradient(180deg, color-mix(in srgb, var(--ac) 35%, #fff), var(--ac)); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 4px 14px color-mix(in srgb, var(--ac) 30%, transparent)); }
 .ov-num span{ font-family:var(--font-display); font-style:italic; font-weight:700; font-size:11px; letter-spacing:.5px; line-height:1.25; text-transform:uppercase; color:var(--text-muted); }
+.ov-num .ov-tot{ display:flex; flex-direction:column; gap:4px; }
+.ov-num .ov-tot small{ font-family:var(--font-display); font-style:italic; font-weight:700; font-size:11px; letter-spacing:.8px; line-height:1; text-transform:uppercase; color:var(--text-muted); }
+.ov-num.com-fx{ align-items:stretch; justify-content:space-between; }
+.ov-num.com-fx .ov-tot{ justify-content:space-between; }
+.ov-num.com-fx .ov-tot b{ font-size:78px; line-height:.8; }
+.ov-num.com-fx.tres .ov-tot b{ font-size:62px; line-height:.95; }
+.ov-num .fx{ display:flex; flex-direction:column; gap:4px; min-width:0; flex:0 1 158px; }
+.ov-num .fx-h{ font-family:var(--font-body); font-style:normal; font-size:9.5px; font-weight:500; letter-spacing:.6px; line-height:1.2; text-transform:uppercase; color:var(--text-faint); margin-bottom:1px; white-space:nowrap; }
+.ov-num .fx-r{ display:flex; align-items:center; gap:7px; height:22px; padding:0 8px 0 5px; border-radius:6px; background:color-mix(in srgb, var(--fc) 12%, transparent); border:1px solid color-mix(in srgb, var(--fc) 35%, transparent); }
+.ov-num .fx-r i{ display:grid; place-items:center; flex:none; width:14px; height:14px; border-radius:4px; background:var(--fc); color:#0B0C0B; font-style:normal; font-size:10px; font-weight:900; line-height:1; }
+.ov-num .fx-r b{ font-family:var(--font-body); font-style:normal; font-weight:700; font-size:13px; line-height:1; padding:0; min-width:30px; color:var(--fc); background:none; -webkit-background-clip:border-box; background-clip:border-box; filter:none; }
+.ov-num .fx-r span{ font-family:var(--font-body); font-style:normal; font-weight:500; font-size:10.5px; letter-spacing:0; line-height:1; text-transform:none; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .ov-num.zero b{ background:none; color:var(--text-faint); filter:none; }
 .ov-ks{ display:flex; }
 .ov-k{ flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; padding:0 10px; border-left:1px solid var(--line-2); }
@@ -1127,6 +1139,7 @@ async function __iniciarAppComDados(__payload) {
   const ENTRADAS = __arr(__payload.ENTRADAS);
   const LOCATARIO_CONTATO_BY_PLACA = __obj(__payload.LOCATARIO_CONTATO_BY_PLACA);
   const USUARIO_ID_BY_PLACA = __obj(__payload.USUARIO_ID_BY_PLACA);
+  const FLUXO_MES = __payload.FLUXO_MES && __payload.FLUXO_MES.porUf ? __payload.FLUXO_MES : null;
   const ESTOQUE_INICIO_MES_DATA = __payload.ESTOQUE_INICIO_MES_DATA && __payload.ESTOQUE_INICIO_MES_DATA.porUf ? __payload.ESTOQUE_INICIO_MES_DATA : undefined;
   const SAIDAS_150_MES = Array.isArray(__payload.SAIDAS_150_MES) ? __payload.SAIDAS_150_MES : undefined;
   const ESTOQUE_MX_DATA = __payload.ESTOQUE_MX && typeof __payload.ESTOQUE_MX.hoje === "number" ? __payload.ESTOQUE_MX : undefined;
@@ -2631,8 +2644,21 @@ async function __iniciarAppComDados(__payload) {
       return `<div class="ov ai" data-ov="${a.id}" style="--ac:${a.cor};animation-delay:${i * 50}ms">\n      <div class="ov-head"><span class="av ${a.mx ? "mx" : ""}">${a.mx ? BANDEIRA_MX : a.ini}</span><div><b>${a.nome}</b></div>${a.mx ? `<button class="ov-go" type="button" data-ov-mx>Ver placas ${ic("arrowRight")}</button>` : `<a class="ov-go" href="#/${a.id}">Entrar ${ic("arrowRight")}</a>`}</div>\n      <div class="ov-ufs ${aberto ? "open" : ""}"><button class="ov-ufn" type="button" data-ufs-toggle="${a.id}" aria-expanded="${aberto}" title="${aberto ? "Recolher" : "Mostrar"} ${rotuloUf}"><b>${a.ufs.length}</b>${rotuloUf}${ic("chevDown")}</button>\n        <div class="ov-uf-wrap"><div class="ov-uf-list">${a.ufs.map((u => {
         const k = l.filter((d => d.uf === u)).length;
         return `<span class="ov-uf ${k ? "" : "no"}" title="${k ? `${k} placa${k > 1 ? "s" : ""}` : "sem placas neste snapshot"}">${u}</span>`;
-      })).join("")}</div></div></div>\n      <div class="ov-num ${l.length ? "" : "zero"}"><b class="tnum">${l.length}</b><span>placas<br>na carteira</span></div>\n      ${l.length ? ovKpis(l) : `<div class="ov-empty">Sem placas neste snapshot.</div>`}\n    </div>`;
+      })).join("")}</div></div></div>\n      <div class="ov-num ${l.length ? "" : "zero"} ${fluxoMesHTML(a.ufs) ? "com-fx" : ""} ${l.length >= 100 ? "tres" : ""}"><div class="ov-tot"><small>Total</small><b class="tnum">${l.length}</b></div>${fluxoMesHTML(a.ufs)}</div>\n      ${l.length ? ovKpis(l) : `<div class="ov-empty">Sem placas neste snapshot.</div>`}\n    </div>`;
     })).join("");
+  }
+  const MESES_PT = [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ];
+  function fluxoMesHTML(ufs) {
+    const fm = typeof FLUXO_MES !== "undefined" ? FLUXO_MES : null;
+    if (!fm || !fm.porUf) return "";
+    const s = [ 0, 0, 0 ];
+    for (const u of ufs) {
+      const v = fm.porUf[u];
+      if (v) for (let i = 0; i < 3; i++) s[i] += v[i] || 0;
+    }
+    const ini = String(fm.inicio || ""), mes = MESES_PT[+ini.slice(5, 7) - 1] || "Mês";
+    const row = (cor, icon, val, rot, dica) => `<div class="fx-r" style="--fc:${cor}" title="${dica}"><i>${icon}</i><b class="tnum">${val}</b><span>${rot}</span></div>`;
+    return `<div class="fx"><div class="fx-h">${mes} · desde ${ini.slice(8, 10)}/${ini.slice(5, 7)}</div>\n    ${row("#FF5449", "↑", `+${s[0]}`, "entraram", "Placas que entraram na carteira desde o dia 1º")}\n    ${row("#00C853", "↓", `−${s[1]}`, "retiradas", "Placas que saíram por recuperação ou mudança de situação desde o dia 1º")}\n    ${row("#FF9F40", "⏱", `${s[2]}`, "perdidas (150d)", "Placas que completaram 150 dias e saíram da carteira desde o dia 1º")}</div>`;
   }
   function renderKpis() {
     const l = escopo(), t = l.length, n = p => l.filter((d => d.prioridade === p)).length, nat = l.filter((d => d.ainda_nao_atuada)).length;
