@@ -206,6 +206,11 @@ main{ max-width:1520px; margin:0 auto; padding:28px 28px 110px; }
 .ov-uf-list{ min-height:0; overflow:hidden; display:flex; flex-wrap:wrap; gap:5px; opacity:0; transition:opacity .2s, padding-top .3s var(--ease); }
 .ov-ufs.open .ov-uf-list{ padding-top:8px; opacity:1; }
 .ov-uf{ padding:3px 7px; border-radius:6px; font-family:var(--font-display); font-style:italic; font-weight:700; font-size:11.5px; letter-spacing:.3px; color:var(--text-primary); background:color-mix(in srgb, var(--ac) 14%, transparent); border:1px solid color-mix(in srgb, var(--ac) 50%, transparent); }
+.ov-uf{ cursor:pointer; transition:opacity .15s, background .15s, border-color .15s; }
+.ov-uf:hover{ filter:brightness(1.15); }
+.ov-uf:focus-visible{ outline:2px solid var(--ac); outline-offset:2px; }
+.ov-uf.off{ opacity:.45; background:transparent; border-style:dashed; }
+.ov-corpo{ display:contents; }
 .ov-uf.no{ color:var(--text-faint); background:transparent; border:1px dashed var(--line-2); }
 .ov-go{ text-decoration:none; margin-left:auto; display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--text-muted); }
 .ov:hover .ov-go{ color:var(--ac); }
@@ -2626,6 +2631,12 @@ async function __iniciarAppComDados(__payload) {
     return `<div class="ov-ks">${cel("var(--status-info)", nat, "Sem atuação", "", "Placas sem nenhuma atuação do RecOps desde a entrada em inadimplência")}${cel("var(--status-critical)", vence, `Chegam a ${LIMITE_DIAS_CARTEIRA}`, `em até ${AVISO_150_DIAS} dias`, `Placas com ${LIMITE_DIAS_CARTEIRA - AVISO_150_DIAS}–${LIMITE_DIAS_CARTEIRA - 1} dias de inadimplência: saem da carteira ao completar ${LIMITE_DIAS_CARTEIRA}`)}${cel("var(--mottu-green-70)", l.filter((d => d.evt_ping)).length, "Pingando", "ping ≤ 48h", "Motos com ping do rastreador nas últimas 48h")}</div>`;
   }
   const ufsAbertas = new Set;
+  const ufsOff = {};
+  const ufsSelDe = a => a.ufs.filter((u => !(ufsOff[a.id] && ufsOff[a.id].has(u))));
+  function ovCorpoHTML(a) {
+    const sel = ufsSelDe(a), l = DATA.filter((d => sel.includes(d.uf))), fx = fluxoMesHTML(sel);
+    return `<div class="ov-num ${l.length ? "" : "zero"} ${fx ? "com-fx" : ""} ${l.length >= 100 ? "tres" : ""}"><div class="ov-tot"><small>Total</small><b class="tnum">${l.length}</b></div>${fx}</div>\n      ${l.length ? ovKpis(l) : `<div class="ov-empty">Sem placas nas UFs selecionadas.</div>`}`;
+  }
   function renderOverview() {
     const el = $("#overview");
     if (carteiraAtual()) {
@@ -2646,10 +2657,11 @@ async function __iniciarAppComDados(__payload) {
     el.innerHTML = itens.map(((a, i) => {
       const l = DATA.filter((d => a.ufs.includes(d.uf))), n = p => l.filter((d => d.prioridade === p)).length, t = l.length || 1;
       const aberto = ufsAbertas.has(a.id), rotuloUf = a.mx ? a.ufs.length > 1 ? "estados" : "estado" : `UF${a.ufs.length > 1 ? "s" : ""}`;
-      return `<div class="ov ai" data-ov="${a.id}" style="--ac:${a.cor};animation-delay:${i * 50}ms">\n      <div class="ov-head"><span class="av ${a.mx ? "mx" : ""}">${a.mx ? BANDEIRA_MX : a.ini}</span><div><b>${a.nome}</b></div>${a.mx ? `<button class="ov-go" type="button" data-ov-mx>Ver placas ${ic("arrowRight")}</button>` : `<a class="ov-go" href="#/${a.id}">Entrar ${ic("arrowRight")}</a>`}</div>\n      <div class="ov-ufs ${aberto ? "open" : ""}"><button class="ov-ufn" type="button" data-ufs-toggle="${a.id}" aria-expanded="${aberto}" title="${aberto ? "Recolher" : "Mostrar"} ${rotuloUf}"><b>${a.ufs.length}</b>${rotuloUf}${ic("chevDown")}</button>\n        <div class="ov-uf-wrap"><div class="ov-uf-list">${a.ufs.map((u => {
+      return `<div class="ov ai" data-ov="${a.id}" style="--ac:${a.cor};animation-delay:${i * 50}ms">\n      <div class="ov-head"><span class="av ${a.mx ? "mx" : ""}">${a.mx ? BANDEIRA_MX : a.ini}</span><div><b>${a.nome}</b></div>${a.mx ? `<button class="ov-go" type="button" data-ov-mx>Ver placas ${ic("arrowRight")}</button>` : `<a class="ov-go" href="#/${a.id}">Entrar ${ic("arrowRight")}</a>`}</div>\n      <div class="ov-ufs ${aberto ? "open" : ""}"><button class="ov-ufn" type="button" data-ufs-toggle="${a.id}" aria-expanded="${aberto}" title="${aberto ? "Recolher" : "Mostrar"} ${rotuloUf}"><b>${ufsSelDe(a).length === a.ufs.length ? a.ufs.length : `${ufsSelDe(a).length}/${a.ufs.length}`}</b>${rotuloUf}${ic("chevDown")}</button>\n        <div class="ov-uf-wrap"><div class="ov-uf-list">${a.ufs.map((u => {
         const k = l.filter((d => d.uf === u)).length;
-        return `<span class="ov-uf ${k ? "" : "no"}" title="${k ? `${k} placa${k > 1 ? "s" : ""}` : "sem placas neste snapshot"}">${u}</span>`;
-      })).join("")}</div></div></div>\n      <div class="ov-num ${l.length ? "" : "zero"} ${fluxoMesHTML(a.ufs) ? "com-fx" : ""} ${l.length >= 100 ? "tres" : ""}"><div class="ov-tot"><small>Total</small><b class="tnum">${l.length}</b></div>${fluxoMesHTML(a.ufs)}</div>\n      ${l.length ? ovKpis(l) : `<div class="ov-empty">Sem placas neste snapshot.</div>`}\n    </div>`;
+        const on = ufsSelDe(a).includes(u);
+        return `<button type="button" class="ov-uf ${k ? "" : "no"} ${on ? "sel" : "off"}" data-uf-sel="${u}" data-ov-id="${a.id}" aria-pressed="${on}" title="${k ? `${k} placa${k > 1 ? "s" : ""}` : "sem placas neste snapshot"}">${u}</button>`;
+      })).join("")}</div></div></div>\n      <div class="ov-corpo">${ovCorpoHTML(a)}</div>\n    </div>`;
     })).join("");
   }
   const MESES_PT = [ "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" ];
@@ -4340,6 +4352,25 @@ async function __iniciarAppComDados(__payload) {
     if (el && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(`#kpis [data-comp="${el.dataset.comp}"]`))) compFoco(null);
   }));
   document.addEventListener("click", (e => {
+    const ub = e.target.closest("[data-uf-sel]");
+    if (ub) {
+      const id = ub.dataset.ovId, u = ub.dataset.ufSel, card = ub.closest(".ov");
+      const mx = DATA.filter(ehMx), a = id === "mexico" ? {
+        id,
+        ufs: [ ...new Set(mx.map((d => d.uf))) ].sort()
+      } : ANALISTAS.find((x => x.id === id));
+      const off = ufsOff[id] = ufsOff[id] || new Set;
+      if (off.has(u)) off.delete(u); else if (ufsSelDe(a).length > 1) off.add(u); else return;
+      card.querySelectorAll("[data-uf-sel]").forEach((x => {
+        const on = !off.has(x.dataset.ufSel);
+        x.classList.toggle("sel", on);
+        x.classList.toggle("off", !on);
+        x.setAttribute("aria-pressed", on);
+      }));
+      card.querySelector(".ov-ufn b").textContent = ufsSelDe(a).length === a.ufs.length ? a.ufs.length : `${ufsSelDe(a).length}/${a.ufs.length}`;
+      card.querySelector(".ov-corpo").innerHTML = ovCorpoHTML(a);
+      return;
+    }
     const tg = e.target.closest("[data-ufs-toggle]");
     if (tg) {
       const id = tg.dataset.ufsToggle, box = tg.closest(".ov-ufs"), abrir = !box.classList.contains("open");
