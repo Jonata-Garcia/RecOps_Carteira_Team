@@ -2098,9 +2098,17 @@ async function __iniciarAppComDados(__payload) {
       return true;
     }));
   }
+  function horasBo(d) {
+    const i = BO_FURTO_BY_PLACA[d.placa], t = i && parseDataBR(i.data);
+    return t ? Math.max(0, (Date.now() - t.getTime()) / 36e5) : null;
+  }
+  function horasFace(d) {
+    const ev = ((FACEMATCH_BY_PLACA[d.placa] || {}).eventos || []).map((e => Date.parse(e.data))).filter((x => !isNaN(x)));
+    return ev.length ? Math.max(0, (Date.now() - Math.max(...ev)) / 36e5) : null;
+  }
   function camposRecenciaSinais() {
     const sel = state.sinaisFiltro.map((k => SINAIS_HORAS_FIELD[k])).filter(Boolean);
-    return sel.length ? sel : Object.values(SINAIS_HORAS_FIELD);
+    return sel.length || state.sinaisFiltro.length ? sel : Object.values(SINAIS_HORAS_FIELD);
   }
   function compararOrdenarPadrao(a, b, chave, ehUltimo) {
     switch (chave) {
@@ -2140,10 +2148,11 @@ async function __iniciarAppComDados(__payload) {
       return av - bv;
     }
     const campos = camposRecenciaSinais();
+    const extras = [ state.sinaisFiltro.includes("bo") ? horasBo : null, state.sinaisFiltro.includes("face") ? horasFace : null ].filter(Boolean);
     const minCampo = d => {
       let m = null;
-      for (const c of campos) {
-        const v = d[c];
+      const vs = campos.map((c => d[c])).concat(extras.map((f => f(d))));
+      for (const v of vs) {
         if (v != null && (m == null || v < m)) m = v;
       }
       return m;
