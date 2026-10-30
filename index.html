@@ -534,12 +534,16 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .dx-tc .dx-rl-outros{ margin-left:46px; }
 .dx-lane{ display:flex; flex-direction:column; gap:6px; padding:8px 10px; margin-top:6px; border-radius:10px; border-left:3px solid var(--pc); background:color-mix(in srgb, var(--pc) 7%, transparent); }
 .dx-lane-h{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-secondary); } .dx-lane-h .dx-av{ width:20px; height:20px; font-size:9px; } .dx-lane-h em{ margin-left:auto; font-style:normal; font-size:11px; color:var(--text-muted); }
-.dx-lane-l{ display:grid; grid-template-columns:repeat(auto-fill, minmax(165px, 1fr)); gap:6px; }
+.dx-lane-l{ display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:6px; }
 .dx-lm{ display:flex; flex-direction:column; gap:2px; padding:6px 9px; border-radius:8px; border:1px solid color-mix(in srgb, var(--pc) 30%, transparent); background:rgba(0,0,0,.2); font-size:12px; }
 .dx-lm b{ color:var(--text-primary); font-size:12.5px; } .dx-lm small{ color:var(--text-muted); font-size:11px; } .dx-lm .dx-geo .li{ color:var(--pc); }
 .dx-lm.rep{ box-shadow:inset 0 0 0 1px rgba(255,255,255,.16); }
 .dx-tl-i .dot{ border-color:var(--pc, var(--text-muted)); } .dx-tl-i.forte .dot{ background:var(--pc); box-shadow:0 0 10px var(--pc); } .dx-tl-i b{ color:var(--pc, var(--text-primary)); }
 @media (max-width:900px){ .dx-rs{ grid-template-columns:1fr; } .dx-rs-a svg{ transform:rotate(90deg); width:30px; } .dx-tc-s, .dx-tc .dx-rl-outros{ margin-left:0; } }
+.modal.disp{ width:min(1180px, 100%); }
+.dx-body{ padding:16px 22px 22px; }
+.dx-body .dx{ margin-top:0; padding:0; border:0; background:none; }
+.dx-av{ position:relative; overflow:hidden; } .dx-foto{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:50%; }
 .dx-chip-p{ display:inline-flex; align-items:center; gap:5px; padding:2px 8px 2px 3px; border-radius:999px; border:1px solid var(--line-2); } .dx-chip-p .dx-av{ width:18px; height:18px; font-size:8.5px; }
 .dx-chip-p em{ font-style:normal; font-size:10.5px; color:var(--text-muted); } .dx-chip-p em.r{ color:#ff8a82; }
 .dx-no{ color:var(--text-muted); font-weight:500; margin-left:4px; } .dx-no b{ color:var(--text-primary); font-size:11px; }
@@ -2110,12 +2114,12 @@ async function __iniciarAppComDados(__payload) {
     if (key === "disp") {
       const a = dispAnalisa(d);
       if (!a) return null;
-      const v = a.top, dono = v.dono;
-      const donoTxt = dono ? `<span style="font-weight:800;color:${dono.eu ? "#A2FF00" : "#818CF8"}">${esc(dispNome(dono.nome))}</span>${dono.eu ? " (locatário)" : ""}` : "—";
+      const P = dispPessoas(a);
+      const nomes = rs => rs.map((r => `<span style="font-weight:800;color:${P.cor(r.t)}">${esc(dispNomeCurto(r.t))}</span>`)).join(" / ");
       return {
         ...base,
         nome: "Aparelho compartilhado",
-        rows: [ [ "Leitura", DISP_CLASSES[v.classe].leitura, "hl" ], [ "Contas no aparelho", String(v.ap.totalContas || v.todas.length) ], [ "Dono do celular", donoTxt, "", "html" ], [ "Último uso cruzado", v.ultimoCruzado ? dispFmt(v.ultimoCruzado) : null ], [ "Outros celulares", a.devs.length > 1 ? String(a.devs.length - 1) : null ] ]
+        rows: [ [ "Leitura", P.leitura, "hl" ], [ "Emprestou para", P.empr.length ? nomes(P.empr) : null, "", "html" ], [ "Usou o celular de", P.usou.length ? nomes(P.usou) : null, "", "html" ], [ "Último acesso", P.ultimo ? dispFmt(P.ultimo, false) : null ] ]
       };
     }
     if (key === "bo") {
@@ -3005,7 +3009,7 @@ async function __iniciarAppComDados(__payload) {
   function detailHTML(d, estado = "") {
     const loc = LOCATARIO_INFO[d.placa], mod = MODELO_INFO[d.placa], foto = LOCATARIO_FOTO_BY_PLACA[d.placa], ct = LOCATARIO_CONTATO_BY_PLACA[d.placa] || {};
     const fact = (icon, v, pend) => `<div class="${pend ? "pend" : ""}">${ic(icon)}${v}</div>`;
-    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    ${dispBlockHTML(d)}\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemEvento ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
+    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemEvento ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      ${dispAnalisa(d) ? `<button class="btn act ai dx-btn" style="--ac:#818CF8;--af:#C3C9FF" type="button" data-action="disp" data-placa="${d.placa}">${ic("sDisp")}Aparelho compartilhado</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
   }
   const DISP_CLASSES = {
     A: {
@@ -3046,8 +3050,7 @@ async function __iniciarAppComDados(__payload) {
   const dispFmt = (s, comHora = true) => {
     const m = String(s || "").match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
     if (!m) return s ? String(s) : "";
-    const ano = m[1] !== String((new Date).getFullYear()) ? "/" + m[1].slice(2) : "";
-    return `${m[3]}/${m[2]}${ano}${comHora && m[4] ? ` ${m[4]}:${m[5]}` : ""}`;
+    return `${m[3]}/${m[2]}/${m[1]}${comHora && m[4] ? ` ${m[4]}:${m[5]}` : ""}`;
   };
   const dispHoras = s => {
     const t = Date.parse(String(s || "").slice(0, 16) + ":00-03:00");
@@ -3231,21 +3234,46 @@ async function __iniciarAppComDados(__payload) {
     }
     return lista.sort(((x, y) => DISP_CLASSES[y.classe].peso - DISP_CLASSES[x.classe].peso || y.dias - x.dias || String(y.ultimo || "").localeCompare(String(x.ultimo || ""))));
   }
-  function dispBlockHTML(d) {
-    const a = dispAnalisa(d);
-    if (!a) return "";
-    const devs = a.devs, rels = dispRelacoes(devs);
-    const eu = {
+  function dispPessoas(a) {
+    const devs = a.devs, rels = dispRelacoes(devs), eu = {
       ...devs[0].eu,
       dias: undefined
-    }, L = dispPrimeiro(eu);
-    const cores = new Map;
+    }, cores = new Map;
     for (const r of rels) if (!cores.has(r.t.usuarioId)) cores.set(r.t.usuarioId, DISP_TER_CORES[cores.size % DISP_TER_CORES.length]);
     for (const v of devs) for (const t of v.ters) if (!cores.has(t.usuarioId)) cores.set(t.usuarioId, "#8B93A7");
     const cor = c => c.eu || c.usuarioId === eu.usuarioId ? DISP_COR_LOC : cores.get(c.usuarioId) || "#8B93A7";
+    const usou = rels.filter((r => r.tipo === "uso")), empr = rels.filter((r => r.tipo === "emp"));
+    const leitura = empr.length && usou.length ? "O locatário emprestou o próprio celular e usou o de outros" : empr.length ? "O locatário emprestou o celular" : "O locatário usou outro celular";
+    const ultimo = rels.map((r => r.ultimo)).filter(Boolean).sort().pop() || a.devs.map((v => v.ultimoCruzado)).filter(Boolean).sort().pop() || null;
+    return {
+      devs,
+      rels,
+      eu,
+      cor,
+      usou,
+      empr,
+      leitura,
+      ultimo
+    };
+  }
+  function dispNomeCurto(c) {
+    const p = dispNome(c.nome).split(/\s+/);
+    return p.length > 1 ? p[0] + " " + p[p.length - 1] : p[0];
+  }
+  function openDisp(placa) {
+    const d = DATA_BY_PLACA[placa], a = d && dispAnalisa(d);
+    if (!a) return;
+    $("#modal").innerHTML = `\n    <div class="modal-head" style="--mc:#818CF8"><span class="mic">${ic("sDisp")}</span><h2 class="modal-title" id="modalTitle">Aparelho compartilhado<small>${placa} · ${esc(dispPessoas(a).leitura)}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="dx-body">${dispBlockHTML(d)}</div>`;
+    openModal("disp");
+  }
+  function dispBlockHTML(d) {
+    const a = dispAnalisa(d);
+    if (!a) return "";
+    const {devs, rels, eu, cor} = dispPessoas(a), L = dispPrimeiro(eu);
+    const foto = LOCATARIO_FOTO_BY_PLACA[d.placa];
     const st = c => `style="--pc:${cor(c)}"`;
     const nm = c => `<span class="dx-n dx-p" ${st(c)}>${esc(dispPrimeiro(c))}</span>`;
-    const av = c => `<span class="dx-av dx-p" ${st(c)}>${esc(iniciais(dispNome(c.nome)))}</span>`;
+    const av = c => `<span class="dx-av dx-p" ${st(c)}>${esc(iniciais(dispNome(c.nome)))}${(c.eu || c.usuarioId === eu.usuarioId) && foto ? `<img class="dx-foto" src="${esc(foto.url)}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span>`;
     const pessoasNome = [ [ eu, dispNome(eu.nome) ], [ eu, L ] ];
     for (const v of devs) for (const t of v.ters) {
       pessoasNome.push([ t, dispNome(t.nome) ]);
@@ -3314,12 +3342,13 @@ async function __iniciarAppComDados(__payload) {
     if (usou.length) partes.push(`${L} usou o celular de ${lista(usou)}`);
     const resumo = partes.join("; ") + "." + (DISP_FORTES.has(top.classe) ? " " + dispResumo(top) : "");
     const legenda = [ `<span ${st(eu)}><i></i>${esc(L)} · locatário</span>`, ...[ ...new Map(rels.map((r => [ r.t.usuarioId, r.t ]))).values() ].map((t => `<span ${st(t)}><i></i>${esc(dispPrimeiro(t))}</span>`)) ].join("");
-    return `<div class="dx"><div class="dx-h"><span class="dx-ic">${ic("sDisp")}</span><div><b>Aparelho compartilhado · ${esc(cl.leitura)}</b><span>${pinta(resumo)}</span></div><span class="dx-tag ${cl.cls}">${cl.tag}</span></div>\n    <div class="dx-leg">${legenda}</div>\n    ${bloco("emp", "Emprestou o celular")}\n    ${bloco("uso", "Usou o celular de")}\n    ${emp}${tlHTML}</div>`;
+    return `<div class="dx"><div class="dx-h"><div><b>${esc(cl.leitura)}</b><span>${pinta(resumo)}</span></div><span class="dx-tag ${cl.cls}">${cl.tag}</span></div>\n    <div class="dx-leg">${legenda}</div>\n    ${bloco("emp", "Emprestou o celular")}\n    ${bloco("uso", "Usou o celular de")}\n    ${emp}${tlHTML}</div>`;
   }
   document.addEventListener("click", (e => {
     const g = e.target.closest("[data-goto-placa]");
     if (!g) return;
     e.preventDefault();
+    closeModal();
     const placa = g.dataset.gotoPlaca, inp = $("#searchInput");
     if (inp) {
       inp.value = placa;
@@ -4693,6 +4722,10 @@ async function __iniciarAppComDados(__payload) {
       }
       if (act.dataset.action === "facematch") {
         openFacematch(placa);
+        return;
+      }
+      if (act.dataset.action === "disp") {
+        openDisp(placa);
         return;
       }
       if (act.dataset.action === "mymaps") {
