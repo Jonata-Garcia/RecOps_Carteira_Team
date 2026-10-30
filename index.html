@@ -3060,7 +3060,7 @@ async function __iniciarAppComDados(__payload) {
     return isNaN(t) ? null : Math.max(0, (Date.now() - t) / 36e5);
   };
   const dispInicioJanela = () => {
-    const d = new Date(Date.now() - 86 * 864e5);
+    const d = new Date(Date.now() - 176 * 864e5);
     return d.toISOString().slice(0, 10);
   };
   function dispDev(ap, info) {
@@ -3137,9 +3137,9 @@ async function __iniciarAppComDados(__payload) {
     }
     if (v.classe === "B") return `Depois de ficar inadimplente, ${L} passou a entrar no celular de ${D} (${v.eu.dias} dias). A última lat/long é a pista mais recente de onde ${L} esteve.`;
     if (v.classe === "C") return `${n} contas usaram o mesmo celular de ${v.eu.papel === "principal" ? L : D}.`;
-    if (v.eu.papel === "secundaria") return v.diasCross ? `${L} usou o celular de ${D} em ${v.diasCross} dia${v.diasCross > 1 ? "s" : ""} nos últimos 90 dias.` : `${L} já usou o celular de ${D} (último uso em ${dispFmt(v.ultimoCruzado, false) || "data desconhecida"}).`;
+    if (v.eu.papel === "secundaria") return v.diasCross ? `${L} usou o celular de ${D} em ${v.diasCross} dia${v.diasCross > 1 ? "s" : ""} nos últimos 180 dias.` : `${L} já usou o celular de ${D} (último uso em ${dispFmt(v.ultimoCruzado, false) || "data desconhecida"}).`;
     const T = v.cross.length === 1 ? dispPrimeiro(v.cross[0]) : `${v.cross.length} contas`;
-    return v.diasCross ? `${L} emprestou o celular para ${T} em ${v.diasCross} dia${v.diasCross > 1 ? "s" : ""} nos últimos 90 dias.` : `${L} já emprestou o celular para ${T} (último uso em ${dispFmt(v.ultimoCruzado, false) || "data desconhecida"}).`;
+    return v.diasCross ? `${L} emprestou o celular para ${T} em ${v.diasCross} dia${v.diasCross > 1 ? "s" : ""} nos últimos 180 dias.` : `${L} já emprestou o celular para ${T} (último uso em ${dispFmt(v.ultimoCruzado, false) || "data desconhecida"}).`;
   }
   function dispLinhaTempo(v) {
     const ev = [], L = dispPrimeiro(v.eu), D = v.dono ? dispPrimeiro(v.dono) : "outra conta";
@@ -3313,7 +3313,7 @@ async function __iniciarAppComDados(__payload) {
     const quando = (s, corte, jan) => s ? esc(dispFmt(s)) : corte ? `antes de ${esc(dispFmt(jan, false))}` : "—";
     const cardTer = r => {
       const t = r.t, outros = [ ...r.outros.values() ];
-      return `<div class="dx-tc" ${st(t)}>\n      <div class="dx-tc-t">${av(t)}<div class="dx-tc-n"><b>${esc(dispNome(t.nome))}</b><span class="dx-sit">${dispSitBadge(t.situacao)}${r.devs.length > 1 ? `<em>${r.devs.length} celulares</em>` : ""}</span>${selos(t) ? `<div>${selos(t)}</div>` : ""}</div>${tag(r.classe)}${adm(t)}</div>\n      ${r.dias ? `<div class="dx-tc-s">\n        <span class="dx-tc-q"><b>${r.eventos}</b> acesso${r.eventos === 1 ? "" : "s"} em <b>${r.dias}</b> dia${r.dias === 1 ? "" : "s"} distinto${r.dias === 1 ? "" : "s"}</span>\n        <span><small>Primeiro acesso</small>${quando(r.primeiro, r.corte, r.corteData)}</span>\n        <span><small>Último acesso</small>${quando(r.ultimo)}</span>\n      </div>` : `<div class="dx-tc-s vazio">Sem acesso nos últimos 90 dias${r.ultimo ? ` · último em ${esc(dispFmt(r.ultimo, false))}` : ""}</div>`}\n      ${outros.length ? `<div class="dx-rl-outros"><small>Também usaram este celular</small>${outros.slice(0, 6).map((o => `<span class="dx-chip-p">${av(o)}${nm(o)}${o.placa ? ` <em>${esc(o.placa)}</em>` : ""}${o.restrita ? ` <em class="r">restrita</em>` : ""}</span>`)).join("")}${outros.length > 6 ? `<span class="dx-mais">+${outros.length - 6}</span>` : ""}</div>` : ""}\n    </div>`;
+      return `<div class="dx-tc" ${st(t)}>\n      <div class="dx-tc-t">${av(t)}<div class="dx-tc-n"><b>${esc(dispNome(t.nome))}</b><span class="dx-sit">${dispSitBadge(t.situacao)}${r.devs.length > 1 ? `<em>${r.devs.length} celulares</em>` : ""}</span>${selos(t) ? `<div>${selos(t)}</div>` : ""}</div>${tag(r.classe)}${adm(t)}</div>\n      ${r.dias ? `<div class="dx-tc-s">\n        <span class="dx-tc-q"><b>${r.eventos}</b> acesso${r.eventos === 1 ? "" : "s"} em <b>${r.dias}</b> dia${r.dias === 1 ? "" : "s"} distinto${r.dias === 1 ? "" : "s"}</span>\n        <span><small>Primeiro acesso</small>${quando(r.primeiro, r.corte, r.corteData)}</span>\n        <span><small>Último acesso</small>${quando(r.ultimo)}</span>\n      </div>` : `<div class="dx-tc-s vazio">Sem acesso nos últimos 180 dias${r.ultimo ? ` · último em ${esc(dispFmt(r.ultimo, false))}` : ""}</div>`}\n      ${outros.length ? `<div class="dx-rl-outros"><small>Também usaram este celular</small>${outros.slice(0, 6).map((o => `<span class="dx-chip-p">${av(o)}${nm(o)}${o.placa ? ` <em>${esc(o.placa)}</em>` : ""}${o.restrita ? ` <em class="r">restrita</em>` : ""}</span>`)).join("")}${outros.length > 6 ? `<span class="dx-mais">+${outros.length - 6}</span>` : ""}</div>` : ""}\n    </div>`;
     };
     const bloco = (tipo, rotulo) => {
       const rs = rels.filter((r => r.tipo === tipo));
@@ -3327,14 +3327,14 @@ async function __iniciarAppComDados(__payload) {
     }
     const mapa = m => `<a class="dx-geo" href="https://www.google.com/maps?q=${encodeURIComponent(m.lat + "," + m.lon)}" target="_blank" rel="noopener">${ic("pin")}${(+m.lat).toFixed(4)}, ${(+m.lon).toFixed(4)}</a>`;
     const lanes = rels.filter((r => r.mom.length)).map((r => {
-      const quemUsa = r.tipo === "emp" ? r.t : eu, donoCel = r.tipo === "emp" ? eu : r.t, ms = r.mom.slice(-8);
-      return `<div class="dx-lane" ${st(r.t)}>\n      <div class="dx-lane-h">${av(quemUsa)}<span>${nm(quemUsa)} no celular de ${nm(donoCel)}</span><em>${r.mom.length > 8 ? `últimos 8 de ${r.mom.length} dias` : `${r.mom.length} dia${r.mom.length > 1 ? "s" : ""}`}</em></div>\n      <div class="dx-lane-l">${ms.map((m => {
+      const quemUsa = r.tipo === "emp" ? r.t : eu, donoCel = r.tipo === "emp" ? eu : r.t, ms = r.mom.slice(-12);
+      return `<div class="dx-lane" ${st(r.t)}>\n      <div class="dx-lane-h">${av(quemUsa)}<span>${nm(quemUsa)} no celular de ${nm(donoCel)}</span><em>${r.mom.length > 12 ? `últimos 12 de ${r.mom.length} dias` : `${r.mom.length} dia${r.mom.length > 1 ? "s" : ""}`}</em></div>\n      <div class="dx-lane-l">${ms.map((m => {
         const rep = contLL[(+m.lat).toFixed(3) + "," + (+m.lon).toFixed(3)] > 1;
         return `<div class="dx-lm ${rep ? "rep" : ""}"><b>${esc(dispFmt(m.data))}</b>${mapa(m)}<small>${m.n} acesso${m.n > 1 ? "s" : ""}${rep ? " · local repetido" : ""}</small></div>`;
       })).join("")}</div>\n    </div>`;
     })).join("");
     const ultimo = rels.map((r => r.ultimo)).filter(Boolean).sort().pop();
-    const emp = `<div class="dx-emp"><div class="dx-emp-h">${ic("pin")}<b>Quando o celular de cada um foi usado</b><span>lat/long do 1º acesso de cada dia · do mais antigo ao mais recente</span></div>\n    ${lanes || `<div class="dx-emp-vazio">Sem acessos cruzados nos últimos 90 dias${ultimo ? `. Último uso compartilhado registrado em ${esc(dispFmt(ultimo, false))}.` : "."}</div>`}</div>`;
+    const emp = `<div class="dx-emp"><div class="dx-emp-h">${ic("pin")}<b>Quando o celular de cada um foi usado</b><span>lat/long do 1º acesso de cada dia · do mais antigo ao mais recente</span></div>\n    ${lanes || `<div class="dx-emp-vazio">Sem acessos cruzados nos últimos 180 dias${ultimo ? `. Último uso compartilhado registrado em ${esc(dispFmt(ultimo, false))}.` : "."}</div>`}</div>`;
     const vistos = new Set, tl = [];
     for (const v of devs) for (const e of dispLinhaTempo(v)) {
       const k = e.data.slice(0, 16) + e.texto;
