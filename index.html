@@ -544,6 +544,7 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .dx-body{ padding:16px 22px 22px; }
 .dx-body .dx{ margin-top:0; padding:0; border:0; background:none; }
 .dx-av{ position:relative; overflow:hidden; } .dx-foto{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.sigs-vazio{ font-size:12px; color:var(--text-muted); }
 .dx-chip-p{ display:inline-flex; align-items:center; gap:5px; padding:2px 8px 2px 3px; border-radius:999px; border:1px solid var(--line-2); } .dx-chip-p .dx-av{ width:18px; height:18px; font-size:8.5px; }
 .dx-chip-p em{ font-style:normal; font-size:10.5px; color:var(--text-muted); } .dx-chip-p em.r{ color:#ff8a82; }
 .dx-no{ color:var(--text-muted); font-weight:500; margin-left:4px; } .dx-no b{ color:var(--text-primary); font-size:11px; }
@@ -2188,16 +2189,16 @@ async function __iniciarAppComDados(__payload) {
   }
   function sinaisHTML(d) {
     const chip = (s, cls, title, t) => `<button class="sig ai ${cls}" type="button" style="--sc:${s.cor};--sf:${s.fg}" data-sig="${s.key}" data-placa="${d.placa}" title="${esc(title)}" aria-label="${esc(title)}">${ic(s.icon)}<span class="lb">${s.label}</span>${t ? `<span class="t">${t}</span>` : ""}</button>`;
-    const chips = SINAIS_DEF.map((s => {
+    const chips = SINAIS_DEF.filter((s => d[s.horas] != null)).map((s => {
       const h = d[s.horas], on = !!d[s.evt], fresh = on && h <= s.janela / 2;
       const title = on ? `${s.label} há ${formatHoras(h)}` : h != null ? `${s.label}: último há ${formatHoras(h)} (fora da janela)` : `${s.label}: sem registro`;
-      const t = h != null ? `Há ${formatHoras(h)}` : s.key === "cel" ? "sem sinal" : null;
+      const t = `Há ${formatHoras(h)}`;
       const desc = s.key === "cbd" && d.cbdDecisao === "descartado" && h != null && h <= s.janela;
       if (desc) return chip(s, "descartado", `CBD há ${formatHoras(h)} · hit descartado`, t);
       return chip(s, `${on ? "on" : ""} ${fresh ? "fresh" : ""}${s.key === "cbd" && d.cbdDecisao === "confirmado" && on ? " confirmado" : ""}`, s.key === "cbd" && d.cbdDecisao === "confirmado" && on ? `${title} · hit confirmado` : title, t);
     }));
     const def = k => SINAIS_FILTRO.find((s => s.key === k));
-    chips.push(chip(def("ping"), d.evt_ping ? "on" : "", d.evt_ping ? `Ping ativo há ${formatHoras(d.horas_desde_ping)}` : d.horas_desde_ping != null ? `Ping: último há ${formatHoras(d.horas_desde_ping)} (fora da janela)` : "Ping: sem sinal", null));
+    if (d.horas_desde_ping != null) chips.push(chip(def("ping"), d.evt_ping ? "on" : "", d.evt_ping ? `Ping ativo há ${formatHoras(d.horas_desde_ping)}` : `Ping: último há ${formatHoras(d.horas_desde_ping)} (fora da janela)`, `Há ${formatHoras(d.horas_desde_ping)}`));
     {
       const a = dispAnalisa(d);
       if (a) chips.push(chip(def("disp"), `on${DISP_FORTES.has(a.top.classe) ? " fresh" : ""}`, `Aparelho compartilhado · ${DISP_CLASSES[a.top.classe].leitura}`, `${a.top.ap.totalContas || a.top.todas.length} contas`));
@@ -2211,7 +2212,7 @@ async function __iniciarAppComDados(__payload) {
       }));
       chips.push(chip(def("face"), `face ${cls}${rec30 ? " rec30" : ""}`, d.facematchTemFalso ? "FaceMatch com tentativa sem sucesso — abrir revisão" : "FaceMatch — somente tentativas aprovadas", null));
     }
-    return `<div class="sigs">${chips.join("")}</div>`;
+    return `<div class="sigs">${chips.join("") || `<span class="sigs-vazio">Sem sinais</span>`}</div>`;
   }
   function tagsHTML(d) {
     const pills = (d.tags || []).map((k => {
@@ -3009,7 +3010,7 @@ async function __iniciarAppComDados(__payload) {
   function detailHTML(d, estado = "") {
     const loc = LOCATARIO_INFO[d.placa], mod = MODELO_INFO[d.placa], foto = LOCATARIO_FOTO_BY_PLACA[d.placa], ct = LOCATARIO_CONTATO_BY_PLACA[d.placa] || {};
     const fact = (icon, v, pend) => `<div class="${pend ? "pend" : ""}">${ic(icon)}${v}</div>`;
-    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemEvento ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      ${dispAnalisa(d) ? `<button class="btn act ai dx-btn" style="--ac:#818CF8;--af:#C3C9FF" type="button" data-action="disp" data-placa="${d.placa}">${ic("sDisp")}Aparelho compartilhado</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
+    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemEvento ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
   }
   const DISP_CLASSES = {
     A: {
@@ -4679,6 +4680,11 @@ async function __iniciarAppComDados(__payload) {
       const d = DATA_BY_PLACA[sig.dataset.placa], key = sig.dataset.sig;
       if (key === "face") {
         openFacematch(d.placa);
+        return;
+      }
+      if (key === "disp") {
+        clearTimeout(hoverTimer);
+        openDisp(d.placa);
         return;
       }
       if (popCtx && popCtx.anchor === sig && popCtx.pinned) {
