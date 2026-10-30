@@ -432,6 +432,119 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .gauge .gv small{ font-size:10.5px; color:var(--text-muted); }
 
 .sigs{ display:flex; gap:6px; align-items:center; }
+.sig.on[data-sig="disp"], .sig.sf[data-opt-sinal="disp"]{ --g1:#A2FF00; --g2:#818CF8; border:1px solid transparent; color:#E9ECFF;
+  background:linear-gradient(160deg, color-mix(in srgb, var(--g1) 24%, #121412) 0%, color-mix(in srgb, var(--g2) 42%, #121412) 100%) padding-box, linear-gradient(160deg, var(--g1) 0%, var(--g2) 70%) border-box; }
+.sig.on[data-sig="disp"] .li, .sig.sf[data-opt-sinal="disp"] .li{ color:var(--g1); }
+.sig.sf[data-opt-sinal="disp"] .lb, .sig.on[data-sig="disp"] .lb{ color:#D4FF8A; } .sig.on[data-sig="disp"] .t{ color:#C3C9FF; }
+.sig.on.fresh[data-sig="disp"]{ box-shadow:-6px 0 14px -6px color-mix(in srgb, var(--g1) 75%, transparent), 6px 0 14px -6px color-mix(in srgb, var(--g2) 85%, transparent); }
+.dx{ --cl:#A2FF00; --ct:#818CF8; --clb:rgba(162,255,0,.10); --ctb:rgba(129,140,248,.12); display:flex; flex-direction:column; gap:10px; padding:12px 16px; margin-top:12px; border-radius:12px; background:var(--glass-2); border:1px solid var(--line-2); }
+.dx-h{ display:flex; align-items:center; gap:12px; }
+.dx-ic{ display:grid; place-items:center; width:36px; height:36px; border-radius:10px; color:#C9D1FF; background:linear-gradient(135deg, rgba(162,255,0,.22), rgba(129,140,248,.28)); --is:20px; flex:none; }
+.dx-h b{ display:block; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:15px; color:var(--text-primary); }
+.dx-h b small{ font-family:var(--font-body); font-style:normal; font-weight:600; font-size:11px; color:var(--text-muted); margin-left:8px; }
+.dx-h span{ font-size:13px; color:var(--text-secondary); }
+.dx-tag{ margin-left:auto; padding:2px 9px; border-radius:6px; font-family:var(--font-display); font-weight:800; font-style:italic; font-size:11px; letter-spacing:.5px; text-transform:uppercase; white-space:nowrap; color:#1a0a00; background:var(--status-warning); }
+.dx-tag.fraude{ color:#fff; background:var(--status-critical); box-shadow:0 0 12px -2px var(--status-critical); }
+.dx-tag.fraco{ background:transparent; color:var(--text-secondary); border:1px solid var(--line-2); }
+.dx-leg{ display:flex; gap:14px; font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; color:var(--text-muted); }
+.dx-leg span{ display:inline-flex; align-items:center; gap:6px; } .dx-leg i{ width:10px; height:10px; border-radius:3px; }
+.dx-leg .loc i{ background:var(--cl); } .dx-leg .ter i{ background:var(--ct); }
+.dx-n{ font-weight:800; } .dx-n.loc{ color:var(--cl); } .dx-n.ter{ color:var(--ct); }
+.dx-av{ display:grid; place-items:center; width:30px; height:30px; border-radius:50%; font-family:var(--font-display); font-weight:800; font-size:12px; flex:none; color:#0b0c0b; }
+.dx-av.loc{ background:var(--cl); } .dx-av.ter{ background:var(--ct); }
+.dx-sel{ display:inline-block; font-style:normal; margin:2px 6px 0 0; padding:1px 7px; border-radius:5px; font-size:10.5px; font-weight:800; letter-spacing:.4px; text-transform:uppercase; }
+.dx-sel.rest{ color:#fff; background:var(--status-critical); } .dx-sel.hist{ color:#ffb3ad; border:1px solid rgba(255,84,73,.5); }
+.dx-sel.ind{ color:#1a1400; background:var(--sig-bo); } .dx-sel.out{ color:var(--text-secondary); border:1px solid var(--line-2); }
+.dx-sel.plc{ color:var(--text-primary); border:1px solid var(--line-2); text-decoration:none; }
+.dx-ff{ display:grid; grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr); align-items:center; gap:10px; }
+.dx-ters{ display:flex; flex-direction:column; gap:8px; }
+.dx-mais{ font-size:12px; color:var(--text-muted); padding-left:4px; }
+.dx-card{ padding:12px 14px; border-radius:12px; border:1px solid; }
+.dx-card.loc{ border-color:color-mix(in srgb, var(--cl) 55%, transparent); background:var(--clb); } .dx-card.ter{ border-color:color-mix(in srgb, var(--ct) 55%, transparent); background:var(--ctb); }
+.dx-card-t{ display:flex; align-items:center; gap:10px; } .dx-card-t .dx-av{ width:38px; height:38px; font-size:14px; }
+.dx-card-t small{ display:block; font-family:var(--font-display); font-weight:800; font-style:italic; font-size:11px; letter-spacing:.4px; text-transform:uppercase; }
+.dx-card.loc .dx-card-t small, .dx-card.loc .dx-card-t b{ color:var(--cl); } .dx-card.ter .dx-card-t small, .dx-card.ter .dx-card-t b{ color:var(--ct); }
+.dx-card-t b{ font-size:16px; font-weight:800; } .dx-card-t .dx-adm{ margin-left:auto; }
+.dx-card-s{ margin:6px 0 0 48px; }
+.dx-card-f{ display:flex; flex-wrap:wrap; gap:6px 24px; margin:8px 0 0 48px; font-size:12.5px; color:var(--text-secondary); }
+.dx-card-f small{ display:block; font-size:10px; letter-spacing:.5px; text-transform:uppercase; color:var(--text-muted); font-weight:600; }
+.dx-card-f b{ color:var(--text-primary); font-size:14px; }
+.dx-rel{ display:flex; flex-direction:column; align-items:center; gap:4px; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:12px; color:var(--text-secondary); text-align:center; }
+.dx-rel svg{ width:100%; height:14px; fill:none; stroke:var(--text-muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.dx-emp{ padding:10px 12px; border-radius:10px; background:rgba(0,0,0,.22); border:1px solid var(--line); }
+.dx-emp-h{ display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 10px; --is:14px; margin-bottom:8px; color:var(--text-secondary); }
+.dx-emp-h b{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:13.5px; color:var(--text-primary); }
+.dx-emp-h b .dx-n{ font-size:inherit; }
+.dx-emp-h > span{ font-size:11.5px; color:var(--text-muted); }
+.dx-emp-l{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px; }
+.dx-emp-vazio{ font-size:12.5px; color:var(--text-muted); }
+.dx-mo{ display:flex; flex-direction:column; gap:3px; padding:7px 9px; border-radius:8px; border:1px solid var(--line); border-left:3px solid; font-size:12px; }
+.dx-mo.loc{ border-left-color:var(--cl); background:var(--clb); } .dx-mo.ter{ border-left-color:var(--ct); background:var(--ctb); }
+.dx-mo.rep{ box-shadow:inset 0 0 0 1px rgba(255,255,255,.14); }
+.dx-mo .dx-who{ display:flex; align-items:center; gap:6px; font-size:11px; } .dx-mo .dx-who .dx-av{ width:18px; height:18px; font-size:8.5px; }
+.dx-mo b{ color:var(--text-primary); font-size:12.5px; } .dx-mo small{ color:var(--text-muted); font-size:11px; }
+.dx-geo{ display:inline-flex; align-items:center; gap:5px; text-decoration:none; font-weight:600; --is:13px; white-space:nowrap; color:var(--text-primary); }
+.dx-geo:hover{ text-decoration:underline; }
+.dx-mo.loc .dx-geo .li{ color:var(--cl); } .dx-mo.ter .dx-geo .li{ color:var(--ct); }
+.dx-tl{ display:flex; padding:10px 12px 4px; border-top:1px dashed var(--line-2); }
+.dx-tl-i{ position:relative; flex:1; padding-top:16px; font-size:12px; color:var(--text-secondary); }
+.dx-tl-i::before{ content:""; position:absolute; top:5px; left:0; right:0; height:2px; background:var(--line-2); }
+.dx-tl-i .dot{ position:absolute; top:0; left:0; width:12px; height:12px; border-radius:50%; background:var(--bg); border:2px solid var(--text-muted); }
+.dx-tl-i.loc .dot{ border-color:var(--cl); } .dx-tl-i.ter .dot{ border-color:var(--ct); }
+.dx-tl-i.forte.loc .dot{ background:var(--cl); box-shadow:0 0 10px var(--cl); } .dx-tl-i.forte.ter .dot{ background:var(--ct); box-shadow:0 0 10px var(--ct); }
+.dx-tl-i b{ display:block; color:var(--text-primary); font-size:12.5px; } .dx-tl-i > span{ display:block; padding-right:12px; }
+.dx-tl-i.loc b{ color:var(--cl); } .dx-tl-i.ter b{ color:var(--ct); }
+.dx-tag.sm{ margin-left:0; font-size:10px; padding:1px 7px; }
+.dx-loc{ display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:10px 12px; border-radius:12px; border:1px solid color-mix(in srgb, var(--cl) 55%, transparent); background:var(--clb); }
+.dx-loc .dx-pe{ flex:1 1 320px; }
+.dx-loc-r{ display:flex; gap:18px; font-size:12.5px; color:var(--text-secondary); } .dx-loc-r b{ color:var(--text-primary); font-size:16px; margin-right:3px; }
+.dx-pe{ display:flex; align-items:center; gap:10px; min-width:0; }
+.dx-pe .dx-av{ width:38px; height:38px; font-size:14px; }
+.dx-pe-n{ min-width:0; } .dx-pe-n small{ display:block; font-family:var(--font-display); font-weight:800; font-style:italic; font-size:11px; letter-spacing:.4px; text-transform:uppercase; }
+.dx-pe.loc .dx-pe-n small, .dx-pe.loc .dx-pe-n b{ color:var(--cl); } .dx-pe.ter .dx-pe-n small, .dx-pe.ter .dx-pe-n b{ color:var(--ct); }
+.dx-pe-n b{ display:block; font-size:15px; font-weight:800; } .dx-sit{ display:block; font-size:11.5px; color:var(--text-muted); margin-top:2px; }
+.dx-pe .dx-adm{ margin-left:auto; flex:none; }
+.dx-sec{ display:flex; flex-direction:column; gap:8px; }
+.dx-sec-h{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:13.5px; color:var(--text-primary); display:flex; align-items:center; gap:8px; }
+.dx-sec-h em{ font-style:normal; font-size:11px; padding:0 7px; border-radius:999px; background:var(--line-2); color:var(--text-secondary); }
+.dx-rl{ display:flex; gap:10px; padding:10px 12px; border-radius:12px; border:1px solid color-mix(in srgb, var(--ct) 45%, transparent); background:var(--ctb); }
+.dx-cel{ flex:none; display:grid; place-items:center; align-content:center; gap:2px; width:38px; height:46px; border-radius:9px; border:1px solid var(--line-2); background:rgba(0,0,0,.25); color:var(--text-secondary); --is:14px; }
+.dx-cel b{ font-family:var(--font-display); font-style:italic; font-size:13px; color:var(--text-primary); line-height:1; }
+.dx-rl-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:8px; }
+.dx-rl-top{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; } .dx-rl-frase{ font-size:13.5px; color:var(--text-secondary); }
+.dx-rl-grid{ display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:12px; align-items:center; }
+.dx-rl-uso{ font-size:12.5px; color:var(--text-secondary); } .dx-rl-uso small{ display:block; font-size:10px; letter-spacing:.5px; text-transform:uppercase; color:var(--text-muted); font-weight:600; margin-bottom:2px; } .dx-rl-uso b{ color:var(--text-primary); font-size:14px; }
+.dx-rl-outros{ display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12px; } .dx-rl-outros small{ font-size:10px; letter-spacing:.5px; text-transform:uppercase; color:var(--text-muted); font-weight:600; margin-right:4px; }
+.dx-p{ --pc:#818CF8; } .dx-n.dx-p{ color:var(--pc); } .dx-av.dx-p{ background:var(--pc); }
+.dx-leg span{ color:var(--pc, var(--text-muted)); } .dx-leg span i{ background:var(--pc); }
+.dx-rs{ display:grid; grid-template-columns:170px 150px minmax(0,1fr); align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:rgba(0,0,0,.18); border:1px solid var(--line); }
+.dx-rs-l{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; border:1px solid color-mix(in srgb, #A2FF00 50%, transparent); background:rgba(162,255,0,.08); }
+.dx-rs-l .dx-av{ width:36px; height:36px; font-size:13px; } .dx-rs-l small{ display:block; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:10.5px; letter-spacing:.4px; text-transform:uppercase; color:#A2FF00; } .dx-rs-l .dx-n{ font-size:15px; }
+.dx-rs-a{ display:flex; flex-direction:column; align-items:center; gap:3px; text-align:center; font-family:var(--font-display); font-style:italic; font-weight:800; font-size:12.5px; color:var(--text-primary); text-transform:uppercase; letter-spacing:.3px; }
+.dx-rs-a svg{ width:100%; height:14px; fill:none; stroke:var(--text-muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.dx-rs-a em{ font-style:normal; font-family:var(--font-body); font-weight:600; font-size:11px; text-transform:none; color:var(--text-muted); }
+.dx-rs-r{ display:flex; flex-direction:column; gap:8px; min-width:0; }
+.dx-tc{ display:flex; flex-direction:column; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid color-mix(in srgb, var(--pc) 45%, transparent); border-left:4px solid var(--pc); background:color-mix(in srgb, var(--pc) 9%, transparent); }
+.dx-tc-t{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; } .dx-tc-t > .dx-av{ width:36px; height:36px; font-size:13px; }
+.dx-tc-n{ min-width:0; } .dx-tc-n b{ display:block; font-size:15px; font-weight:800; color:var(--pc); } .dx-tc-n .dx-sit{ margin-top:0; }
+.dx-tc-t .dx-tag{ margin-left:auto; } .dx-tc-t .dx-adm{ flex:none; }
+.dx-tc-s{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:6px 28px; margin-left:46px; font-size:13px; color:var(--text-primary); }
+.dx-tc-s small{ display:block; font-size:10px; letter-spacing:.5px; text-transform:uppercase; color:var(--text-muted); font-weight:600; margin-bottom:1px; }
+.dx-tc-q{ color:var(--text-secondary); } .dx-tc-q b{ color:var(--pc); font-size:16px; } .dx-tc-s.vazio{ color:var(--text-muted); font-size:12.5px; }
+.dx-tc .dx-rl-outros{ margin-left:46px; }
+.dx-lane{ display:flex; flex-direction:column; gap:6px; padding:8px 10px; margin-top:6px; border-radius:10px; border-left:3px solid var(--pc); background:color-mix(in srgb, var(--pc) 7%, transparent); }
+.dx-lane-h{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-secondary); } .dx-lane-h .dx-av{ width:20px; height:20px; font-size:9px; } .dx-lane-h em{ margin-left:auto; font-style:normal; font-size:11px; color:var(--text-muted); }
+.dx-lane-l{ display:grid; grid-template-columns:repeat(auto-fill, minmax(165px, 1fr)); gap:6px; }
+.dx-lm{ display:flex; flex-direction:column; gap:2px; padding:6px 9px; border-radius:8px; border:1px solid color-mix(in srgb, var(--pc) 30%, transparent); background:rgba(0,0,0,.2); font-size:12px; }
+.dx-lm b{ color:var(--text-primary); font-size:12.5px; } .dx-lm small{ color:var(--text-muted); font-size:11px; } .dx-lm .dx-geo .li{ color:var(--pc); }
+.dx-lm.rep{ box-shadow:inset 0 0 0 1px rgba(255,255,255,.16); }
+.dx-tl-i .dot{ border-color:var(--pc, var(--text-muted)); } .dx-tl-i.forte .dot{ background:var(--pc); box-shadow:0 0 10px var(--pc); } .dx-tl-i b{ color:var(--pc, var(--text-primary)); }
+@media (max-width:900px){ .dx-rs{ grid-template-columns:1fr; } .dx-rs-a svg{ transform:rotate(90deg); width:30px; } .dx-tc-s, .dx-tc .dx-rl-outros{ margin-left:0; } }
+.dx-chip-p{ display:inline-flex; align-items:center; gap:5px; padding:2px 8px 2px 3px; border-radius:999px; border:1px solid var(--line-2); } .dx-chip-p .dx-av{ width:18px; height:18px; font-size:8.5px; }
+.dx-chip-p em{ font-style:normal; font-size:10.5px; color:var(--text-muted); } .dx-chip-p em.r{ color:#ff8a82; }
+.dx-no{ color:var(--text-muted); font-weight:500; margin-left:4px; } .dx-no b{ color:var(--text-primary); font-size:11px; }
+@media (max-width: 900px){ .dx-rl-grid{ grid-template-columns:1fr; } }
+@media (max-width: 900px){ .dx-ff{ grid-template-columns:1fr; } .dx-rel{ flex-direction:row; } .dx-rel svg{ width:60px; transform:rotate(90deg); } .dx-emp-l{ grid-template-columns:repeat(2, minmax(0,1fr)); } .dx-tl{ flex-direction:column; gap:10px; } }
 .sig{ position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-width:36px; min-height:38px; padding:4px 5px; border-radius:8px; font-family:var(--font-display); font-weight:700; color:var(--text-muted); background:rgba(255,255,255,.05); border:1px solid var(--border); cursor:pointer; transition:transform .15s var(--ease), filter .15s; --is:14px; }
 .sig:hover{ transform:translateY(-1px); filter:brightness(1.3); }
 .sig.on{ color:var(--sf); background:color-mix(in srgb, var(--sc) 18%, transparent); border-color:color-mix(in srgb, var(--sc) 55%, transparent); }
@@ -1149,6 +1262,7 @@ async function __iniciarAppComDados(__payload) {
   const SAIDAS_150_MES = Array.isArray(__payload.SAIDAS_150_MES) ? __payload.SAIDAS_150_MES : undefined;
   const ESTOQUE_MX_DATA = __payload.ESTOQUE_MX && typeof __payload.ESTOQUE_MX.hoje === "number" ? __payload.ESTOQUE_MX : undefined;
   const MX_UFS_DATA = Array.isArray(__payload.MX_UFS) ? __payload.MX_UFS : undefined;
+  const DISP_BY_PLACA = __obj(__payload.DISP_BY_PLACA);
   const ANALISTAS = Array.isArray(__payload.ANALISTAS) && __payload.ANALISTAS.length ? __payload.ANALISTAS : [ {
     id: "jonata",
     nome: "Jonata Garcia",
@@ -1351,6 +1465,7 @@ async function __iniciarAppComDados(__payload) {
     sCbd: `<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/>`,
     sPing: `<path class="arc d1" d="M5 12.55a11 11 0 0 1 14.08 0"/><path class="arc d2" d="M1.42 9a16 16 0 0 1 21.16 0"/><path class="arc" d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>`,
     sBo: `<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path class="ln d1" pathLength="1" style="stroke-dasharray:1" d="M16 13H8"/><path class="ln d2" pathLength="1" style="stroke-dasharray:1" d="M16 17H8"/><path class="ln" pathLength="1" style="stroke-dasharray:1" d="M10 9H8"/>`,
+    sDisp: `<circle cx="9" cy="8" r="3.2"/><path d="M3 20v-1.2a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5V20"/><circle cx="16.5" cy="9.2" r="2.6"/><path d="M16.3 14.3h.9a4.3 4.3 0 0 1 4.3 4.3V20"/>`,
     sFace: `<path class="corner" d="M3 7V5a2 2 0 0 1 2-2h2"/><path class="corner" d="M17 3h2a2 2 0 0 1 2 2v2"/><path class="corner" d="M21 17v2a2 2 0 0 1-2 2h-2"/><path class="corner" d="M7 21H5a2 2 0 0 1-2-2v-2"/><path class="mouth" d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/>`,
     shieldAlert: `<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>`
   };
@@ -1876,6 +1991,13 @@ async function __iniciarAppComDados(__payload) {
     fg: "var(--sig-bo-fg)",
     match: d => !!BO_FURTO_BY_PLACA[d.placa]
   }, {
+    key: "disp",
+    label: "Apar.",
+    icon: "sDisp",
+    cor: "#818CF8",
+    fg: "#C3C9FF",
+    match: d => !!dispAnalisa(d)
+  }, {
     key: "face",
     label: "Face",
     icon: "sFace",
@@ -1985,6 +2107,17 @@ async function __iniciarAppComDados(__payload) {
       janela: "≤48h",
       empty: "Sem sinal do rastreador registrado."
     };
+    if (key === "disp") {
+      const a = dispAnalisa(d);
+      if (!a) return null;
+      const v = a.top, dono = v.dono;
+      const donoTxt = dono ? `<span style="font-weight:800;color:${dono.eu ? "#A2FF00" : "#818CF8"}">${esc(dispNome(dono.nome))}</span>${dono.eu ? " (locatário)" : ""}` : "—";
+      return {
+        ...base,
+        nome: "Aparelho compartilhado",
+        rows: [ [ "Leitura", DISP_CLASSES[v.classe].leitura, "hl" ], [ "Contas no aparelho", String(v.ap.totalContas || v.todas.length) ], [ "Dono do celular", donoTxt, "", "html" ], [ "Último uso cruzado", v.ultimoCruzado ? dispFmt(v.ultimoCruzado) : null ], [ "Outros celulares", a.devs.length > 1 ? String(a.devs.length - 1) : null ] ]
+      };
+    }
     if (key === "bo") {
       const i = BO_FURTO_BY_PLACA[d.placa];
       return {
@@ -2003,7 +2136,7 @@ async function __iniciarAppComDados(__payload) {
   function sinalPopHTML(p) {
     if (!p) return "";
     const badge = p.cbd && p.cbd.decisao === "descartado" ? `<span class="pop-badge expirado">Hit descartado</span>` : p.janela ? `<span class="pop-badge ${p.recente ? "recente" : "expirado"}">${p.recente ? p.cbd && p.cbd.decisao === "confirmado" ? "Hit confirmado" : "Recente" : "Fora da janela"} · ${p.janela}</span>`.replace('class="pop-badge recente"', p.cbd && p.cbd.decisao === "confirmado" ? 'class="pop-badge hit-ok"' : 'class="pop-badge recente"') : "";
-    const body = p.empty ? `<div class="pop-empty">${esc(p.empty)}</div>` : `<dl class="pop-rows">${p.rows.filter((r => r[1] != null)).map((r => `<dt>${esc(r[0])}</dt><dd class="${r[2] || ""}">${esc(r[1])}</dd>`)).join("")}</dl>`;
+    const body = p.empty ? `<div class="pop-empty">${esc(p.empty)}</div>` : `<dl class="pop-rows">${p.rows.filter((r => r[1] != null)).map((r => `<dt>${esc(r[0])}</dt><dd class="${r[2] || ""}">${r[3] === "html" ? r[1] : esc(r[1])}</dd>`)).join("")}</dl>`;
     const fotoPlaca = p.cbd ? p.cbd.placa : "";
     const foto = p.img ? `<button class="pop-img ai" type="button" data-cbd-foto="${esc(fotoPlaca)}" title="Ampliar a foto"><img src="${esc(CBD_URL_FRESCA[fotoPlaca] || p.img.url)}" alt="Captura CarBigData" data-cbd-img="${esc(fotoPlaca)}"><span class="pop-img-load">Atualizando a foto…</span><span class="pop-img-fail">Foto indisponível</span></button>` : "";
     const cbd = p.cbd ? `<div class="pop-foot cbd-acoes"><button class="btn sm ai cbd-ok${p.cbd.decisao === "confirmado" ? " ativo" : ""}" type="button" data-cbd="confirmar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "confirmado"}">${ic("check")}Confirmar Hit</button><button class="btn sm ai cbd-no${p.cbd.decisao === "descartado" ? " ativo" : ""}" type="button" data-cbd="descartar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "descartado"}">${ic("x")}Descartar Hit</button></div>` : "";
@@ -2061,6 +2194,10 @@ async function __iniciarAppComDados(__payload) {
     }));
     const def = k => SINAIS_FILTRO.find((s => s.key === k));
     chips.push(chip(def("ping"), d.evt_ping ? "on" : "", d.evt_ping ? `Ping ativo há ${formatHoras(d.horas_desde_ping)}` : d.horas_desde_ping != null ? `Ping: último há ${formatHoras(d.horas_desde_ping)} (fora da janela)` : "Ping: sem sinal", null));
+    {
+      const a = dispAnalisa(d);
+      if (a) chips.push(chip(def("disp"), `on${DISP_FORTES.has(a.top.classe) ? " fresh" : ""}`, `Aparelho compartilhado · ${DISP_CLASSES[a.top.classe].leitura}`, `${a.top.ap.totalContas || a.top.todas.length} contas`));
+    }
     if (BO_FURTO_BY_PLACA[d.placa]) chips.push(chip(def("bo"), "on", "Boletim de Ocorrência (furto)", null));
     if (d.facematchTemEvento) {
       const cls = d.facematchConfirmado ? "on" : d.facematchDescartado ? "descartado" : "on";
@@ -2148,7 +2285,7 @@ async function __iniciarAppComDados(__payload) {
       return av - bv;
     }
     const campos = camposRecenciaSinais();
-    const extras = [ state.sinaisFiltro.includes("bo") ? horasBo : null, state.sinaisFiltro.includes("face") ? horasFace : null ].filter(Boolean);
+    const extras = [ state.sinaisFiltro.includes("bo") ? horasBo : null, state.sinaisFiltro.includes("face") ? horasFace : null, state.sinaisFiltro.includes("disp") ? horasDisp : null ].filter(Boolean);
     const minCampo = d => {
       let m = null;
       const vs = campos.map((c => d[c])).concat(extras.map((f => f(d))));
@@ -2868,8 +3005,331 @@ async function __iniciarAppComDados(__payload) {
   function detailHTML(d, estado = "") {
     const loc = LOCATARIO_INFO[d.placa], mod = MODELO_INFO[d.placa], foto = LOCATARIO_FOTO_BY_PLACA[d.placa], ct = LOCATARIO_CONTATO_BY_PLACA[d.placa] || {};
     const fact = (icon, v, pend) => `<div class="${pend ? "pend" : ""}">${ic(icon)}${v}</div>`;
-    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemEvento ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
+    return `<tr class="detail ${estado}" data-detail="${d.placa}"><td colspan="${colunasVisiveis().length}"><div class="panel">\n    ${d.aprovadaViaSolicitacaoGestores ? `<div class="gest-banner"><span class="ic">${ic("clipboard", "live")}</span><div class="tx"><b>Origem: Solicitação de Gestores</b><span class="mot"><em>Motivo</em><strong>${esc(d.motivoSolicitacao)}</strong></span></div>\n      <a class="btn sm warn ai" href="${KANBAN_GESTORES_URL}${encodeURIComponent(d.placa)}" target="_blank" rel="noopener">Ver na Solicitação de Gestores ${ic("external")}</a></div>` : ""}\n    <div class="panel-grid">\n      <div class="who">\n        <div class="who-top">${foto ? `<img class="who-photo" src="${esc(foto.url)}" alt="Foto do locatário" loading="lazy" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}">` : `<div class="who-photo">${ic("user")}</div>`}\n          <div><div class="who-name">${esc(loc ? loc[0] : "Locatário não identificado")}</div></div></div>\n        <div class="facts">\n          ${fact("building", esc(loc ? loc[1] : "—"))}\n          ${fact("bike", mod ? `${esc(mod[0])} · ${mod[1]}` : "—")}\n          ${fact("idcard", ct.cpf ? esc(ct.cpf) : `${ehMx(d) ? "Documento" : "CPF"} <em>aguardando endpoint</em>`, !ct.cpf)}\n          ${fact("phone", ct.celular ? esc(ct.celular) : `Celular <em>aguardando endpoint</em>`, !ct.celular)}\n          ${fact("clock", `Último ping ${esc(ultimaAtualizacaoTexto(d.placa).split(" — ")[1] || "—")}`)}\n        </div>\n      </div>\n      ${fieldColHTML(d)}${recopsColHTML(d)}\n    </div>\n    ${dispBlockHTML(d)}\n    <div class="acts">\n      <div class="mon-wrap"><a class="btn act ai" style="--ac:var(--mottu-green);--af:#7CE38F" href="${monitorUrl(d.placa)}" target="_blank" rel="noopener" title="${d.evt_gps || d.evt_ping ? "Sinal ativo agora" : "Sem GPS/Ping ativo no momento"}">${mottuMark()}Ver no Monitor</a>${monitorMenuHTML(d)}</div>\n      <button class="btn act ai" style="--ac:var(--sig-cel);--af:var(--sig-cel-fg)" type="button" data-action="mymaps" data-placa="${d.placa}">${ic("mapPinPlus")}Criar MyMaps</button>\n      ${d.facematchTemEvento ? `<button class="btn act ai" style="--ac:var(--sig-face);--af:var(--sig-face-fg)" type="button" data-action="facematch" data-placa="${d.placa}">${ic("sFace")}Revisar FaceMatch</button>` : ""}\n      <span class="grow"></span>\n      <button class="btn pri solicit ai" type="button" data-action="solicitar" data-placa="${d.placa}">${ic("send")}Solicitar acionamento</button>\n    </div>\n  </div></td></tr>`;
   }
+  const DISP_CLASSES = {
+    A: {
+      leitura: "Possível laranja",
+      tag: "Possível fraude",
+      cls: "fraude",
+      peso: 5
+    },
+    B: {
+      leitura: "Locatário em celular de terceiro após a inadimplência",
+      tag: "Atenção",
+      cls: "",
+      peso: 4
+    },
+    C: {
+      leitura: "Rede de contas no mesmo celular",
+      tag: "Possível fraude",
+      cls: "fraude",
+      peso: 3
+    },
+    D: {
+      leitura: "Pessoa próxima",
+      tag: "Informativo",
+      cls: "fraco",
+      peso: 2
+    },
+    E: {
+      leitura: "Empréstimo pontual",
+      tag: "Informativo",
+      cls: "fraco",
+      peso: 1
+    }
+  };
+  const DISP_FORTES = new Set([ "A", "B", "C" ]);
+  const DISP_ANALISE = new Map;
+  const dispNome = s => String(s || "Conta sem nome").toLowerCase().replace(/(^|[\s'-])(\p{L})/gu, ((_, a, b) => a + b.toUpperCase()));
+  const dispPrimeiro = c => dispNome(c.nome).split(/\s+/)[0];
+  const dispFmt = (s, comHora = true) => {
+    const m = String(s || "").match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+    if (!m) return s ? String(s) : "";
+    const ano = m[1] !== String((new Date).getFullYear()) ? "/" + m[1].slice(2) : "";
+    return `${m[3]}/${m[2]}${ano}${comHora && m[4] ? ` ${m[4]}:${m[5]}` : ""}`;
+  };
+  const dispHoras = s => {
+    const t = Date.parse(String(s || "").slice(0, 16) + ":00-03:00");
+    return isNaN(t) ? null : Math.max(0, (Date.now() - t) / 36e5);
+  };
+  const dispInicioJanela = () => {
+    const d = new Date(Date.now() - 86 * 864e5);
+    return d.toISOString().slice(0, 10);
+  };
+  function dispDev(ap, info) {
+    const eu = {
+      ...ap.eu,
+      eu: true
+    }, ters = ap.contas || [], todas = [ eu, ...ters ];
+    const mom = (ap.momentos || []).filter((m => eu.papel === "secundaria" ? m.usuarioId === eu.usuarioId : m.usuarioId !== eu.usuarioId));
+    const dono = todas.find((c => c.papel === "principal")) || null;
+    const cross = eu.papel === "secundaria" ? [ eu ] : ters.filter((c => c.papel === "secundaria"));
+    const jan = dispInicioJanela();
+    const primeiroDe = c => {
+      const m = mom.find((x => x.usuarioId === c.usuarioId));
+      const p = m ? m.data : c.primeiro;
+      return p && p.slice(0, 10) > jan ? p : null;
+    };
+    const ultimoDe = c => {
+      const m = mom.filter((x => x.usuarioId === c.usuarioId)).pop();
+      return m ? m.data : c.ultimo || c.ultimaConexao || null;
+    };
+    const ultimoCruzado = cross.map(ultimoDe).filter(Boolean).sort().pop() || null;
+    const diasCross = Math.max(0, ...cross.map((c => c.dias || 0)));
+    const loc = info.inicioLocacao, inad = info.inicioInadimplencia;
+    const umAnoAntes = eu.cadastro ? new Date(Date.parse(eu.cadastro.slice(0, 10)) - 365 * 864e5).toISOString().slice(0, 10) : null;
+    const suspeito = ters.find((t => t.restricaoData && (eu.cadastro && t.restricaoData < eu.cadastro && t.restricaoData.slice(0, 10) >= umAnoAntes || eu.indicadoPor != null && t.usuarioId === eu.indicadoPor || t.papel === "secundaria" && loc && (primeiroDe(t) || "") >= loc)));
+    let classe = "E";
+    if (suspeito) classe = "A"; else if (eu.papel === "secundaria" && inad && (primeiroDe(eu) || "") >= inad) classe = "B"; else if ((ap.totalContas || todas.length) >= 4) classe = "C"; else if (diasCross >= 5) classe = "D";
+    let classeBase = classe;
+    if (classe === "A") classeBase = eu.papel === "secundaria" && inad && (primeiroDe(eu) || "") >= inad ? "B" : (ap.totalContas || todas.length) >= 4 ? "C" : diasCross >= 5 ? "D" : "E";
+    return {
+      ap,
+      info,
+      eu,
+      ters,
+      todas,
+      dono,
+      cross,
+      mom,
+      primeiroDe,
+      ultimoDe,
+      ultimoCruzado,
+      diasCross,
+      suspeito,
+      classe,
+      classeBase
+    };
+  }
+  function dispAnalisa(d) {
+    if (DISP_ANALISE.has(d.placa)) return DISP_ANALISE.get(d.placa);
+    const info = DISP_BY_PLACA[d.placa];
+    let r = null;
+    if (info && Array.isArray(info.aparelhos) && info.aparelhos.length) {
+      const devs = info.aparelhos.map((ap => dispDev(ap, info))).sort(((x, y) => DISP_CLASSES[y.classe].peso - DISP_CLASSES[x.classe].peso || String(y.ultimoCruzado || "").localeCompare(String(x.ultimoCruzado || ""))));
+      r = {
+        devs,
+        top: devs[0],
+        horas: dispHoras(devs[0].ultimoCruzado)
+      };
+    }
+    DISP_ANALISE.set(d.placa, r);
+    return r;
+  }
+  const horasDisp = d => {
+    const a = dispAnalisa(d);
+    return a ? a.horas : null;
+  };
+  function dispResumo(v) {
+    const L = dispPrimeiro(v.eu), D = v.dono ? dispPrimeiro(v.dono) : "outra conta", n = v.ap.totalContas || v.todas.length;
+    if (v.classe === "A") {
+      const t = v.suspeito, T = dispPrimeiro(t), partes = [ `${T} teve restrição (${t.restricaoMotivo || "restrição"}) em ${dispFmt(t.restricaoData, false)}` ];
+      if (v.eu.indicadoPor === t.usuarioId) partes.push(`indicou ${L}`);
+      if (t.papel === "principal") partes.push(`e é dono do celular que ${L} usou`); else if (v.eu.papel === "principal") partes.push(`e usou o celular de ${L}`); else partes.push(`e também usou o celular de ${D}, o mesmo que ${L} usou`);
+      return partes.join(", ") + ".";
+    }
+    if (v.classe === "B") return `Depois de ficar inadimplente, ${L} passou a entrar no celular de ${D} (${v.eu.dias} dias). A última lat/long é a pista mais recente de onde ${L} esteve.`;
+    if (v.classe === "C") return `${n} contas usaram o mesmo celular de ${v.eu.papel === "principal" ? L : D}.`;
+    if (v.eu.papel === "secundaria") return v.diasCross ? `${L} usou o celular de ${D} em ${v.diasCross} dia${v.diasCross > 1 ? "s" : ""} nos últimos 90 dias.` : `${L} já usou o celular de ${D} (último uso em ${dispFmt(v.ultimoCruzado, false) || "data desconhecida"}).`;
+    const T = v.cross.length === 1 ? dispPrimeiro(v.cross[0]) : `${v.cross.length} contas`;
+    return v.diasCross ? `${L} emprestou o celular para ${T} em ${v.diasCross} dia${v.diasCross > 1 ? "s" : ""} nos últimos 90 dias.` : `${L} já emprestou o celular para ${T} (último uso em ${dispFmt(v.ultimoCruzado, false) || "data desconhecida"}).`;
+  }
+  function dispLinhaTempo(v) {
+    const ev = [], L = dispPrimeiro(v.eu), D = v.dono ? dispPrimeiro(v.dono) : "outra conta";
+    for (const t of v.ters) if (t.restricaoData) ev.push({
+      data: t.restricaoData,
+      texto: `${dispPrimeiro(t)} recebe restrição (${t.restricaoMotivo || "restrição"})`,
+      quem: "ter",
+      uid: t.usuarioId
+    });
+    const ind = v.ters.find((t => t.usuarioId === v.eu.indicadoPor));
+    if (v.eu.cadastro) ev.push({
+      data: v.eu.cadastro,
+      texto: `${L} cria a conta${ind ? `, indicado por ${dispPrimeiro(ind)}` : ""}`,
+      quem: "loc"
+    });
+    if (v.info.inicioLocacao) ev.push({
+      data: v.info.inicioLocacao,
+      texto: `${L} inicia a locação`,
+      quem: "loc"
+    });
+    if (v.info.inicioInadimplencia) ev.push({
+      data: v.info.inicioInadimplencia,
+      texto: `${L} fica inadimplente`,
+      quem: "loc"
+    });
+    for (const c of v.cross) {
+      const p = v.primeiroDe(c), u = v.ultimoDe(c), quem = c.eu ? "loc" : "ter";
+      const frase = c.eu ? `${L} no celular de ${D}` : `${dispPrimeiro(c)} no celular de ${L}`, uid = c.eu ? v.dono && v.dono.usuarioId : c.usuarioId;
+      if (p) ev.push({
+        data: p,
+        texto: `1º acesso de ${frase}`,
+        quem,
+        forte: true,
+        uid
+      });
+      if (u && u !== p) ev.push({
+        data: u,
+        texto: `Último acesso de ${frase}`,
+        quem,
+        forte: true,
+        uid
+      });
+    }
+    return ev.filter((e => e.data)).sort(((a, b) => String(a.data).localeCompare(String(b.data)))).slice(-6);
+  }
+  const DISP_COR_LOC = "#A2FF00";
+  const DISP_TER_CORES = [ "#818CF8", "#38BDF8", "#FBBF24", "#2DD4BF", "#C084FC", "#FB923C" ];
+  function dispRelacoes(devs) {
+    const rels = new Map, jan = dispInicioJanela();
+    const add = (tipo, t, v, uso, mom, outros) => {
+      const k = tipo + ":" + t.usuarioId;
+      const r = rels.get(k) || {
+        tipo,
+        t,
+        dias: 0,
+        eventos: 0,
+        primeiro: null,
+        ultimo: null,
+        corte: false,
+        mom: [],
+        devs: [],
+        outros: new Map,
+        classe: "E"
+      };
+      r.dias += uso.dias || 0;
+      r.eventos += uso.eventos || 0;
+      const p = v.primeiroDe(uso), u = v.ultimoDe(uso);
+      if (p) {
+        if (!r.primeiro || p < r.primeiro) r.primeiro = p;
+      } else if (uso.dias) r.corte = true;
+      if (u && (!r.ultimo || u > r.ultimo)) r.ultimo = u;
+      r.mom.push(...mom);
+      r.devs.push(v);
+      for (const o of outros) r.outros.set(o.usuarioId, o);
+      const cl = v.classe === "A" && v.suspeito && v.suspeito.usuarioId !== t.usuarioId ? v.classeBase : v.classe;
+      if (DISP_CLASSES[cl].peso > DISP_CLASSES[r.classe].peso) r.classe = cl;
+      rels.set(k, r);
+    };
+    for (const v of devs) {
+      if (v.eu.papel === "principal") {
+        for (const t of v.ters.filter((c => c.papel === "secundaria"))) add("emp", t, v, t, v.mom.filter((m => m.usuarioId === t.usuarioId)), []);
+      } else {
+        const dono = v.dono || {
+          nome: "Conta não identificada",
+          usuarioId: "?" + v.ap.id,
+          papel: "principal"
+        };
+        add("uso", dono, v, v.eu, v.mom, v.ters.filter((t => t !== v.dono)));
+      }
+    }
+    const lista = [ ...rels.values() ];
+    for (const r of lista) {
+      r.mom.sort(((x, y) => String(x.data).localeCompare(String(y.data))));
+      r.corteData = jan;
+    }
+    return lista.sort(((x, y) => DISP_CLASSES[y.classe].peso - DISP_CLASSES[x.classe].peso || y.dias - x.dias || String(y.ultimo || "").localeCompare(String(x.ultimo || ""))));
+  }
+  function dispBlockHTML(d) {
+    const a = dispAnalisa(d);
+    if (!a) return "";
+    const devs = a.devs, rels = dispRelacoes(devs);
+    const eu = {
+      ...devs[0].eu,
+      dias: undefined
+    }, L = dispPrimeiro(eu);
+    const cores = new Map;
+    for (const r of rels) if (!cores.has(r.t.usuarioId)) cores.set(r.t.usuarioId, DISP_TER_CORES[cores.size % DISP_TER_CORES.length]);
+    for (const v of devs) for (const t of v.ters) if (!cores.has(t.usuarioId)) cores.set(t.usuarioId, "#8B93A7");
+    const cor = c => c.eu || c.usuarioId === eu.usuarioId ? DISP_COR_LOC : cores.get(c.usuarioId) || "#8B93A7";
+    const st = c => `style="--pc:${cor(c)}"`;
+    const nm = c => `<span class="dx-n dx-p" ${st(c)}>${esc(dispPrimeiro(c))}</span>`;
+    const av = c => `<span class="dx-av dx-p" ${st(c)}>${esc(iniciais(dispNome(c.nome)))}</span>`;
+    const pessoasNome = [ [ eu, dispNome(eu.nome) ], [ eu, L ] ];
+    for (const v of devs) for (const t of v.ters) {
+      pessoasNome.push([ t, dispNome(t.nome) ]);
+      pessoasNome.push([ t, dispPrimeiro(t) ]);
+    }
+    pessoasNome.sort(((x, y) => y[1].length - x[1].length));
+    const pinta = txt => {
+      const tk = [];
+      let h = esc(txt);
+      for (const [c, n] of pessoasNome) {
+        const e = esc(n);
+        if (!e || !h.includes(e)) continue;
+        h = h.split(e).join(`\0${tk.length}\0`);
+        tk.push(`<span class="dx-n dx-p" ${st(c)}>${e}</span>`);
+      }
+      return h.replace(/\u0000(\d+)\u0000/g, ((_, k) => tk[k]));
+    };
+    const selos = c => [ c.restrita ? `<em class="dx-sel rest">Restrita</em>` : c.restricaoData ? `<em class="dx-sel hist">Teve restrição · ${esc(c.restricaoMotivo || "")}</em>` : "", !c.eu && eu.indicadoPor === c.usuarioId ? `<em class="dx-sel ind">Indicou o locatário</em>` : "", !c.eu && c.indicadoPor === eu.usuarioId ? `<em class="dx-sel ind">Indicado pelo locatário</em>` : "", !c.eu && c.placa ? `<a class="dx-sel plc" href="#/geral" data-goto-placa="${esc(c.placa)}">Na carteira · ${esc(c.placa)}</a>` : "" ].join("");
+    const adm = c => c.eu || String(c.usuarioId).startsWith("?") ? "" : `<a class="btn sm ai dx-adm" href="https://admin-v3.mottu.cloud/customer-success/user-detail/${encodeURIComponent(c.usuarioId)}" target="_blank" rel="noopener">Admin${ic("external")}</a>`;
+    const tag = cl => {
+      const c = DISP_CLASSES[cl];
+      return `<span class="dx-tag sm ${c.cls}" title="${esc(c.leitura)}">${esc(c.leitura)}</span>`;
+    };
+    const quando = (s, corte, jan) => s ? esc(dispFmt(s)) : corte ? `antes de ${esc(dispFmt(jan, false))}` : "—";
+    const cardTer = r => {
+      const t = r.t, outros = [ ...r.outros.values() ];
+      return `<div class="dx-tc" ${st(t)}>\n      <div class="dx-tc-t">${av(t)}<div class="dx-tc-n"><b>${esc(dispNome(t.nome))}</b><span class="dx-sit">${esc(t.situacao || "—")}${r.devs.length > 1 ? ` · ${r.devs.length} celulares` : ""}</span>${selos(t) ? `<div>${selos(t)}</div>` : ""}</div>${tag(r.classe)}${adm(t)}</div>\n      ${r.dias ? `<div class="dx-tc-s">\n        <span class="dx-tc-q"><b>${r.eventos}</b> acesso${r.eventos === 1 ? "" : "s"} em <b>${r.dias}</b> dia${r.dias === 1 ? "" : "s"} distinto${r.dias === 1 ? "" : "s"}</span>\n        <span><small>Primeiro acesso</small>${quando(r.primeiro, r.corte, r.corteData)}</span>\n        <span><small>Último acesso</small>${quando(r.ultimo)}</span>\n      </div>` : `<div class="dx-tc-s vazio">Sem acesso nos últimos 90 dias${r.ultimo ? ` · último em ${esc(dispFmt(r.ultimo, false))}` : ""}</div>`}\n      ${outros.length ? `<div class="dx-rl-outros"><small>Também usaram este celular</small>${outros.slice(0, 6).map((o => `<span class="dx-chip-p">${av(o)}${nm(o)}${o.placa ? ` <em>${esc(o.placa)}</em>` : ""}${o.restrita ? ` <em class="r">restrita</em>` : ""}</span>`)).join("")}${outros.length > 6 ? `<span class="dx-mais">+${outros.length - 6}</span>` : ""}</div>` : ""}\n    </div>`;
+    };
+    const bloco = (tipo, rotulo) => {
+      const rs = rels.filter((r => r.tipo === tipo));
+      if (!rs.length) return "";
+      return `<div class="dx-rs">\n      <div class="dx-rs-l">${av(eu)}<div><small>Locatário</small>${nm(eu)}</div></div>\n      <div class="dx-rs-a"><span>${rotulo}</span><svg viewBox="0 0 120 14" preserveAspectRatio="none"><path d="M2 7h112M106 2l8 5-8 5"/></svg><em>${rs.length} pessoa${rs.length > 1 ? "s" : ""}</em></div>\n      <div class="dx-rs-r">${rs.map(cardTer).join("")}</div>\n    </div>`;
+    };
+    const contLL = {};
+    for (const r of rels) for (const m of r.mom) {
+      const k = (+m.lat).toFixed(3) + "," + (+m.lon).toFixed(3);
+      contLL[k] = (contLL[k] || 0) + 1;
+    }
+    const mapa = m => `<a class="dx-geo" href="https://www.google.com/maps?q=${encodeURIComponent(m.lat + "," + m.lon)}" target="_blank" rel="noopener">${ic("pin")}${(+m.lat).toFixed(4)}, ${(+m.lon).toFixed(4)}</a>`;
+    const lanes = rels.filter((r => r.mom.length)).map((r => {
+      const quemUsa = r.tipo === "emp" ? r.t : eu, donoCel = r.tipo === "emp" ? eu : r.t, ms = r.mom.slice(-8);
+      return `<div class="dx-lane" ${st(r.t)}>\n      <div class="dx-lane-h">${av(quemUsa)}<span>${nm(quemUsa)} no celular de ${nm(donoCel)}</span><em>${r.mom.length > 8 ? `últimos 8 de ${r.mom.length} dias` : `${r.mom.length} dia${r.mom.length > 1 ? "s" : ""}`}</em></div>\n      <div class="dx-lane-l">${ms.map((m => {
+        const rep = contLL[(+m.lat).toFixed(3) + "," + (+m.lon).toFixed(3)] > 1;
+        return `<div class="dx-lm ${rep ? "rep" : ""}"><b>${esc(dispFmt(m.data))}</b>${mapa(m)}<small>${m.n} acesso${m.n > 1 ? "s" : ""}${rep ? " · local repetido" : ""}</small></div>`;
+      })).join("")}</div>\n    </div>`;
+    })).join("");
+    const ultimo = rels.map((r => r.ultimo)).filter(Boolean).sort().pop();
+    const emp = `<div class="dx-emp"><div class="dx-emp-h">${ic("pin")}<b>Quando o celular de cada um foi usado</b><span>lat/long do 1º acesso de cada dia · do mais antigo ao mais recente</span></div>\n    ${lanes || `<div class="dx-emp-vazio">Sem acessos cruzados nos últimos 90 dias${ultimo ? `. Último uso compartilhado registrado em ${esc(dispFmt(ultimo, false))}.` : "."}</div>`}</div>`;
+    const vistos = new Set, tl = [];
+    for (const v of devs) for (const e of dispLinhaTempo(v)) {
+      const k = e.data.slice(0, 16) + e.texto;
+      if (vistos.has(k)) continue;
+      vistos.add(k);
+      tl.push(e);
+    }
+    tl.sort(((x, y) => String(x.data).localeCompare(String(y.data))));
+    const tlSel = tl.filter((e => !tl.some((o => o !== e && o.data === e.data && o.texto.length > e.texto.length && o.texto.startsWith(e.texto))))).slice(-7);
+    const tlHTML = tlSel.length >= 2 ? `<div class="dx-tl">${tlSel.map((e => `<div class="dx-tl-i ${e.forte ? "forte" : ""}" ${e.quem === "loc" && !e.uid ? st(eu) : `style="--pc:${e.uid != null ? cor({
+      usuarioId: e.uid
+    }) : DISP_COR_LOC}"`}><span class="dot"></span><b>${esc(dispFmt(e.data, false))}</b><span>${pinta(e.texto)}</span></div>`)).join("")}</div>` : "";
+    const top = a.top, cl = DISP_CLASSES[top.classe];
+    const usou = rels.filter((r => r.tipo === "uso")), empr = rels.filter((r => r.tipo === "emp"));
+    const lista = rs => rs.map((r => dispPrimeiro(r.t))).join(rs.length > 2 ? ", " : " e ").replace(/, ([^,]*)$/, " e $1");
+    const partes = [];
+    if (empr.length) partes.push(`${L} emprestou o celular para ${lista(empr)}`);
+    if (usou.length) partes.push(`${L} usou o celular de ${lista(usou)}`);
+    const resumo = partes.join("; ") + "." + (DISP_FORTES.has(top.classe) ? " " + dispResumo(top) : "");
+    const legenda = [ `<span ${st(eu)}><i></i>${esc(L)} · locatário</span>`, ...[ ...new Map(rels.map((r => [ r.t.usuarioId, r.t ]))).values() ].map((t => `<span ${st(t)}><i></i>${esc(dispPrimeiro(t))}</span>`)) ].join("");
+    return `<div class="dx"><div class="dx-h"><span class="dx-ic">${ic("sDisp")}</span><div><b>Aparelho compartilhado · ${esc(cl.leitura)}</b><span>${pinta(resumo)}</span></div><span class="dx-tag ${cl.cls}">${cl.tag}</span></div>\n    <div class="dx-leg">${legenda}</div>\n    ${bloco("emp", "Emprestou o celular")}\n    ${bloco("uso", "Usou o celular de")}\n    ${emp}${tlHTML}</div>`;
+  }
+  document.addEventListener("click", (e => {
+    const g = e.target.closest("[data-goto-placa]");
+    if (!g) return;
+    e.preventDefault();
+    const placa = g.dataset.gotoPlaca, inp = $("#searchInput");
+    if (inp) {
+      inp.value = placa;
+      inp.dispatchEvent(new Event("input"));
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }));
   const disclosureAberto = new Set;
   function timelineHTML(id, label, itens) {
     const aberto = disclosureAberto.has(id);
@@ -3100,7 +3560,7 @@ async function __iniciarAppComDados(__payload) {
     const opt = (k, lb, c, icon, ativo, n) => `<button class="opt ai" type="button" style="--sc:${c}" data-opt-prio="${k}" aria-pressed="${ativo}"><span class="oi">${ic(icon)}</span><b class="olb">${lb}</b><span class="n pn">(${n})</span>${ic("check", "ck")}</button>`;
     return `<div class="sf-head">Filtrar por prioridade</div><div class="menu-group"><div class="menu-grid">${[ [ "alta", "Alta", "var(--status-critical)", "flame" ], [ "atencao", "Média", "var(--status-warning)", "badge" ], [ "normal", "Baixa", "var(--status-normal)", "gauge" ] ].map((([k, lb, c, icon]) => opt(k, lb, c, icon, state.prioridades.includes(k), l.filter((d => d.prioridade === k)).length))).join("")}</div></div>\n    <div class="menu-group"><div class="menu-grid">${opt("__nat__", "Sem atuação", "var(--status-info)", "hourglass", state.semAtuacao, l.filter((d => d.ainda_nao_atuada)).length)}${opt("__150__", `Chegam a ${LIMITE_DIAS_CARTEIRA}`, "var(--status-critical)", "timer", state.vence150, l.filter(vence150).length)}</div></div>\n    <div class="menu-foot"><span>Prioridades combinam com OU · os de baixo restringem</span><button class="link-btn" type="button" data-opt-prio="__clear__">Limpar</button></div>`;
   }
-  const SINAIS_MENU_ORDEM = [ "multa", "cbd", "ping", "cel", "ticket", "bo", "face" ];
+  const SINAIS_MENU_ORDEM = [ "multa", "cbd", "ping", "cel", "ticket", "bo", "disp", "face" ];
   function sinaisMenuHTML() {
     const l = escopo();
     const itens = SINAIS_MENU_ORDEM.map((k => SINAIS_FILTRO.find((s => s.key === k)))).map((s => {
