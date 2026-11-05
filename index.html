@@ -1702,11 +1702,12 @@ async function __iniciarAppComDados(__payload) {
     } else if (k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores) t = "Automática — placa entrou via Solicitação de Gestores";
     return t ? `${t}. Clique para retirar.` : "";
   };
+  const temBo = d => !!BO_FURTO_BY_PLACA[d.placa];
   const comAuto = (d, lista, disp = dispensadas()) => {
     const out = lista.filter((t => !TAGS_AUTO.includes(t)));
     for (const k of cardTagsDe(d, disp)) if (!out.includes(k)) out.push(k);
     if (d.naoDesvinculada && !autoDispensada(d, "nao_desvinculada", disp) && !out.includes("nao_desvinculada")) out.push("nao_desvinculada");
-    return out;
+    return temBo(d) ? out.filter((t => t !== "aguardando_bo")) : out;
   };
   const acionamentoEncerrouTag = (d, marcadaEm) => {
     const c = cardInfo(d), a = c && c.acionamento;
@@ -1751,6 +1752,12 @@ async function __iniciarAppComDados(__payload) {
         atuais = comBo;
         tags[d.placa] = atuais;
         mudou = true;
+      }
+      if (temBo(d) && atuais.includes("aguardando_bo")) {
+        atuais = atuais.filter((t => t !== "aguardando_bo"));
+        tags[d.placa] = atuais;
+        mudou = true;
+        if (quando[d.placa]) delete quando[d.placa].aguardando_bo;
       }
       d.tags = comAuto(d, atuais, disp);
     }));
@@ -3747,8 +3754,9 @@ async function __iniciarAppComDados(__payload) {
   function rowTagsMenuHTML(placa) {
     const d = DATA_BY_PLACA[placa], atuais = d.tags || [];
     const grupos = TAG_CATEGORIAS.map((cat => `<div class="tf-cluster"><div class="tf-cat">${cat}</div><div class="tf-box">${Object.entries(TAG_OPCOES).filter((([, t]) => t.categoria === cat)).map((([k, t]) => {
-      const semOrigem = k === "nao_desvinculada" && !d.naoDesvinculada;
-      const titulo = semOrigem ? "Automática — entra quando há ocorrência Recuperada e a moto segue vinculada ao locatário" : tagAuto(d, k) ? atuais.includes(k) ? tituloTagAuto(d, k) : "Automática, retirada por você nesta placa. Clique para voltar." : "";
+      const comBoJa = k === "aguardando_bo" && temBo(d);
+      const semOrigem = k === "nao_desvinculada" && !d.naoDesvinculada || comBoJa;
+      const titulo = comBoJa ? "A placa já tem B.O no sistema — Aguardando BO sai automaticamente" : semOrigem ? "Automática — entra quando há ocorrência Recuperada e a moto segue vinculada ao locatário" : tagAuto(d, k) ? atuais.includes(k) ? tituloTagAuto(d, k) : "Automática, retirada por você nesta placa. Clique para voltar." : "";
       return `<button class="tf-chip" type="button" data-rowtag="${k}" data-placa="${placa}" aria-pressed="${atuais.includes(k)}" ${semOrigem ? "disabled" : ""} ${titulo ? `title="${esc(titulo)}"` : ""}><span>${TAG_ICONE[k] || ""}</span>${t.label}${ic("check", "ck")}</button>`;
     })).join("")}</div></div>`)).join("");
     return `<div class="sf-head">Tags · ${placa}</div>${grupos}<button class="tf-clear" type="button" data-rowtag="__clear__" data-placa="${placa}">${ic("x")}Remover todas</button>`;
