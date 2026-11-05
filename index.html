@@ -1667,41 +1667,53 @@ async function __iniciarAppComDados(__payload) {
     const c = cardInfo(d);
     return !!(c && c.acionamento && c.acionamento.situacao === "Ativo");
   };
-  const cardTagsDe = d => {
+  const assinaturaAuto = (d, k) => {
+    const c = cardInfo(d);
+    if (c && c.tags && c.tags[k] && TAG_OPCOES[k]) return `card:${c.ocorrenciaId}:${c.tags[k].desde || ""}`;
+    if (k === "em_acionamento" && acionamentoAtivo(d)) return `ac:${c.ocorrenciaId}:${c.acionamento.criado || ""}`;
+    if (k === "nao_desvinculada" && d.naoDesvinculada) return `nd:${d.naoDesvinculada.ocorrenciaId || ""}:${d.naoDesvinculada.data || ""}`;
+    if (k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores) return "gestores";
+    return null;
+  };
+  const dispensadas = () => store.get("recops_tags_dispensadas", {});
+  const autoDispensada = (d, k, disp = dispensadas()) => {
+    const sig = assinaturaAuto(d, k);
+    return !!sig && (disp[d.placa] || {})[k] === sig;
+  };
+  const tagAuto = (d, k) => !!assinaturaAuto(d, k);
+  const tagTravada = () => false;
+  const cardTagsDe = (d, disp = dispensadas()) => {
     const c = cardInfo(d), ks = c && c.tags ? Object.keys(c.tags).filter((k => TAG_OPCOES[k])) : [];
     if (acionamentoAtivo(d) && !ks.includes("em_acionamento")) ks.push("em_acionamento");
-    return ks;
+    return ks.filter((k => !autoDispensada(d, k, disp)));
   };
-  const tagTravada = (d, k) => k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores || TAGS_AUTO.includes(k) || cardTagsDe(d).includes(k);
   const tituloTagAuto = (d, k) => {
-    if (k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores) return "Aplicada automaticamente — placa entrou via Solicitação de Gestores";
-    if (k === "nao_desvinculada") {
-      const n = d.naoDesvinculada || {};
-      return `Aplicada automaticamente — ocorrência${n.ocorrenciaId ? ` #${n.ocorrenciaId}` : ""} Recuperada${n.data ? ` em ${n.data}` : ""} e a moto segue vinculada ao locatário`;
-    }
+    let t = "";
     const c = cardInfo(d);
     if (c && c.tags && c.tags[k]) {
-      const t = c.tags[k];
-      return `Vem do card${c.ocorrenciaId ? ` #${c.ocorrenciaId}` : ""} do Monitor — tag "${t.tag}"${t.desde ? ` desde ${fmtCardData(t.desde)}` : ""}. Sai quando for retirada do card.`;
-    }
-    if (k === "em_acionamento" && acionamentoAtivo(d)) {
+      const x = c.tags[k];
+      t = `Vem do card${c.ocorrenciaId ? ` #${c.ocorrenciaId}` : ""} do Monitor — tag "${x.tag}"${x.desde ? ` desde ${fmtCardData(x.desde)}` : ""}`;
+    } else if (k === "em_acionamento" && acionamentoAtivo(d)) {
       const a = c.acionamento;
-      return `Automática — acionamento ativo no card${c.ocorrenciaId ? ` #${c.ocorrenciaId}` : ""}${a.empresa ? ` · ${a.empresa}` : ""}${a.criado ? ` desde ${fmtCardData(a.criado)}` : ""}`;
-    }
-    return "";
+      t = `Automática — acionamento ativo no card${c.ocorrenciaId ? ` #${c.ocorrenciaId}` : ""}${a.empresa ? ` · ${a.empresa}` : ""}${a.criado ? ` desde ${fmtCardData(a.criado)}` : ""}`;
+    } else if (k === "nao_desvinculada" && d.naoDesvinculada) {
+      const n = d.naoDesvinculada;
+      t = `Automática — ocorrência${n.ocorrenciaId ? ` #${n.ocorrenciaId}` : ""} Recuperada${n.data ? ` em ${n.data}` : ""} e a moto segue vinculada ao locatário`;
+    } else if (k === "solicitacao_gestores" && d.aprovadaViaSolicitacaoGestores) t = "Automática — placa entrou via Solicitação de Gestores";
+    return t ? `${t}. Clique para retirar.` : "";
   };
-  const comAuto = (d, lista) => {
+  const comAuto = (d, lista, disp = dispensadas()) => {
     const out = lista.filter((t => !TAGS_AUTO.includes(t)));
-    for (const k of cardTagsDe(d)) if (!out.includes(k)) out.push(k);
-    if (d.naoDesvinculada && !out.includes("nao_desvinculada")) out.push("nao_desvinculada");
+    for (const k of cardTagsDe(d, disp)) if (!out.includes(k)) out.push(k);
+    if (d.naoDesvinculada && !autoDispensada(d, "nao_desvinculada", disp) && !out.includes("nao_desvinculada")) out.push("nao_desvinculada");
     return out;
   };
   const acionamentoEncerrouTag = (d, marcadaEm) => {
     const c = cardInfo(d), a = c && c.acionamento;
     return !!(a && a.situacao === "Finalizado" && a.finalizado && (!marcadaEm || a.finalizado.slice(0, 16) >= marcadaEm.slice(0, 16)));
   };
-  function regraAguardandoBo(d, atuais, quando, regra) {
-    if (!comAuto(d, atuais).includes("com_terceiro") || BO_FURTO_BY_PLACA[d.placa] || atuais.includes("aguardando_bo") || (regra[d.placa] || {}).aguardando_bo) return null;
+  function regraAguardandoBo(d, atuais, quando, regra, disp) {
+    if (!comAuto(d, atuais, disp).includes("com_terceiro") || BO_FURTO_BY_PLACA[d.placa] || atuais.includes("aguardando_bo") || (regra[d.placa] || {}).aguardando_bo) return null;
     const agora = agoraSP();
     regra[d.placa] = {
       ...regra[d.placa] || {},
@@ -1714,7 +1726,7 @@ async function __iniciarAppComDados(__payload) {
     return [ ...atuais, "aguardando_bo" ];
   }
   function aplicarTags() {
-    const tags = lerTags(), quando = store.get("recops_tags_quando", {}), regra = store.get("recops_tags_regra", {});
+    const tags = lerTags(), quando = store.get("recops_tags_quando", {}), regra = store.get("recops_tags_regra", {}), disp = dispensadas();
     let mudou = false;
     DATA.forEach((d => {
       let atuais = tags[d.placa] || [];
@@ -1723,7 +1735,7 @@ async function __iniciarAppComDados(__payload) {
         tags[d.placa] = atuais;
         mudou = true;
       }
-      if (d.aprovadaViaSolicitacaoGestores && !atuais.includes("solicitacao_gestores")) {
+      if (d.aprovadaViaSolicitacaoGestores && !atuais.includes("solicitacao_gestores") && !autoDispensada(d, "solicitacao_gestores", disp)) {
         atuais = [ ...atuais, "solicitacao_gestores" ];
         tags[d.placa] = atuais;
         mudou = true;
@@ -1734,13 +1746,13 @@ async function __iniciarAppComDados(__payload) {
         mudou = true;
         if (quando[d.placa]) delete quando[d.placa].em_acionamento;
       }
-      const comBo = regraAguardandoBo(d, atuais, quando, regra);
+      const comBo = regraAguardandoBo(d, atuais, quando, regra, disp);
       if (comBo) {
         atuais = comBo;
         tags[d.placa] = atuais;
         mudou = true;
       }
-      d.tags = comAuto(d, atuais);
+      d.tags = comAuto(d, atuais, disp);
     }));
     if (mudou) {
       store.set("recops_tags", tags);
@@ -1750,30 +1762,50 @@ async function __iniciarAppComDados(__payload) {
   }
   function toggleTag(placa, key) {
     const d = DATA_BY_PLACA[placa];
-    if (tagTravada(d, key)) return;
-    const tags = lerTags(), quando = store.get("recops_tags_quando", {});
-    const atuais = (tags[placa] || []).filter((t => !TAGS_AUTO.includes(t)));
-    const tira = atuais.includes(key);
-    tags[placa] = tira ? atuais.filter((t => t !== key)) : [ ...atuais, key ];
+    const tags = lerTags(), quando = store.get("recops_tags_quando", {}), disp = dispensadas();
+    let atuais = (tags[placa] || []).filter((t => !TAGS_AUTO.includes(t)));
+    const sig = assinaturaAuto(d, key), visivel = (d.tags || []).includes(key);
     quando[placa] = quando[placa] || {};
-    if (tira) delete quando[placa][key]; else quando[placa][key] = agoraSP();
-    const regra = store.get("recops_tags_regra", {}), comBo = regraAguardandoBo(d, tags[placa], quando, regra);
+    if (visivel) {
+      atuais = atuais.filter((t => t !== key));
+      delete quando[placa][key];
+      if (sig) disp[placa] = {
+        ...disp[placa] || {},
+        [key]: sig
+      };
+    } else if (sig && (disp[placa] || {})[key] === sig) {
+      delete disp[placa][key];
+    } else if (key !== "nao_desvinculada") {
+      atuais = [ ...atuais, key ];
+      quando[placa][key] = agoraSP();
+    }
+    tags[placa] = atuais;
+    const regra = store.get("recops_tags_regra", {}), comBo = regraAguardandoBo(d, atuais, quando, regra, disp);
     if (comBo) {
       tags[placa] = comBo;
       store.set("recops_tags_regra", regra);
     }
     store.set("recops_tags", tags);
     store.set("recops_tags_quando", quando);
-    d.tags = comAuto(d, tags[placa]);
+    store.set("recops_tags_dispensadas", disp);
+    d.tags = comAuto(d, tags[placa], disp);
   }
   function limparTags(placa) {
     const d = DATA_BY_PLACA[placa];
-    const tags = lerTags(), quando = store.get("recops_tags_quando", {});
-    tags[placa] = d.aprovadaViaSolicitacaoGestores ? [ "solicitacao_gestores" ] : [];
+    const tags = lerTags(), quando = store.get("recops_tags_quando", {}), disp = dispensadas();
+    for (const k of d.tags || []) {
+      const sig = assinaturaAuto(d, k);
+      if (sig) disp[placa] = {
+        ...disp[placa] || {},
+        [k]: sig
+      };
+    }
+    tags[placa] = [];
     delete quando[placa];
     store.set("recops_tags", tags);
     store.set("recops_tags_quando", quando);
-    d.tags = comAuto(d, tags[placa]);
+    store.set("recops_tags_dispensadas", disp);
+    d.tags = comAuto(d, tags[placa], disp);
   }
   const $ = s => document.querySelector(s);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, (c => ({
@@ -2293,7 +2325,7 @@ async function __iniciarAppComDados(__payload) {
     const pills = (d.tags || []).map((k => {
       const t = TAG_OPCOES[k];
       if (!t) return "";
-      const lock = tagTravada(d, k);
+      const lock = tagAuto(d, k);
       return `<span class="tag ${lock ? "lock" : ""}" style="--tc:${t.cor}" ${lock ? `title="${esc(tituloTagAuto(d, k))}"` : ""}><span class="te">${TAG_ICONE[k] || ""}</span>${esc(t.label)}</span>`;
     })).join("");
     return `<div class="tags" data-tags="${d.placa}">${pills}<button class="tag-add ai" type="button" data-tagmenu="${d.placa}" title="Editar tags" aria-label="Editar tags de ${d.placa}">${ic(pills ? "tag" : "plus")}</button></div>`;
@@ -3715,8 +3747,9 @@ async function __iniciarAppComDados(__payload) {
   function rowTagsMenuHTML(placa) {
     const d = DATA_BY_PLACA[placa], atuais = d.tags || [];
     const grupos = TAG_CATEGORIAS.map((cat => `<div class="tf-cluster"><div class="tf-cat">${cat}</div><div class="tf-box">${Object.entries(TAG_OPCOES).filter((([, t]) => t.categoria === cat)).map((([k, t]) => {
-      const travada = tagTravada(d, k);
-      return `<button class="tf-chip" type="button" data-rowtag="${k}" data-placa="${placa}" aria-pressed="${atuais.includes(k)}" ${travada ? `disabled title="${esc(k === "nao_desvinculada" && !d.naoDesvinculada ? "Automática — entra quando há ocorrência Recuperada e a moto segue vinculada ao locatário" : tituloTagAuto(d, k))}"` : ""}><span>${TAG_ICONE[k] || ""}</span>${t.label}${ic("check", "ck")}</button>`;
+      const semOrigem = k === "nao_desvinculada" && !d.naoDesvinculada;
+      const titulo = semOrigem ? "Automática — entra quando há ocorrência Recuperada e a moto segue vinculada ao locatário" : tagAuto(d, k) ? atuais.includes(k) ? tituloTagAuto(d, k) : "Automática, retirada por você nesta placa. Clique para voltar." : "";
+      return `<button class="tf-chip" type="button" data-rowtag="${k}" data-placa="${placa}" aria-pressed="${atuais.includes(k)}" ${semOrigem ? "disabled" : ""} ${titulo ? `title="${esc(titulo)}"` : ""}><span>${TAG_ICONE[k] || ""}</span>${t.label}${ic("check", "ck")}</button>`;
     })).join("")}</div></div>`)).join("");
     return `<div class="sf-head">Tags · ${placa}</div>${grupos}<button class="tf-clear" type="button" data-rowtag="__clear__" data-placa="${placa}">${ic("x")}Remover todas</button>`;
   }
