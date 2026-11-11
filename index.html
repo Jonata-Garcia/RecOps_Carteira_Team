@@ -948,6 +948,8 @@ tr.row.flip.out{ transition-duration:.32s; }
 .av.mx{ position:relative; overflow:hidden; padding:0; background:#fff !important; color:transparent; box-shadow:0 0 0 1.5px rgba(255,255,255,.85), 0 0 16px rgba(206,17,38,.35); }
 .av.mx svg{ position:absolute; inset:0; width:100%; height:100%; }
 .overview.com-mx{ grid-template-columns:repeat(5, minmax(0,1fr)); }
+.mov-mx{ display:inline-flex; align-items:center; gap:6px; margin-right:10px; padding:2px 10px 2px 4px; border-radius:999px; background:rgba(206,17,38,.12); color:#CE1126; font-weight:600; font-size:12px; }
+.mov-mx .flag-mx svg{ width:18px; height:12px; }
 button.ov-go{ border:0; background:none; padding:0; font:inherit; font-size:12px; cursor:pointer; }
 button.ov-go:hover{ color:var(--text-primary); }
 .plate.mx .plate-bar{ background:linear-gradient(180deg, #006847 0 33%, #fff 33% 66%, #CE1126 66%); }
@@ -1633,6 +1635,7 @@ const I18N_D = {
 "Nenhuma placa entrou na carteira.": "Ninguna placa entró a la cartera.",
 "Nenhuma saída por mudança de situação.": "Ninguna salida por cambio de situación.",
 "Nenhuma saída por 150 dias neste mês.": "Ninguna salida por 150 días en este mes.",
+"Só México": "Solo México",
 "Entrada na carteira por aprovação de solicitação de gestores.": "Entrada a la cartera por aprobación de solicitud de gestores.",
 "Entrou em Apropriação Indébita com menos de 150 dias de inadimplência.": "Entró en Apropiación indebida con menos de 150 días de mora.",
 "Apropriação Indébita": "Apropiación indebida",
@@ -2782,6 +2785,8 @@ async function __iniciarAppComDados(__payload) {
     const a = carteiraAtual();
     return a ? l.filter((x => a.ufs.includes(x.uf))) : l;
   };
+  const soMexico = () => !carteiraAtual() && state.ufs.length > 0 && state.ufs.every(ehMxUf);
+  const movEscopo = l => soMexico() ? l.filter((x => ehMxUf(x.uf))) : noEscopo(l);
   const BR_UFS = [ "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO" ];
   const MX_UF_SET = new Set([ "AGS", "BC", "BCS", "CAMP", "CHIS", "CHIH", "CDMX", "COAH", "COL", "DGO", "GTO", "GRO", "HGO", "JAL", "MEX", "MICH", "MOR", "NAY", "NL", "OAX", "PUE", "QRO", "QROO", "SLP", "SIN", "SON", "TAB", "TAMS", "TLAX", "VER", "YUC", "ZAC" ].concat(typeof MX_UFS_DATA !== "undefined" && Array.isArray(MX_UFS_DATA) ? MX_UFS_DATA : []));
   const ehMxUf = uf => MX_UF_SET.has(uf);
@@ -3761,6 +3766,7 @@ async function __iniciarAppComDados(__payload) {
     ufPainel.aberto = "mx";
     renderUfChips();
     renderTable();
+    renderMov();
     const tb = document.getElementById("toolbar");
     if (tb) scrollTo({
       top: tb.getBoundingClientRect().top + scrollY - 90,
@@ -4349,7 +4355,8 @@ async function __iniciarAppComDados(__payload) {
     d150: []
   };
   function renderMov() {
-    let ent = noEscopo(ENTRADAS), d150 = noEscopo(SAIDAS_150_HIST || SAIDAS.filter((s => s.motivo === "150dias")));
+    const mx = soMexico();
+    let ent = movEscopo(ENTRADAS), d150 = movEscopo(SAIDAS_150_HIST || SAIDAS.filter((s => s.motivo === "150dias")));
     const saiu150Em = {};
     for (const s of SAIDAS_150_HIST || SAIDAS.filter((x => x.motivo === "150dias"))) {
       const d = s.data_evento || isoDeBR(s.data_saida);
@@ -4359,8 +4366,8 @@ async function __iniciarAppComDados(__payload) {
       const d150 = saiu150Em[s.placa], d = s.data_evento || isoDeBR(s.data_saida);
       return !!d150 && (!d || d >= d150);
     };
-    const sit = noEscopo(SAIDAS).filter((s => s.motivo !== "150dias" && !jaSaiuPor150(s)));
-    const entEx = MOV_EXEMPLOS && !ent.length, d150Ex = MOV_EXEMPLOS && !d150.length;
+    const sit = movEscopo(SAIDAS).filter((s => s.motivo !== "150dias" && !jaSaiuPor150(s)));
+    const entEx = MOV_EXEMPLOS && !mx && !ent.length, d150Ex = MOV_EXEMPLOS && !mx && !d150.length;
     if (entEx) ent = MOV_EXEMPLO.entradas;
     if (d150Ex) d150 = MOV_EXEMPLO.d150;
     const selo = ex => ex ? `<span class="stk-ex" title="Cards de exemplo: não há dados reais desta seção no snapshot">exemplo</span>` : "";
@@ -4370,7 +4377,7 @@ async function __iniciarAppComDados(__payload) {
       month: "long",
       year: "numeric"
     }).format(new Date);
-    $("#movSub").textContent = `Atualizado em ${new Date(DASHBOARD_UPDATED_AT).toLocaleDateString("pt-BR")}`;
+    $("#movSub").innerHTML = (mx ? `<span class="mov-mx">${flagMx()}Só México</span>` : "") + `Atualizado em ${new Date(DASHBOARD_UPDATED_AT).toLocaleDateString("pt-BR")}`;
     const head = (placa, dias, uf, data) => `<div class="mv-head"><b class="mv-placa">${esc(placa)}</b><span class="mv-dias">${diasInad(dias)}</span><span class="uf">${esc(uf || "")}${ufMxTag(uf)}</span><span class="mv-dt">${esc(data)}</span></div>`;
     const motivo = (titulo, texto) => `<div class="mv-mot"><small>Motivo${titulo ? ` · <b>${esc(titulo)}</b>` : ""}</small><p>${esc(texto)}</p></div>`;
     const fluxo = (de, para) => `<div class="mv-flow"><span class="de">${esc(de || "Apropriação Indébita")}</span>${ic("arrowRight")}<span class="para">${esc(para || "—")}</span></div>`;
@@ -5406,6 +5413,7 @@ async function __iniciarAppComDados(__payload) {
       if (k.startsWith("__pais__")) selecionarPais(k.slice(8)); else state.ufs = k === "__all__" ? [] : state.ufs.includes(k) ? state.ufs.filter((x => x !== k)) : [ ...state.ufs, k ];
       renderUfChips();
       renderTable();
+      renderMov();
       return;
     }
     if (t.closest("[data-ov-mx]")) {
