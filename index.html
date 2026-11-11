@@ -1228,6 +1228,748 @@ body.gate-on{ overflow:hidden; }
 <button class="fab fab-top" id="fabTop" type="button" aria-label="Voltar ao topo"><span class="li" data-icon="arrowUp"></span></button>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script id="i18n-es">
+const I18N_D = {
+"Carteira RecOps — Command Center": "Cartera RecOps — Command Center",
+"Carteira RecOps — Team": "Cartera RecOps — Team",
+"Carteira RecOps — visão geral": "Cartera RecOps — vista general",
+"Acesso restrito à rede/VPN da Mottu. Digite a senha do time para entrar.": "Acceso restringido a la red/VPN de Mottu. Escribe la contraseña del equipo para entrar.",
+"Senha": "Contraseña",
+"Entrar": "Entrar",
+"Validando acesso": "Validando acceso",
+"Conectando ao n8n pela VPN": "Conectando a n8n por la VPN",
+"Abrindo a carteira": "Abriendo la cartera",
+"Montando o painel": "Armando el panel",
+"Digite a senha.": "Escribe la contraseña.",
+"Senha incorreta.": "Contraseña incorrecta.",
+"Não foi possível falar com o n8n. Confira se está na VPN da Mottu. Se estiver, o bloqueio pode ser de CORS (Allowed Origins do webhook).": "No fue posible comunicarse con n8n. Verifica que estés en la VPN de Mottu. Si lo estás, el bloqueo puede ser de CORS (Allowed Origins del webhook).",
+"O n8n respondeu sem um JSON válido. Veja a execução do webhook no n8n.": "n8n respondió sin un JSON válido. Revisa la ejecución del webhook en n8n.",
+"O n8n respondeu sem dados. O cache do OneDrive pode estar vazio ou corrompido.": "n8n respondió sin datos. La caché de OneDrive puede estar vacía o dañada.",
+"Carteiras por analista": "Carteras por analista",
+"Indicadores": "Indicadores",
+"Buscar placa": "Buscar placa",
+"Limpar busca": "Limpiar búsqueda",
+"Prioridades": "Prioridades",
+"Tags": "Etiquetas",
+"Sinais": "Señales",
+"Limpar filtros": "Limpiar filtros",
+"Limpar": "Limpiar",
+"Movimentação da carteira": "Movimiento de la cartera",
+"Voltar ao topo": "Volver arriba",
+"Fechar": "Cerrar",
+"Exportar": "Exportar",
+"Exportar a carteira em planilha (.xls)": "Exportar la cartera en hoja de cálculo (.xls)",
+"Exportar carteira": "Exportar cartera",
+"Baixar XLS": "Descargar XLS",
+"Preset de colunas": "Conjunto de columnas",
+"Nome do arquivo": "Nombre del archivo",
+"Carteira completa": "Cartera completa",
+"Decisão rápida": "Decisión rápida",
+"Só localização": "Solo ubicación",
+"Inadimplência e atuação": "Morosidad y actuación",
+"Identificação": "Identificación",
+"Localização": "Ubicación",
+"Acompanhamento": "Seguimiento",
+"Sinais (Sim/Não)": "Señales (Sí/No)",
+"Sai a carteira inteira desta visão, sem os filtros da tela": "Sale la cartera completa de esta vista, sin los filtros de la pantalla",
+"placas serão exportadas": "placas se exportarán",
+"Nada para exportar": "Nada para exportar",
+"Mostrar UFs": "Mostrar estados",
+"Mostrar": "Mostrar",
+"Recolher": "Contraer",
+"Movimentação do ciclo: entraram / saíram por situação / saíram por 150 dias — clique para ir (de novo para a próxima seção)": "Movimiento del ciclo: entraron / salieron por situación / salieron por 150 días — clic para ir (de nuevo para la siguiente sección)",
+"Geral": "General",
+"Visão consolidada": "Vista consolidada",
+"Todas as carteiras": "Todas las carteras",
+"Carteira do analista": "Cartera del analista",
+"Carteira": "Cartera",
+"Entrar": "Entrar",
+"Atualizado": "Actualizado",
+"Última atualização do dashboard": "Última actualización del dashboard",
+"Hoje": "Hoy",
+"Ontem": "Ayer",
+"agora mesmo": "justo ahora",
+"sem sinal": "sin señal",
+"Brasil": "Brasil",
+"México": "México",
+"Só Brasil": "Solo Brasil",
+"Todas as UFs": "Todos los estados",
+"Todas as UFs da carteira": "Todos los estados de la cartera",
+"todas as UFs": "todos los estados",
+"UFs": "Estados",
+"UF": "Estado",
+"País": "País",
+"Sem placas nesta UF": "Sin placas en este estado",
+"Sem placas nas UFs selecionadas.": "Sin placas en los estados seleccionados.",
+"sem placas neste snapshot": "sin placas en esta captura",
+"Carteira vazia neste snapshot": "Cartera vacía en esta captura",
+"Cards de exemplo: não há dados reais desta seção no snapshot": "Tarjetas de ejemplo: no hay datos reales de esta sección en la captura",
+"exemplo": "ejemplo",
+"A foto do dia 1 ainda não vem do refresh — número ilustrativo": "La foto del día 1 todavía no viene del refresh — número ilustrativo",
+"Estoque": "Inventario",
+"Total": "Total",
+"Placas": "Placas",
+"placas": "placas",
+"Placa": "Placa",
+"Taxa": "Tasa",
+"Atenção": "Atención",
+"Alta": "Alta",
+"Média": "Media",
+"Baixa": "Baja",
+"alta": "alta",
+"Sem atuação": "Sin actuación",
+"sem atuação": "sin actuación",
+"Sem atuação do RecOps": "Sin actuación de RecOps",
+"do RecOps": "de RecOps",
+"Pingando": "Con ping",
+"Placas sem nenhuma atuação do RecOps desde a entrada em inadimplência": "Placas sin ninguna actuación de RecOps desde la entrada en mora",
+"Motos com ping do rastreador nas últimas 48h": "Motos con ping del rastreador en las últimas 48h",
+"Placas com FaceMatch sem sucesso pendente de revisão": "Placas con FaceMatch fallido pendiente de revisión",
+"Placas que entraram na carteira desde o dia 1º": "Placas que entraron a la cartera desde el día 1",
+"Placas que saíram por recuperação ou mudança de situação desde o dia 1º": "Placas que salieron por recuperación o cambio de situación desde el día 1",
+"Placas que completaram 150 dias e saíram da carteira desde o dia 1º": "Placas que cumplieron 150 días y salieron de la cartera desde el día 1",
+"Mês": "Mes",
+"Prioridade": "Prioridad",
+"Dias sem atuação": "Días sin actuación",
+"Dias em inadimplência": "Días de mora",
+"Dias de inadimplência": "Días de mora",
+"GPS ativo": "GPS activo",
+"Ping": "Ping",
+"Sinais novos": "Señales nuevas",
+"Clique para ordenar · Ctrl+clique para combinar critérios": "Clic para ordenar · Ctrl+clic para combinar criterios",
+"Ainda não atuada": "Aún sin actuación",
+"GPS ativo — clique para ver no Monitor": "GPS activo — clic para ver en el Monitor",
+"Ping ativo — clique para ver no Monitor": "Ping activo — clic para ver en el Monitor",
+"Ping também ativo": "Ping también activo",
+"Sem GPS/Ping ativo no momento": "Sin GPS/Ping activo en este momento",
+"Sinal ativo agora": "Señal activa ahora",
+"Nenhuma placa para esses filtros": "Ninguna placa para estos filtros",
+"Copiar placa": "Copiar placa",
+"Editar tags": "Editar etiquetas",
+"Filtrar por prioridade": "Filtrar por prioridad",
+"Filtrar por sinal": "Filtrar por señal",
+"Filtrar por tag": "Filtrar por etiqueta",
+"Prioridades combinam com OU · os de baixo restringem": "Las prioridades se combinan con O · los de abajo restringen",
+"Todas": "Todas",
+"Todas as tags": "Todas las etiquetas",
+"Todos os sinais": "Todas las señales",
+"Sem tags": "Sin etiquetas",
+"Remover todas": "Quitar todas",
+"Remover": "Quitar",
+"Cel": "Cel",
+"Ticket": "Ticket",
+"Multa": "Multa",
+"CBD": "CBD",
+"B.O.": "B.O.",
+"Face": "Face",
+"Apar.": "Disp.",
+"Sem sinais": "Sin señales",
+"Ping celular (App)": "Ping celular (App)",
+"Ping celular": "Ping celular",
+"Ticket (Intercom)": "Ticket (Intercom)",
+"CarBigData": "CarBigData",
+"Ping (rastreador)": "Ping (rastreador)",
+"Rastreador IoT da moto": "Rastreador IoT de la moto",
+"Boletim de Ocorrência (Furto)": "Denuncia (B.O.) por robo",
+"Boletim de Ocorrência (furto)": "Denuncia (B.O.) por robo",
+"B.O. furto": "B.O. robo",
+"Sinal": "Señal",
+"Último uso": "Último uso",
+"Evento": "Evento",
+"Data": "Fecha",
+"Assunto": "Asunto",
+"Motivo": "Motivo",
+"Local": "Lugar",
+"Fonte": "Fuente",
+"Recente": "Reciente",
+"Fora da janela": "Fuera de la ventana",
+"Hit confirmado": "Hit confirmado",
+"Hit descartado": "Hit descartado",
+"Confirmar Hit": "Confirmar hit",
+"Descartar Hit": "Descartar hit",
+"Abrir no Intercom": "Abrir en Intercom",
+"Ver ocorrência do locatário": "Ver incidencia del arrendatario",
+"Baixar B.O.": "Descargar B.O.",
+"Ampliar a foto": "Ampliar la foto",
+"Atualizando a foto…": "Actualizando la foto…",
+"Foto indisponível": "Foto no disponible",
+"Captura CarBigData": "Captura CarBigData",
+"Sem multa registrada.": "Sin multa registrada.",
+"Sem captura nos últimos 30 dias.": "Sin captura en los últimos 30 días.",
+"Sem sinal do rastreador registrado.": "Sin señal del rastreador registrada.",
+"Nenhum ticket com interação do locatário registrado.": "Ningún ticket con interacción del arrendatario registrado.",
+"Nenhuma atividade de app registrada — placa sem usuário identificável.": "Ninguna actividad de app registrada — placa sin usuario identificable.",
+"Locatário abriu o ticket": "El arrendatario abrió el ticket",
+"Locatário respondeu ao ticket": "El arrendatario respondió el ticket",
+"Locatário respondeu ao ticket (primeiro contato humano)": "El arrendatario respondió el ticket (primer contacto humano)",
+"Evento do ticket": "Evento del ticket",
+"Data do B.O.": "Fecha del B.O.",
+"Horas desde GPS": "Horas desde GPS",
+"Horas desde ping (rastreador)": "Horas desde ping (rastreador)",
+"Horas desde ping celular": "Horas desde ping celular",
+"Dados do locatário": "Datos del arrendatario",
+"Foto do locatário": "Foto del arrendatario",
+"Locatário não identificado": "Arrendatario no identificado",
+"Filial": "Sucursal",
+"Modelo": "Modelo",
+"CPF / Documento": "CPF / Documento",
+"Documento": "Documento",
+"Celular": "Celular",
+"aguardando endpoint": "esperando endpoint",
+"Inadimplência": "Morosidad",
+"Field": "Field",
+"RecOps": "RecOps",
+"Interpretação": "Interpretación",
+"Relatório consolidado": "Reporte consolidado",
+"Histórico de recusas": "Historial de rechazos",
+"Histórico de comentários": "Historial de comentarios",
+"Ver comentário completo": "Ver comentario completo",
+"Mostrar menos": "Mostrar menos",
+"Comentário": "Comentario",
+"Autor não informado": "Autor no informado",
+"Acionamento": "Despacho",
+"Recusa": "Rechazo",
+"Recusa sem motivo": "Rechazo sin motivo",
+"Sem comentário do agente.": "Sin comentario del agente.",
+"Ver no mapa": "Ver en el mapa",
+"Clique para expandir": "Clic para expandir",
+"Insucesso Flow": "Fallo de Flow",
+"Devolvido Automaticamente": "Devuelto automáticamente",
+"Origem: Solicitação de Gestores": "Origen: Solicitud de Gestores",
+"Ver na Solicitação de Gestores": "Ver en la Solicitud de Gestores",
+"Ver no Monitor": "Ver en el Monitor",
+"Ver Admin": "Ver Admin",
+"Ver Ocorrência": "Ver incidencia",
+"Criar MyMaps": "Crear MyMaps",
+"Revisar FaceMatch": "Revisar FaceMatch",
+"Solicitar acionamento": "Solicitar despacho",
+"Admin": "Admin",
+"MyMaps": "MyMaps",
+"Mottu": "Mottu",
+"ANDAMENTO": "EN CURSO",
+"NEGOCIAÇÃO": "NEGOCIACIÓN",
+"LOCATÁRIO": "ARRENDATARIO",
+"PENDÊNCIA": "PENDIENTE",
+"FINALIZAÇÃO": "CIERRE",
+"Em Análise": "En análisis",
+"Em Contato": "En contacto",
+"Em acionamento": "En despacho",
+"Investigação": "Investigación",
+"Solicitação de Gestores": "Solicitud de Gestores",
+"Promessa de Pagamento": "Promesa de pago",
+"Agendamento de Recolhimento": "Recolección agendada",
+"Com Terceiro": "Con tercero",
+"Locatário Preso": "Arrendatario detenido",
+"Locatário Morto": "Arrendatario fallecido",
+"Apreendida": "Incautada",
+"Aguardando BO": "Esperando denuncia (BO)",
+"Processo Judicial": "Proceso judicial",
+"Não Desvinculada": "No desvinculada",
+"Sem Prévia de PR": "Sin previa de PR",
+"Finalizar Card": "Finalizar tarjeta",
+"Pago": "Pagado",
+"Recuperada": "Recuperada",
+"Perdida": "Perdida",
+"Automática — placa entrou via Solicitação de Gestores. Clique para retirar.": "Automática — la placa entró por Solicitud de Gestores. Clic para quitar.",
+"Automática — placa entrou via Solicitação de Gestores": "Automática — la placa entró por Solicitud de Gestores",
+"Automática — entra quando há ocorrência Recuperada e a moto segue vinculada ao locatário": "Automática — entra cuando hay una incidencia Recuperada y la moto sigue vinculada al arrendatario",
+"Automática, retirada por você nesta placa. Clique para voltar.": "Automática, la quitaste en esta placa. Clic para volver a ponerla.",
+"A placa já tem B.O no sistema — Aguardando BO sai automaticamente": "La placa ya tiene B.O en el sistema — Esperando denuncia (BO) sale automáticamente",
+"FaceMatch": "FaceMatch",
+"Reprovados": "Rechazados",
+"Aprovados": "Aprobados",
+"Tentativas sem sucesso": "Intentos fallidos",
+"Ping ativo + 0 km": "Ping activo + 0 km",
+"Sucesso após a última falha": "Éxito después de la última falla",
+"Foto de referência do locatário": "Foto de referencia del arrendatario",
+"Foto de referência": "Foto de referencia",
+"Foto da tentativa": "Foto del intento",
+"Referência": "Referencia",
+"Tentativa": "Intento",
+"Nenhum FaceMatch com sucesso para comparar": "Ningún FaceMatch exitoso para comparar",
+"sem foto de referência": "sin foto de referencia",
+"Candidatos a validação humana, não fatos consumados. Compare a foto de referência com a foto de cada tentativa antes de decidir.": "Candidatos a validación humana, no hechos consumados. Compara la foto de referencia con la foto de cada intento antes de decidir.",
+"Onde e como o locatário costuma validar o rosto com sucesso. Use para julgar se as falhas fazem sentido.": "Dónde y cómo el arrendatario suele validar el rostro con éxito. Úsalo para juzgar si las fallas tienen sentido.",
+"Tentativas aprovadas": "Intentos aprobados",
+"Tentativas de FaceMatch": "Intentos de FaceMatch",
+"Nenhuma tentativa sem sucesso no histórico.": "Ningún intento fallido en el historial.",
+"Nenhuma tentativa aprovada no histórico.": "Ningún intento aprobado en el historial.",
+"Sem tentativas reprovadas registradas para este locatário": "Sin intentos rechazados registrados para este arrendatario",
+"Sem tentativas aprovadas registradas para este locatário": "Sin intentos aprobados registrados para este arrendatario",
+"Sem tentativas reprovadas": "Sin intentos rechazados",
+"Pendente de decisão": "Pendiente de decisión",
+"Descartado (não é fraude)": "Descartado (no es fraude)",
+"Suspeita confirmada · placa forçada para Alta": "Sospecha confirmada · placa forzada a Alta",
+"Suspeita confirmada — placa forçada para Alta": "Sospecha confirmada — placa forzada a Alta",
+"Descartar (não é fraude)": "Descartar (no es fraude)",
+"Confirmar suspeita de fraude": "Confirmar sospecha de fraude",
+"Editar decisão": "Editar decisión",
+"FaceMatch descartado": "FaceMatch descartado",
+"Decisão removida": "Decisión eliminada",
+"Decisão do hit removida": "Decisión del hit eliminada",
+"Hit do CarBigData confirmado": "Hit de CarBigData confirmado",
+"Hit do CarBigData descartado": "Hit de CarBigData descartado",
+"Ver foto": "Ver foto",
+"Ver CNH": "Ver licencia (CNH)",
+"comparar": "comparar",
+"possível fraude (IA)": "posible fraude (IA)",
+"KM Null — sem distância do veículo registrada": "KM Null — sin distancia del vehículo registrada",
+"Comparação: referência × tentativa": "Comparación: referencia × intento",
+"Arraste para recortar e ampliar": "Arrastra para recortar y ampliar",
+"Arraste sobre a foto para recortar e ampliar · clique para voltar": "Arrastra sobre la foto para recortar y ampliar · clic para volver",
+"Clique para voltar ao tamanho original": "Clic para volver al tamaño original",
+"Abrir em nova aba": "Abrir en nueva pestaña",
+"Não foi possível carregar aqui (o storage pode exigir sessão autenticada).": "No fue posible cargar aquí (el storage puede requerir sesión autenticada).",
+"FaceMatch com tentativa sem sucesso — abrir revisão": "FaceMatch con intento fallido — abrir revisión",
+"FaceMatch — somente tentativas aprovadas": "FaceMatch — solo intentos aprobados",
+"Enroll": "Enroll",
+"Identify": "Identify",
+"Aparelho compartilhado": "Dispositivo compartido",
+"Leitura": "Lectura",
+"Emprestou para": "Prestó a",
+"Usou o celular de": "Usó el celular de",
+"Último acesso": "Último acceso",
+"Primeiro acesso": "Primer acceso",
+"Contas no aparelho": "Cuentas en el dispositivo",
+"Dono do celular": "Dueño del celular",
+"Último uso cruzado": "Último uso cruzado",
+"Outros celulares": "Otros celulares",
+"O locatário emprestou o celular": "El arrendatario prestó el celular",
+"O locatário usou outro celular": "El arrendatario usó otro celular",
+"O locatário emprestou o próprio celular e usou o de outros": "El arrendatario prestó su propio celular y usó el de otros",
+"Possível laranja": "Posible prestanombres",
+"Possível fraude": "Posible fraude",
+"Locatário em celular de terceiro após a inadimplência": "Arrendatario en celular de tercero tras la mora",
+"Rede de contas no mesmo celular": "Red de cuentas en el mismo celular",
+"Pessoa próxima": "Persona cercana",
+"Empréstimo pontual": "Préstamo puntual",
+"Informativo": "Informativo",
+"Emprestou o celular": "Prestó el celular",
+"Locatário": "Arrendatario",
+"locatário": "arrendatario",
+"Terceiro": "Tercero",
+"Também usaram este celular": "También usaron este celular",
+"Quando o celular de cada um foi usado": "Cuándo se usó el celular de cada uno",
+"lat/long do 1º acesso de cada dia · do mais antigo ao mais recente": "lat/long del 1.er acceso de cada día · del más antiguo al más reciente",
+"Restrita": "Restringida",
+"restrita": "restringida",
+"Indicou o locatário": "Recomendó al arrendatario",
+"Indicado pelo locatário": "Recomendado por el arrendatario",
+"Tem celular próprio na base": "Tiene celular propio en la base",
+"Conta não identificada": "Cuenta no identificada",
+"Conta sem nome": "Cuenta sin nombre",
+"Sem situação": "Sin situación",
+"outra conta": "otra cuenta",
+"data desconhecida": "fecha desconocida",
+"emprestou o celular para": "prestó el celular a",
+"já emprestou o celular para": "ya prestó el celular a",
+"usou o celular de": "usó el celular de",
+"já usou o celular de": "ya usó el celular de",
+"e": "y",
+"no celular de": "en el celular de",
+"passou a entrar no celular de": "empezó a entrar en el celular de",
+"Depois de ficar inadimplente,": "Después de caer en mora,",
+". Depois de ficar inadimplente,": ". Después de caer en mora,",
+"esteve.": "estuvo.",
+"usou.": "usó.",
+", e usou o celular de": ", y usó el celular de",
+", e é dono do celular que": ", y es dueño del celular que",
+", e também usou o celular de": ", y también usó el celular de",
+", o mesmo que": ", el mismo que",
+"cria a conta": "crea la cuenta",
+"cria a conta, indicado por": "crea la cuenta, recomendado por",
+"inicia a locação": "inicia la renta",
+"fica inadimplente": "cae en mora",
+"Último acesso de": "Último acceso de",
+"acesso em": "acceso en",
+"acessos em": "accesos en",
+"dia distinto": "día distinto",
+"dias distintos": "días distintos",
+"Ativo": "Activo",
+"Aprovado": "Aprobado",
+"Finalizado": "Finalizado",
+"Inativo": "Inactivo",
+"Inicial": "Inicial",
+"Suspenso": "Suspendido",
+"Congelado": "Congelado",
+"Sem locação": "Sin renta",
+"ativo": "activo",
+"Solicitação de acionamento": "Solicitud de despacho",
+"auto-preenchido": "autocompletado",
+"QTH de consulta": "QTH de consulta",
+"Importar KML": "Importar KML",
+"QTH livre — escreva o endereço ou referência": "QTH libre — escribe la dirección o referencia",
+"importe o KML ou escreva livre": "importa el KML o escribe libre",
+"opcional": "opcional",
+"Cole o link do MyMaps": "Pega el enlace de MyMaps",
+"Relato": "Relato",
+"texto livre + importar dados da placa": "texto libre + importar datos de la placa",
+"Descreva o contexto para a empresa parceira": "Describe el contexto para la empresa socia",
+"Anexa ao final do relato": "Se agrega al final del relato",
+"Escolher qual comentário entra no relato": "Elegir qué comentario entra en el relato",
+"Pré-visualização": "Vista previa",
+"exatamente o que será copiado": "exactamente lo que se copiará",
+"Copiar solicitação": "Copiar solicitud",
+"Copiado": "Copiado",
+"Cancelar": "Cancelar",
+"sem foto": "sin foto",
+"Motivo Solicitação de Gestores": "Motivo Solicitud de Gestores",
+"Última recusa do Field": "Último rechazo del Field",
+"Interpretação do Field": "Interpretación del Field",
+"Comentário RecOps": "Comentario RecOps",
+"Interpretação RecOps": "Interpretación RecOps",
+"Passagens CarBigData": "Pasos CarBigData",
+"Multa recente": "Multa reciente",
+"Nenhum QTH marcado ainda": "Ningún QTH marcado todavía",
+"QTH marcados — nesta ordem no texto": "QTH marcados — en este orden en el texto",
+"Trocar arquivo": "Cambiar archivo",
+"Mapa do KML": "Mapa del KML",
+"Concluir": "Terminar",
+"Não foi possível ler o arquivo KML": "No fue posible leer el archivo KML",
+"Gerando link...": "Generando enlace...",
+"Baixar B.O. só funciona na carteira publicada": "Descargar B.O. solo funciona en la cartera publicada",
+"Entraram na carteira": "Entraron a la cartera",
+"Saíram — mudança de situação": "Salieron — cambio de situación",
+"Nenhuma placa entrou na carteira.": "Ninguna placa entró a la cartera.",
+"Nenhuma saída por mudança de situação.": "Ninguna salida por cambio de situación.",
+"Nenhuma saída por 150 dias neste mês.": "Ninguna salida por 150 días en este mes.",
+"Entrada na carteira por aprovação de solicitação de gestores.": "Entrada a la cartera por aprobación de solicitud de gestores.",
+"Entrou em Apropriação Indébita com menos de 150 dias de inadimplência.": "Entró en Apropiación indebida con menos de 150 días de mora.",
+"Apropriação Indébita": "Apropiación indebida",
+"Apropriação indébita": "Apropiación indebida",
+"Alugada": "Rentada",
+"Alugada — esteira recops": "Rentada — flujo recops",
+"Alugada — esteira field_service": "Rentada — flujo field_service",
+"Na rua recolhida": "Recogida en la calle",
+"Em manutenção": "En mantenimiento",
+"Prestador Inativo": "Prestador inactivo",
+"Serviço devolvido sem pagamento após pausa": "Servicio devuelto sin pago tras pausa",
+"Serviço devolvido: Motorista inativo": "Servicio devuelto: conductor inactivo",
+"Cliente não estava no local": "Cliente no estaba en el lugar",
+"Nenhum contato": "Sin contacto",
+"Se recusou a entregar": "Se negó a entregar",
+"Cliente se recusou a entregar a moto": "Cliente se negó a entregar la moto",
+"Área de risco": "Zona de riesgo",
+"Moto não encontrada": "Moto no encontrada",
+"Moto não encontrada (conhecido)": "Moto no encontrada (conocido)",
+"Promessa de pagamento": "Promesa de pago",
+"Rejeitado após aguardar pagamento em pausa": "Rechazado tras esperar pago en pausa",
+"Moto com terceiro": "Moto con tercero",
+"Cliente em movimento": "Cliente en movimiento",
+"Local de risco apesar do horário": "Lugar de riesgo a pesar del horario",
+"Ajuda com a conta": "Ayuda con la cuenta",
+"Sem categoria": "Sin categoría",
+"Sim": "Sí",
+"Não": "No",
+"Score": "Score",
+"GPS ativo força Alta": "GPS activo fuerza Alta",
+"Interpretação das recusas": "Interpretación de los rechazos",
+"Interpretação ocorrência RecOps": "Interpretación incidencia RecOps",
+"ID do cliente ainda não vem nos dados desta placa": "El ID del cliente todavía no viene en los datos de esta placa",
+"Search": "Buscar",
+"Janeiro": "Enero", "Fevereiro": "Febrero", "Março": "Marzo", "Abril": "Abril", "Maio": "Mayo", "Junho": "Junio",
+"Julho": "Julio", "Agosto": "Agosto", "Setembro": "Septiembre", "Outubro": "Octubre", "Novembro": "Noviembre", "Dezembro": "Diciembre",
+"Idioma": "Idioma",
+"Traduzir para espanhol": "Traducir al español",
+"Ver em português": "Ver en portugués"
+};
+const I18N_MES = { janeiro:"enero", fevereiro:"febrero", "março":"marzo", abril:"abril", maio:"mayo", junho:"junio", julho:"julio", agosto:"agosto", setembro:"septiembre", outubro:"octubre", novembro:"noviembre", dezembro:"diciembre" };
+const I18N_MOTIVO = { "ocorrência":"incidencia", "apreensão":"decomiso", "mau uso":"mal uso", "restrição":"restricción" };
+
+(() => {
+const KEY = "recops_lang", ATTRS = ["title", "placeholder", "aria-label", "alt"];
+const SKIP = "script,style,textarea,select,svg,[data-no-i18n]", SKIP_EL = "script,style,svg,[data-no-i18n]";
+const D = Object.assign({}, I18N_D, {
+  "Ping ativo": "Ping activo", "Último ping": "Último ping", "Motivo ·": "Motivo ·", "Cel: último": "Cel: último"
+});
+const UN = { dia:"día", dias:"días", "mês":"mes", meses:"meses", hora:"hora", horas:"horas", minuto:"minuto", minutos:"minutos", min:"min" };
+const PL = { dia:"día", dias:"días", placa:"placa", placas:"placas", pessoa:"persona", pessoas:"personas", acesso:"acceso", acessos:"accesos", conta:"cuenta", contas:"cuentas", "comentário":"comentario", "comentários":"comentarios", "recusas de campo":"rechazos de campo", meses:"meses", hora:"hora", horas:"horas", celulares:"celulares", "mês":"mes" };
+const norm = s => String(s).replace(/\s+/g, " ").trim();
+const T = s => { const r = tr(norm(s)); return r == null ? s : r; };
+const M = s => I18N_MOTIVO[String(s).toLowerCase()] || s;
+const SCORE = [["eventos c/ sinal forte", "eventos c/ señal fuerte"], ["GPS ativo força Alta", "GPS activo fuerza Alta"], ["Inadimplência", "Morosidad"], ["Sem atuação", "Sin actuación"], ["sem atuação", "sin actuación"]];
+const R = [
+  [/^([A-Z]{3}-?\d[A-Z0-9]\d{2}) · (.+)$/, m => `${m[1]} · ${T(m[2])}`],
+  [/^(.+?): último há (\S+) \(fora da janela\)$/, m => `${T(m[1])}: último hace ${m[2]} (fuera de la ventana)`],
+  [/^(.+?): sem sinal$/, m => `${T(m[1])}: sin señal`],
+  [/^(.+?): sem registro$/, m => `${T(m[1])}: sin registro`],
+  [/^(.*?)\b(Há|há) (<1h|\d+[dhm])(.*)$/, m => `${m[1] ? T(m[1].trim()) + " " : ""}${m[2] === "Há" && !m[1] ? "Hace" : "hace"} ${m[3]}${m[4] ? " " + T(m[4].trim()) : ""}`],
+  [/^(.*?)\b(Há|há) (\d+) (dias?|mês|meses|horas?|minutos?)(.*)$/, m => `${m[1] ? T(m[1].trim()) + " " : ""}${m[2] === "Há" && !m[1] ? "Hace" : "hace"} ${m[3]} ${UN[m[4]] || m[4]}${m[5]}`],
+  [/^(.*?)~(\d+) (min|h) atrás$/, m => `${m[1] ? T(m[1].trim()) + " " : ""}hace ~${m[2]} ${m[3]}`],
+  [/^(\d\d\/\d\d\/\d{4}) às (\d\d:\d\d)(.*)$/, m => `${m[1]} a las ${m[2]}${m[3].replace(/— (.+)$/, (_, r) => "— " + T(r))}`],
+  [/^Atualizado em (.+)$/, m => `Actualizado el ${m[1]}`],
+  [/^(\d+) de (\d+) dias — sai da carteira ao completar (\d+)$/, m => `${m[1]} de ${m[2]} días — sale de la cartera al cumplir ${m[3]}`],
+  [/^(\d+) de (\d+) placas · (\d+)% da carteira$/, m => `${m[1]} de ${m[2]} placas · ${m[3]}% de la cartera`],
+  [/^(\d+) de (\d+) placas$/, m => `${m[1]} de ${m[2]} placas`],
+  [/^(\d+) (dias?|placas?|pessoas?|acessos?|contas?|comentários?|recusas de campo|meses|horas?|celulares|mês)$/, m => `${m[1]} ${PL[m[2]]}`],
+  [/^(\d+) dias sem atuação — nenhuma atuação desde a entrada em inadimplência$/, m => `${m[1]} días sin actuación — ninguna actuación desde la entrada en mora`],
+  [/^(\d+) · mais recentes primeiro$/, m => `${m[1]} · más recientes primero`],
+  [/^(\d+)º acesso de$/, m => `${m[1]}.er acceso de`],
+  [/^(\d+) acessos? · local repetido$/, m => `${m[1]} acceso${m[1] === "1" ? "" : "s"} · lugar repetido`],
+  [/^\((\d+) dias?\)\. A última lat\/long é a pista mais recente de onde$/, m => `(${m[1]} días). La última lat/long es la pista más reciente de dónde`],
+  [/^teve restrição \((.+?)\) em ([\d/]+)(, indicou)?$/, m => `tuvo restricción (${M(m[1])}) el ${m[2]}${m[3] ? ", recomendó a" : ""}`],
+  [/^recebe restrição \((.+)\)$/, m => `recibe restricción (${M(m[1])})`],
+  [/^(\d+) contas usaram o mesmo celular de$/, m => `${m[1]} cuentas usaron el mismo celular de`],
+  [/^em (\d+) dias? nos últimos (\d+) dias\.$/, m => `en ${m[1]} día${m[1] === "1" ? "" : "s"} en los últimos ${m[2]} días.`],
+  [/^\(último uso em (.+)\)\.$/, m => `(último uso el ${T(m[1])}).`],
+  [/^Aprovado · matchLevel (.+)$/, m => `Aprobado · matchLevel ${m[1]}`],
+  [/^Falha · matchLevel (.+)$/, m => `Fallo · matchLevel ${m[1]}`],
+  [/^Chegam a (\d+)$/, m => `Llegan a ${m[1]}`],
+  [/^em até (\d+) dias$/, m => `en hasta ${m[1]} días`],
+  [/^Colunas \((\d+) de (\d+)\)$/, m => `Columnas (${m[1]} de ${m[2]})`],
+  [/^Completou (\d+) dias de inadimplência e saiu da carteira RecOps\.$/, m => `Cumplió ${m[1]} días de mora y salió de la cartera RecOps.`],
+  [/^Copiar placa (.+)$/, m => `Copiar placa ${m[1]}`],
+  [/^Placa (.+) copiada$/, m => `Placa ${m[1]} copiada`],
+  [/^Deixaram de estar em Apropriação Indébita · últimas (\d+)h$/, m => `Dejaron de estar en Apropiación indebida · últimas ${m[1]}h`],
+  [/^Apropriação indébita < (\d+) dias, ou aprovadas via Solicitação de Gestores · últimas (\d+)h$/, m => `Apropiación indebida < ${m[1]} días, o aprobadas por Solicitud de Gestores · últimas ${m[2]}h`],
+  [/^Dia (\d.*)$/, m => `Día ${m[1]}`],
+  [/^Editar tags de (.+)$/, m => `Editar etiquetas de ${m[1]}`],
+  [/^Tags · (.+)$/, m => `Etiquetas · ${m[1]}`],
+  [/^Em manutenção \(recolhida — confirmado pelo (.+) em (.+)\)\.?$/, m => `En mantenimiento (recogida — confirmado por ${m[1]} el ${m[2]})`],
+  [/^FaceMatch com sucesso mais recente · (.+) — clique para ampliar$/, m => `FaceMatch exitoso más reciente · ${m[1]} — clic para ampliar`],
+  [/^Foto do FaceMatch ok mais recente · (.+) — clique para ampliar$/, m => `Foto del FaceMatch ok más reciente · ${m[1]} — clic para ampliar`],
+  [/^Ver CNH \(primeiro FaceMatch aprovado\)(.*)$/, m => `Ver licencia (CNH) (primer FaceMatch aprobado)${m[1] ? " " + T(m[1].trim()) : ""}`],
+  [/^Ver foto(.*)$/, m => m[1] === " — compara lado a lado com a referência" ? "Ver foto — compara lado a lado con la referencia" : null],
+  [/^— compara lado a lado com a referência$/, () => "— compara lado a lado con la referencia"],
+  [/^Filtrar por (.+) \((\d+) placas?\)$/, m => `Filtrar por ${T(m[1])} (${m[2]} placas)`],
+  [/^(Fora da janela|Recente) · (.+)$/, m => `${m[1] === "Recente" ? "Reciente" : "Fuera de la ventana"} · ${m[2].replace(/dias/, "días")}`],
+  [/^≤(\d+) dias$/, m => `≤${m[1]} días`],
+  [/^GPS do veículo · janela ≤(\d+)h$/, m => `GPS del vehículo · ventana ≤${m[1]}h`],
+  [/^Ping do rastreador IoT · janela ≤(\d+)h$/, m => `Ping del rastreador IoT · ventana ≤${m[1]}h`],
+  [/^Histórico de (\S+) de (\d{4})$/, m => `Historial de ${I18N_MES[m[1].toLowerCase()] || m[1]} de ${m[2]}`],
+  [/^Motos com ping do rastreador nas últimas (\d+)h · (\d+)% do total$/, m => `Motos con ping del rastreador en las últimas ${m[1]}h · ${m[2]}% del total`],
+  [/^Motos com ping do rastreador nas últimas (\d+)h$/, m => `Motos con ping del rastreador en las últimas ${m[1]}h`],
+  [/^(.+) · foto de (.+)$/, m => `${T(m[1])} · foto del ${m[2]}`],
+  [/^Situação mudou de (.+) para (.+) com (\d+) dias de inadimplência\.$/, m => `La situación cambió de ${T(m[1])} a ${T(m[2])} con ${m[3]} días de mora.`],
+  [/^Mudou de (.+) para (.+?)\.?$/, m => `Cambió de ${T(m[1])} a ${T(m[2])}.`],
+  [/^Entrou na carteira por aprovação da Solicitação de Gestores: (.+)$/, m => `Entró a la cartera por aprobación de la Solicitud de Gestores: ${m[1]}`],
+  [/^Nenhuma placa de (.+) nos dados atuais — elas aparecem aqui no próximo refresh\.$/, m => `Ninguna placa de ${m[1]} en los datos actuales — aparecerán aquí en el próximo refresh.`],
+  [/^Ping ativo \+ (\d+) km$/, m => `Ping activo + ${m[1]} km`],
+  [/^Ping ativo nesse momento(?: \((.+)\))?$/, m => `Ping activo en ese momento${m[1] ? ` (${m[1]})` : ""}`],
+  [/^Ping não estava ativo — sem comunicar com a moto antes da tentativa(?: · último ping (.+))?$/, m => `El ping no estaba activo — sin comunicación con la moto antes del intento${m[1] ? ` · último ping ${m[1]}` : ""}`],
+  [/^Último ping do veículo: (.+)$/, m => `Último ping del vehículo: ${m[1]}`],
+  [/^Placas com (\d+)–(\d+) dias de inadimplência: saem da carteira ao completar (\d+)(?: · (\d+)% do total)?$/, m => `Placas con ${m[1]}–${m[2]} días de mora: salen de la cartera al cumplir ${m[3]}${m[4] ? ` · ${m[4]}% del total` : ""}`],
+  [/^Placas que saíram por (\d+) dias neste mês e depois foram recuperadas$/, m => `Placas que salieron por ${m[1]} días este mes y después fueron recuperadas`],
+  [/^Placas sem nenhuma atuação do RecOps desde a entrada em inadimplência · (\d+)% do total$/, m => `Placas sin ninguna actuación de RecOps desde la entrada en mora · ${m[1]}% del total`],
+  [/^Recuperada após a saída da carteira · (.+)$/, m => `Recuperada después de la salida de la cartera · ${m[1]}`],
+  [/^recuperada após (\d+) dias$/, m => `recuperada tras ${m[1]} días`],
+  [/^Saíram — completaram (\d+) dias$/, m => `Salieron — cumplieron ${m[1]} días`],
+  [/^Score (\d.*)$/, m => "Score " + SCORE.reduce((s, [a, b]) => s.split(a).join(b), m[1])],
+  [/^placas · (.+)$/, m => `placas · ${T(m[1])}`],
+  [/^(·\s)?(\d+(?:[.,]\d+)?) km do último ping da moto \(naquele momento\)$/, m => `${m[1] || ""}${m[2]} km del último ping de la moto (en ese momento)`],
+  [/^(·\s)?KM Null — sem distância do veículo registrada$/, m => `${m[1] || ""}KM Null — sin distancia del vehículo registrada`],
+  [/^· sucesso mais recente \((.+)\)$/, m => `· éxito más reciente (${m[1]})`],
+  [/^Automática — acionamento ativo no card(.*?)(?: desde (.+?))?\. Clique para retirar\.$/, m => `Automática — despacho activo en la tarjeta${m[1]}${m[2] ? ` desde ${m[2]}` : ""}. Clic para quitar.`],
+  [/^Vem do card(.*?) do Monitor — tag "(.+)"(?: desde (.+?))?\. Clique para retirar\.$/, m => `Viene de la tarjeta${m[1]} del Monitor — etiqueta "${m[2]}"${m[3] ? ` desde ${m[3]}` : ""}. Clic para quitar.`],
+  [/^Automática — ocorrência(.*?) Recuperada(?: em (.+?))? e a moto segue vinculada ao locatário\. Clique para retirar\.$/, m => `Automática — incidencia${m[1]} Recuperada${m[2] ? ` el ${m[2]}` : ""} y la moto sigue vinculada al arrendatario. Clic para quitar.`],
+  [/^Aparelho compartilhado · (.+)$/, m => `Dispositivo compartido · ${T(m[1])}`],
+  [/^últimos (\d+) de (\d+) dias$/, m => `últimos ${m[1]} de ${m[2]} días`],
+  [/^antes de (.+)$/, m => `antes del ${m[1]}`],
+  [/^Sem acesso nos últimos (\d+) dias(?: · último em (.+))?$/, m => `Sin acceso en los últimos ${m[1]} días${m[2] ? ` · último el ${m[2]}` : ""}`],
+  [/^Sem acessos cruzados nos últimos (\d+) dias(?:\. Último uso compartilhado registrado em (.+?))?\.$/, m => `Sin accesos cruzados en los últimos ${m[1]} días${m[2] ? `. Último uso compartido registrado el ${m[2]}` : ""}.`],
+  [/^Teve restrição · (.+)$/, m => `Tuvo restricción · ${M(m[1])}`],
+  [/^Na carteira · (.+)$/, m => `En la cartera · ${m[1]}`],
+  [/^(.+) · locatário$/, m => `${m[1]} · arrendatario`],
+  [/^Não deu para baixar o B\.O\.: (.+)$/, m => `No fue posible descargar el B.O.: ${m[1]}`],
+  [/^Os dados chegaram, mas o dashboard não conseguiu montar: (.+)$/, m => `Los datos llegaron, pero el dashboard no pudo armarse: ${m[1]}`],
+  [/^O n8n respondeu com erro (\d+)\. Veja a execução do webhook no n8n\.$/, m => `n8n respondió con error ${m[1]}. Revisa la ejecución del webhook en n8n.`],
+  [/^(.+) recebidos$/, m => `${m[1]} recibidos`],
+  [/^(\d+) selecionadas?$/, m => `${m[1]} seleccionada${m[1] === "1" ? "" : "s"}`],
+  [/^Entrar (.+)$/, m => `Entrar ${m[1]}`]
+];
+const cache = new Map();
+function tr(k){
+  if(!k) return null;
+  if(cache.has(k)) return cache.get(k);
+  let r = Object.prototype.hasOwnProperty.call(D, k) ? D[k] : null;
+  if(r == null) for(const [re, f] of R){ const m = k.match(re); if(m){ const v = f(m); if(v != null){ r = v; break; } } }
+  cache.set(k, r);
+  return r;
+}
+let lang = "pt";
+try { lang = localStorage.getItem(KEY) === "es" ? "es" : "pt"; } catch(e){}
+const wrapWs = (orig, r) => { const a = orig.match(/^\s*/)[0], b = orig.match(/\s*$/)[0]; return a + r + b; };
+function t(s){
+  if(lang !== "es" || s == null || typeof s !== "string") return s;
+  const r = tr(norm(s)); return r == null ? s : wrapWs(s, r);
+}
+const TXT = new WeakMap(), ATR = new WeakMap();
+let mt = null, mtState = "idle";
+const mtCache = new Map(), mtWait = new Map();
+let mtChain = Promise.resolve();
+const mtElegivel = s => {
+  const k = norm(s);
+  if(k.length < 12 || /^[\d\W_]+$/.test(k)) return false;
+  const pal = k.match(/[A-Za-zÀ-ÿ]{2,}/g) || [];
+  return pal.length >= 3 && pal.some(w => w.length >= 3 && w === w.toLowerCase());
+};
+function mtPedir(node, orig){
+  const k = norm(orig);
+  if(mtCache.has(k)){ aplicaMt(node, orig, mtCache.get(k)); return; }
+  if(!mt) return;
+  if(!mtWait.has(k)){
+    mtWait.set(k, new Set());
+    mtChain = mtChain.then(async () => {
+      if(lang !== "es" || !mt) return;
+      let out = null;
+      try { out = await mt.translate(k); } catch(e){}
+      const nodes = mtWait.get(k) || new Set(); mtWait.delete(k);
+      if(out){ mtCache.set(k, out); nodes.forEach(n => aplicaMt(n, null, out)); }
+    });
+  }
+  mtWait.get(k).add(node);
+}
+function aplicaMt(node, _o, out){
+  const rec = TXT.get(node); if(!rec || lang !== "es") return;
+  if(node.data !== rec.o) return;
+  const v = wrapWs(rec.o, out); rec.t = v; node.data = v;
+}
+function procTexto(n){
+  const p = n.parentElement; if(!p || p.closest(SKIP)) return;
+  const rec = TXT.get(n);
+  if(rec && n.data === rec.t) return;
+  const o = n.data; if(!o.trim()) return;
+  const r = tr(norm(o));
+  if(r != null){ const v = wrapWs(o, r); TXT.set(n, { o, t:v }); if(v !== o) n.data = v; return; }
+  TXT.set(n, { o, t:o });
+  if(mtElegivel(o)) mtPedir(n, o);
+}
+function procAttr(el, a){
+  if(!el.getAttribute || el.closest(SKIP_EL + ",[data-no-i18n-attr]")) return;
+  const v = el.getAttribute(a); if(v == null || !v.trim()) return;
+  let m = ATR.get(el); if(!m){ m = {}; ATR.set(el, m); }
+  const rec = m[a]; if(rec && v === rec.t) return;
+  const r = tr(norm(v)); const tv = r == null ? v : r;
+  m[a] = { o:v, t:tv }; if(tv !== v) el.setAttribute(a, tv);
+}
+function percorre(root){
+  if(!root) return;
+  if(root.nodeType === 3){ procTexto(root); return; }
+  if(root.nodeType !== 1 && root.nodeType !== 9 && root.nodeType !== 11) return;
+  if(root.nodeType === 1){ if(root.matches(SKIP_EL)) return; ATTRS.forEach(a => root.hasAttribute(a) && procAttr(root, a)); }
+  const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, { acceptNode: n => n.nodeType === 1 && n.matches(SKIP_EL) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  let n = tw.nextNode();
+  while(n){
+    if(n.nodeType === 3) procTexto(n); else ATTRS.forEach(a => n.hasAttribute(a) && procAttr(n, a));
+    n = tw.nextNode();
+  }
+}
+function restaura(){
+  const tw = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let n = tw.currentNode;
+  while(n){
+    if(n.nodeType === 3){ const rec = TXT.get(n); if(rec && n.data === rec.t && rec.t !== rec.o) n.data = rec.o; TXT.delete(n); }
+    else { const m = ATR.get(n); if(m){ for(const a in m){ if(n.getAttribute(a) === m[a].t) n.setAttribute(a, m[a].o); } ATR.delete(n); } }
+    n = tw.nextNode();
+  }
+}
+const mo = new MutationObserver(ms => {
+  if(lang !== "es") return;
+  for(const m of ms){
+    if(m.type === "characterData") procTexto(m.target);
+    else if(m.type === "attributes") procAttr(m.target, m.attributeName);
+    else m.addedNodes.forEach(percorre);
+  }
+});
+async function mtIniciar(comClique){
+  if(mt || mtState === "carregando") return;
+  const API = self.Translator;
+  if(!API || !API.availability){ mtState = "sem-suporte"; pintaBotoes(); return; }
+  try {
+    const opts = { sourceLanguage:"pt", targetLanguage:"es" };
+    const disp = await API.availability(opts);
+    if(disp === "unavailable"){ mtState = "sem-suporte"; pintaBotoes(); return; }
+    if(disp !== "available" && !comClique){ mtState = "precisa-clique"; pintaBotoes(); return; }
+    mtState = "carregando"; pintaBotoes();
+    mt = await API.create({ ...opts, monitor(m){ m.addEventListener("downloadprogress", e => { mtState = "baixando:" + Math.round((e.loaded || 0) * 100); pintaBotoes(); }); } });
+    mtState = "pronto"; pintaBotoes();
+    if(lang === "es") reprocessaLivres();
+  } catch(e){ mtState = "erro"; pintaBotoes(); }
+}
+function reprocessaLivres(){
+  const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  let n = tw.nextNode();
+  while(n){ const rec = TXT.get(n); if(rec && rec.t === rec.o && n.data === rec.o && mtElegivel(rec.o) && n.parentElement && !n.parentElement.closest(SKIP)) mtPedir(n, rec.o); n = tw.nextNode(); }
+}
+function dicaEs(){
+  if(mtState === "pronto") return "Interface e textos livres em espanhol (tradução do navegador, no próprio computador)";
+  if(mtState.startsWith("baixando")) return `Baixando o tradutor do navegador: ${mtState.split(":")[1]}%`;
+  if(mtState === "precisa-clique") return "Clique em ES para baixar o tradutor de textos livres do navegador";
+  if(mtState === "sem-suporte" || mtState === "erro") return "Interface em espanhol. Comentários e textos livres seguem em português (navegador sem tradutor embutido)";
+  return "Ver a carteira em espanhol";
+}
+const botoes = [];
+function pintaBotoes(){
+  botoes.forEach(g => {
+    g.querySelectorAll("button").forEach(b => { const on = b.dataset.lang === lang; b.setAttribute("aria-pressed", String(on)); b.classList.toggle("on", on); });
+    const es = g.querySelector('[data-lang="es"]'); if(es){ es.title = lang === "es" ? (mtState === "pronto" ? "Interfaz y textos libres en español (traducción del navegador)" : mtState.startsWith("baixando") ? `Descargando el traductor del navegador: ${mtState.split(":")[1]}%` : "Interfaz en español. Comentarios y textos libres siguen en portugués si el navegador no tiene traductor integrado") : dicaEs(); es.dataset.mt = mtState.split(":")[0]; }
+    const pt = g.querySelector('[data-lang="pt"]'); if(pt) pt.title = lang === "es" ? "Ver en portugués" : "Ver em português";
+  });
+}
+function set(novo, comClique){
+  novo = novo === "es" ? "es" : "pt";
+  if(novo === "es" && comClique) mtIniciar(true);
+  if(novo === lang){ pintaBotoes(); return; }
+  lang = novo;
+  try { localStorage.setItem(KEY, lang); } catch(e){}
+  document.documentElement.lang = lang === "es" ? "es-MX" : "pt-BR";
+  if(lang === "es"){ percorre(document.documentElement); if(!mt) mtIniciar(false); }
+  else restaura();
+  pintaBotoes();
+  document.dispatchEvent(new CustomEvent("i18n:lang", { detail:{ lang } }));
+}
+function criaSeletor(extra){
+  const g = document.createElement("div");
+  g.className = "lang-sw" + (extra ? " " + extra : ""); g.setAttribute("role", "group"); g.setAttribute("data-no-i18n", "");
+  g.setAttribute("aria-label", "Idioma / Idioma");
+  g.innerHTML = '<button type="button" data-lang="pt">PT</button><button type="button" data-lang="es">ES</button>';
+  g.addEventListener("click", e => { const b = e.target.closest("[data-lang]"); if(b) set(b.dataset.lang, true); });
+  botoes.push(g); return g;
+}
+const MSG = [
+  [/^🪪 CPF:/m, "🪪 CPF:"],
+  [/^🏍️ Situação do veículo: (.*)$/m, (_, v) => `🏍️ Situación del vehículo: ${t(v)}`],
+  [/^📅 (\d+) dias de inadimplência$/m, (_, n) => `📅 ${n} días de mora`],
+  [/^🏢 Filial:/m, "🏢 Sucursal:"],
+  [/^🕒 Última atualização: (.*)$/m, (_, v) => `🕒 Última actualización: ${t(v)}`],
+  [/^Relato:$/m, "Relato:"],
+  [/\(sem relato preenchido\)/, "(sin relato)"],
+  [/^- Motivo da Solicitação de Gestores:/gm, "- Motivo de la Solicitud de Gestores:"],
+  [/^- Última recusa de campo \(/gm, "- Último rechazo de campo ("],
+  [/^- Interpretação \(recusas de campo\):/gm, "- Interpretación (rechazos de campo):"],
+  [/^- Interpretação \(acionamento RecOps\):/gm, "- Interpretación (despacho RecOps):"],
+  [/^- Último comentário RecOps \(/gm, "- Último comentario RecOps ("],
+  [/^- CarBigData: última captura (.+?) em /gm, (_, d) => `- CarBigData: última captura ${d} en `],
+  [/^- Multa recente \(/gm, "- Multa reciente ("]
+];
+function msg(texto){
+  if(lang !== "es" || typeof texto !== "string") return texto;
+  return MSG.reduce((s, [re, r]) => s.replace(re, r), texto);
+}
+const css = document.createElement("style");
+css.textContent = `.lang-sw{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--line-2,rgba(255,255,255,.14));background:rgba(0,0,0,.25);flex:none}
+.lang-sw button{min-width:34px;padding:5px 9px;border:0;border-radius:999px;background:transparent;color:var(--text-muted,#9aa39c);font:800 italic 12px/1 var(--font-display,system-ui);letter-spacing:.6px;cursor:pointer;position:relative}
+.lang-sw button:hover{color:var(--text-primary,#fff)}
+.lang-sw button.on{background:var(--mottu-green,#00B131);color:#0B0C0B}
+.lang-sw button[data-mt="baixando"]::after,.lang-sw button[data-mt="carregando"]::after{content:"";position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:#FBBF24;animation:langPisca 1s ease-in-out infinite}
+.lang-sw.gate{position:absolute;top:14px;right:14px}
+.gate-card{position:relative}
+@keyframes langPisca{50%{opacity:.25}}`;
+document.head.appendChild(css);
+function monta(){
+  const hub = document.querySelector("header.hub");
+  if(hub && !hub.querySelector(".lang-sw")){ const exp = hub.querySelector("#expBtn"); hub.insertBefore(criaSeletor(), exp || null); }
+  const gc = document.querySelector("#gate .gate-card");
+  if(gc && !gc.querySelector(".lang-sw")) gc.appendChild(criaSeletor("gate"));
+  document.documentElement.lang = lang === "es" ? "es-MX" : "pt-BR";
+  if(lang === "es"){ percorre(document.documentElement); mtIniciar(false); }
+  pintaBotoes();
+  mo.observe(document.documentElement, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:ATTRS });
+}
+window.I18N = { t, msg, set, get lang(){ return lang; } };
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", monta); else monta();
+})();
+</script>
 <script>
 async function __iniciarAppComDados(__payload) {
   const __obj = v => v && typeof v === "object" && !Array.isArray(v) ? v : {};
@@ -2849,7 +3591,8 @@ async function __iniciarAppComDados(__payload) {
   function gerarXls() {
     const cols = XLS_COLUNAS.filter((c => xp.sel.has(c.k))), linhas = ordenar(escopo());
     const cab = "<" + "!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Carteira RecOps</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--" + ">";
-    const thead = `<tr>${cols.map((c => xlsCelula(c.l, "th"))).join("")}</tr>`;
+    const tl = v => window.I18N && typeof v === "string" ? I18N.t(v) : v;
+    const thead = `<tr>${cols.map((c => xlsCelula(tl(c.l), "th"))).join("")}</tr>`;
     const tbody = linhas.map((d => `<tr>${cols.map((c => {
       let v;
       try {
@@ -2857,7 +3600,7 @@ async function __iniciarAppComDados(__payload) {
       } catch {
         v = "";
       }
-      return xlsCelula(v);
+      return xlsCelula(tl(v));
     })).join("")}</tr>`)).join("");
     return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8">${cab}</head><body><table border="1">${thead}${tbody}</table></body></html>`;
   }
@@ -4123,7 +4866,8 @@ async function __iniciarAppComDados(__payload) {
     const d = DATA_BY_PLACA[placa] || {}, loc = LOCATARIO_INFO[placa], ct = LOCATARIO_CONTATO_BY_PLACA[placa] || {}, mod = MODELO_INFO[placa], draft = draftDe(placa);
     const qth = draft.qthSelections.length ? `QTH DE CONSULTA:\n${draft.qthSelections.map(((x, i) => `${i + 1}. ${x.label}\nQTH: ${x.url}`)).join("\n\n")}` : `QTH DE CONSULTA: ${draft.qth.trim() || "—"}`;
     const mymaps = draft.mymapsUrl.trim() ? `\n🗺️ MyMaps: ${draft.mymapsUrl.trim()}\n` : "";
-    return `👤 ${loc ? loc[0] : "—"}\n🪪 ${ehMxUf(d.uf) ? "Documento" : "CPF"}: ${ct.cpf || "—"}\n📱 Celular: ${ct.celular || "—"}\n🏍️ Situação do veículo: ${SITUACAO_VEICULO}\n🛵 Modelo: ${mod ? mod[0] : "—"}\n🔖 ${placa}\n📅 ${d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias de inadimplência` : "—"}\n🏢 Filial: ${loc ? loc[1] : "—"}\n🕒 Última atualização: ${ultimaAtualizacaoTexto(placa)}\n\n${qth}\n${mymaps}\nRelato:\n${draft.relato.trim() || "(sem relato preenchido)"}`;
+    const tx = `👤 ${loc ? loc[0] : "—"}\n🪪 ${ehMxUf(d.uf) ? "Documento" : "CPF"}: ${ct.cpf || "—"}\n📱 Celular: ${ct.celular || "—"}\n🏍️ Situação do veículo: ${SITUACAO_VEICULO}\n🛵 Modelo: ${mod ? mod[0] : "—"}\n🔖 ${placa}\n📅 ${d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias de inadimplência` : "—"}\n🏢 Filial: ${loc ? loc[1] : "—"}\n🕒 Última atualização: ${ultimaAtualizacaoTexto(placa)}\n\n${qth}\n${mymaps}\nRelato:\n${draft.relato.trim() || "(sem relato preenchido)"}`;
+    return window.I18N ? I18N.msg(tx) : tx;
   }
   function qthHTML(placa) {
     const draft = draftDe(placa), kml = draft.kml;
@@ -4138,6 +4882,10 @@ async function __iniciarAppComDados(__payload) {
     return sel + lista;
   }
   let solicitAtual = null;
+  document.addEventListener("i18n:lang", (() => {
+    const pv = $("#solicitPreview");
+    if (pv && solicitAtual) pv.textContent = buildSolicitText(solicitAtual.placa);
+  }));
   const mapa = {
     map: null,
     camada: null,
@@ -4380,7 +5128,7 @@ async function __iniciarAppComDados(__payload) {
     const loc = LOCATARIO_INFO[placa], mod = MODELO_INFO[placa], ct = LOCATARIO_CONTATO_BY_PLACA[placa] || {}, d = DATA_BY_PLACA[placa], draft = draftDe(placa), foto = LOCATARIO_FOTO_BY_PLACA[placa];
     const fact = (icon, k, v, cor, pend) => `<div class="loc-fact ${pend ? "pend" : ""}" style="--fc:${cor}">${ic(icon)}<span><span class="k">${k}</span><span class="v">${esc(v)}</span></span></div>`;
     const head = (icon, cor, titulo, sub, id) => `<div class="sol-h ai" style="--hc:${cor}"><span class="ic">${ic(icon)}</span><b>${titulo}</b><span ${id ? `id="${id}"` : ""}>${sub}</span></div>`;
-    $("#modal").innerHTML = `\n    <div class="modal-head"><span class="mic">${ic("send", "live")}</span><h2 class="modal-title" id="modalTitle">Solicitação de acionamento<small>${placa}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="modal-body">\n      <div class="modal-form">\n        <div class="sol-sec">${head("user", "var(--mottu-green-70)", "Dados do locatário", "auto-preenchido")}\n          <div class="loc-card">\n            ${foto ? `<img class="loc-photo" src="${esc(foto.url)}" alt="Foto do locatário" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}" title="Foto do FaceMatch ok mais recente · ${esc(foto.data)} — clique para ampliar">` : `<div class="loc-photo none">${ic("user")}<span>sem foto</span></div>`}\n            <div class="loc-main">\n              <div class="loc-name">${esc(loc ? loc[0] : "—")}<small>${esc(loc ? loc[1] : "—")}${foto ? ` · foto de ${esc(foto.data)}` : ""}</small></div>\n              <div class="loc-facts">\n                ${fact("idcard", ehMxUf(d.uf) ? "Documento" : "CPF", ct.cpf || "aguardando endpoint", "var(--status-info)", !ct.cpf)}\n                ${fact("phone", "Celular", ct.celular || "aguardando endpoint", "var(--sig-cel)", !ct.celular)}\n                ${fact("bike", "Modelo", mod ? mod[0] : "—", "var(--mottu-lime)")}\n                ${fact("hourglass", "Inadimplência", d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias` : "—", corInad(d.dias_inadimplencia))}\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="sol-sec">${head("pin", "var(--sig-cel)", "QTH de consulta", "", "qthCount")}\n          <div class="qth-row"><input type="file" id="kmlFile" accept=".kml" hidden>\n            <button class="btn kml ai" type="button" data-kml-pick>${ic("upload")}Importar KML</button>\n            <input class="input" id="qthLivre" placeholder="QTH livre — escreva o endereço ou referência" value="${esc(draft.qth)}"></div>\n          <div id="qthWrap">${qthHTML(placa)}</div>\n        </div>\n        <div class="sol-sec">${head("mapPinPlus", "var(--mottu-lime)", "MyMaps", "opcional")}\n          <input class="input" id="mymapsInput" placeholder="Cole o link do MyMaps" value="${esc(draft.mymapsUrl)}"></div>\n        <div class="sol-sec">${head("file", "var(--sig-ticket)", "Relato", "texto livre + importar dados da placa")}\n          <textarea class="textarea" id="relatoInput" placeholder="Descreva o contexto para a empresa parceira">${esc(draft.relato)}</textarea>\n          <div class="inject" id="injectWrap">${injectsHTML(placa)}</div></div>\n      </div>\n      <div class="modal-preview"><div class="modal-preview-inner">\n        ${head("monitorCheck", "var(--mottu-green-70)", "Pré-visualização", "exatamente o que será copiado")}\n        <pre class="preview-box v2" id="solicitPreview"></pre>\n        <div class="modal-foot"><button class="btn cancel" type="button" data-action="close-modal">Cancelar</button><button class="btn pri ai" type="button" id="copySolicit">${ic("copy")}Copiar solicitação</button></div>\n      </div></div>\n    </div>`;
+    $("#modal").innerHTML = `\n    <div class="modal-head"><span class="mic">${ic("send", "live")}</span><h2 class="modal-title" id="modalTitle">Solicitação de acionamento<small>${placa}</small></h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>\n    <div class="modal-body">\n      <div class="modal-form">\n        <div class="sol-sec">${head("user", "var(--mottu-green-70)", "Dados do locatário", "auto-preenchido")}\n          <div class="loc-card">\n            ${foto ? `<img class="loc-photo" src="${esc(foto.url)}" alt="Foto do locatário" data-photo="${esc(foto.url)}" data-photo-date="${esc(foto.data)}" title="Foto do FaceMatch ok mais recente · ${esc(foto.data)} — clique para ampliar">` : `<div class="loc-photo none">${ic("user")}<span>sem foto</span></div>`}\n            <div class="loc-main">\n              <div class="loc-name">${esc(loc ? loc[0] : "—")}<small>${esc(loc ? loc[1] : "—")}${foto ? ` · foto de ${esc(foto.data)}` : ""}</small></div>\n              <div class="loc-facts">\n                ${fact("idcard", ehMxUf(d.uf) ? "Documento" : "CPF", ct.cpf || "aguardando endpoint", "var(--status-info)", !ct.cpf)}\n                ${fact("phone", "Celular", ct.celular || "aguardando endpoint", "var(--sig-cel)", !ct.celular)}\n                ${fact("bike", "Modelo", mod ? mod[0] : "—", "var(--mottu-lime)")}\n                ${fact("hourglass", "Inadimplência", d.dias_inadimplencia != null ? `${d.dias_inadimplencia} dias` : "—", corInad(d.dias_inadimplencia))}\n              </div>\n            </div>\n          </div>\n        </div>\n        <div class="sol-sec">${head("pin", "var(--sig-cel)", "QTH de consulta", "", "qthCount")}\n          <div class="qth-row"><input type="file" id="kmlFile" accept=".kml" hidden>\n            <button class="btn kml ai" type="button" data-kml-pick>${ic("upload")}Importar KML</button>\n            <input class="input" id="qthLivre" placeholder="QTH livre — escreva o endereço ou referência" value="${esc(draft.qth)}"></div>\n          <div id="qthWrap">${qthHTML(placa)}</div>\n        </div>\n        <div class="sol-sec">${head("mapPinPlus", "var(--mottu-lime)", "MyMaps", "opcional")}\n          <input class="input" id="mymapsInput" placeholder="Cole o link do MyMaps" value="${esc(draft.mymapsUrl)}"></div>\n        <div class="sol-sec">${head("file", "var(--sig-ticket)", "Relato", "texto livre + importar dados da placa")}\n          <textarea class="textarea" id="relatoInput" placeholder="Descreva o contexto para a empresa parceira">${esc(draft.relato)}</textarea>\n          <div class="inject" id="injectWrap">${injectsHTML(placa)}</div></div>\n      </div>\n      <div class="modal-preview"><div class="modal-preview-inner">\n        ${head("monitorCheck", "var(--mottu-green-70)", "Pré-visualização", "exatamente o que será copiado")}\n        <pre class="preview-box v2" id="solicitPreview" data-no-i18n></pre>\n        <div class="modal-foot"><button class="btn cancel" type="button" data-action="close-modal">Cancelar</button><button class="btn pri ai" type="button" id="copySolicit">${ic("copy")}Copiar solicitação</button></div>\n      </div></div>\n    </div>`;
     const upd = () => {
       $("#solicitPreview").textContent = buildSolicitText(placa);
       const c = $("#qthCount");
