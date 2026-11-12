@@ -1701,6 +1701,7 @@ const R = [
   [/^(.*?)~(\d+) (min|h) atrás$/, m => `${m[1] ? T(m[1].trim()) + " " : ""}hace ~${m[2]} ${m[3]}`],
   [/^(\d\d\/\d\d\/\d{4}) às (\d\d:\d\d)(.*)$/, m => `${m[1]} a las ${m[2]}${m[3].replace(/— (.+)$/, (_, r) => "— " + T(r))}`],
   [/^Atualizado em (.+)$/, m => `Actualizado el ${m[1]}`],
+  [/^Foto indisponível · (.+)$/, m => `Foto no disponible · ${m[1]}`],
   [/^(\d+) de (\d+) dias — sai da carteira ao completar (\d+)$/, m => `${m[1]} de ${m[2]} días — sale de la cartera al cumplir ${m[3]}`],
   [/^(\d+) de (\d+) placas · (\d+)% da carteira$/, m => `${m[1]} de ${m[2]} placas · ${m[3]}% de la cartera`],
   [/^(\d+) de (\d+) placas$/, m => `${m[1]} de ${m[2]} placas`],
@@ -2668,7 +2669,7 @@ async function __iniciarAppComDados(__payload) {
     clearTimeout(toastTimer);
     toastTimer = setTimeout((() => t.classList.remove("show")), 1700);
   }
-  const CBD_URL_FRESCA = {}, CBD_URL_PEDIDO = {};
+  const CBD_URL_FRESCA = {}, CBD_URL_PEDIDO = {}, CBD_FOTO_ERRO = {};
   function cbdPedirFoto(placa) {
     if (CBD_URL_PEDIDO[placa]) return CBD_URL_PEDIDO[placa];
     if (typeof __WEBHOOK_URL === "undefined") return Promise.resolve(null);
@@ -2681,7 +2682,13 @@ async function __iniciarAppComDados(__payload) {
       body: JSON.stringify({
         placa
       })
-    }).then((r => r.ok ? r.json() : null)).then((j => j && j.ok && j.url ? CBD_URL_FRESCA[placa] = j.url : null)).catch((err => {
+    }).then((r => r.ok ? r.json() : {
+      erro: `webhook respondeu ${r.status}`
+    })).then((j => {
+      if (j && j.ok && j.url) return CBD_URL_FRESCA[placa] = j.url;
+      CBD_FOTO_ERRO[placa] = j && j.erro || "sem resposta do n8n";
+      return null;
+    })).catch((err => {
       console.error("[carteira] foto do CarBigData:", err);
       return null;
     })).finally((() => {
@@ -2690,15 +2697,32 @@ async function __iniciarAppComDados(__payload) {
       }), 6e4);
     }));
   }
+  function cbdFalhou(box, placa) {
+    if (!box) return;
+    box.classList.remove("carregando");
+    box.classList.add("erro");
+    const f = box.querySelector(".pop-img-fail");
+    if (f && CBD_FOTO_ERRO[placa]) f.textContent = `Foto indisponível · ${CBD_FOTO_ERRO[placa]}`;
+  }
+  function cbdCarregaFotos(root) {
+    root.querySelectorAll(".pop-img.carregando img[data-cbd-img]:not([src])").forEach((im => {
+      const box = im.closest(".pop-img"), placa = im.dataset.cbdImg;
+      im.dataset.renovada = "1";
+      cbdPedirFoto(placa).then((url => {
+        if (!im.isConnected) return;
+        if (url) {
+          im.src = url;
+          box.classList.remove("carregando");
+        } else cbdFalhou(box, placa);
+      }));
+    }));
+  }
   document.addEventListener("error", (e => {
     const im = e.target;
     if (!(im instanceof HTMLImageElement) || !im.dataset.cbdImg) return;
     const box = im.closest(".pop-img"), placa = im.dataset.cbdImg;
     if (im.dataset.renovada) {
-      if (box) {
-        box.classList.remove("carregando");
-        box.classList.add("erro");
-      }
+      cbdFalhou(box, placa);
       return;
     }
     im.dataset.renovada = "1";
@@ -2707,10 +2731,7 @@ async function __iniciarAppComDados(__payload) {
       if (url && url !== im.getAttribute("src")) {
         im.src = url;
         if (box) box.classList.remove("carregando");
-      } else if (box) {
-        box.classList.remove("carregando");
-        box.classList.add("erro");
-      }
+      } else cbdFalhou(box, placa);
     }));
   }), true);
   async function baixarBo(placa, btn) {
@@ -2945,10 +2966,10 @@ async function __iniciarAppComDados(__payload) {
         nome: "CarBigData",
         janela: "≤30 dias",
         recente: d.evt_cbd,
-        img: i.imageUrl ? {
-          url: i.imageUrl,
+        img: {
+          url: i.imageUrl || null,
           legenda: `${d.placa} · CarBigData · ${fmtDataHora(i.ultimaCaptura) || ""}`
-        } : null,
+        },
         rows: [ [ "Data", fmtDataHora(i.ultimaCaptura) ] ],
         cbd: {
           placa: d.placa,
@@ -3004,7 +3025,8 @@ async function __iniciarAppComDados(__payload) {
     const badge = p.cbd && p.cbd.decisao === "descartado" ? `<span class="pop-badge expirado">Hit descartado</span>` : p.janela ? `<span class="pop-badge ${p.recente ? "recente" : "expirado"}">${p.recente ? p.cbd && p.cbd.decisao === "confirmado" ? "Hit confirmado" : "Recente" : "Fora da janela"} · ${p.janela}</span>`.replace('class="pop-badge recente"', p.cbd && p.cbd.decisao === "confirmado" ? 'class="pop-badge hit-ok"' : 'class="pop-badge recente"') : "";
     const body = p.empty ? `<div class="pop-empty">${esc(p.empty)}</div>` : `<dl class="pop-rows">${p.rows.filter((r => r[1] != null)).map((r => `<dt>${esc(r[0])}</dt><dd class="${r[2] || ""}">${r[3] === "html" ? r[1] : esc(r[1])}</dd>`)).join("")}</dl>`;
     const fotoPlaca = p.cbd ? p.cbd.placa : "";
-    const foto = p.img ? `<button class="pop-img ai" type="button" data-cbd-foto="${esc(fotoPlaca)}" title="Ampliar a foto"><img src="${esc(CBD_URL_FRESCA[fotoPlaca] || p.img.url)}" alt="Captura CarBigData" data-cbd-img="${esc(fotoPlaca)}"><span class="pop-img-load">Atualizando a foto…</span><span class="pop-img-fail">Foto indisponível</span></button>` : "";
+    const fotoUrl = p.img ? CBD_URL_FRESCA[fotoPlaca] || p.img.url : null;
+    const foto = p.img ? `<button class="pop-img ai${fotoUrl ? "" : " carregando"}" type="button" data-cbd-foto="${esc(fotoPlaca)}" title="Ampliar a foto"><img ${fotoUrl ? `src="${esc(fotoUrl)}"` : ""} alt="Captura CarBigData" data-cbd-img="${esc(fotoPlaca)}"><span class="pop-img-load">Atualizando a foto…</span><span class="pop-img-fail">Foto indisponível</span></button>` : "";
     const cbd = p.cbd ? `<div class="pop-foot cbd-acoes"><button class="btn sm ai cbd-ok${p.cbd.decisao === "confirmado" ? " ativo" : ""}" type="button" data-cbd="confirmar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "confirmado"}">${ic("check")}Confirmar Hit</button><button class="btn sm ai cbd-no${p.cbd.decisao === "descartado" ? " ativo" : ""}" type="button" data-cbd="descartar" data-placa="${esc(p.cbd.placa)}" aria-pressed="${p.cbd.decisao === "descartado"}">${ic("x")}Descartar Hit</button></div>` : "";
     const bo = p.baixarBo ? `<button class="btn sm ai" type="button" data-bo-baixar="${esc(p.baixarBo)}">${ic("download")}Baixar B.O.</button>` : "";
     const lk = p.link ? `<a class="btn sm ai" href="${p.link.url}" target="_blank" rel="noopener">${esc(p.link.label)}${ic("external")}</a>` : "";
@@ -4405,6 +4427,7 @@ async function __iniciarAppComDados(__payload) {
   function openPop(anchor, html, ctx) {
     pop.innerHTML = html;
     pop.scrollTop = 0;
+    cbdCarregaFotos(pop);
     pop.className = "pop" + (ctx.menu ? " menu" : "") + (ctx.menuKey === "tags" || ctx.rowTags ? " tf" : "");
     popCtx = {
       ...ctx,
@@ -5530,7 +5553,8 @@ async function __iniciarAppComDados(__payload) {
       e.stopPropagation();
       const i = CBD_INFO[cbdFoto.dataset.cbdFoto];
       if (cbdFoto.classList.contains("erro") || cbdFoto.classList.contains("carregando")) return;
-      if (i && i.imageUrl) openLightbox(CBD_URL_FRESCA[cbdFoto.dataset.cbdFoto] || i.imageUrl, "Captura CarBigData", null, `CarBigData · ${cbdFoto.dataset.cbdFoto} · ${fmtDataHora(i.ultimaCaptura) || ""}`, true);
+      const u = CBD_URL_FRESCA[cbdFoto.dataset.cbdFoto] || i && i.imageUrl;
+      if (i && u) openLightbox(u, "Captura CarBigData", null, `CarBigData · ${cbdFoto.dataset.cbdFoto} · ${fmtDataHora(i.ultimaCaptura) || ""}`, true);
       return;
     }
     const cbdBtn = t.closest("[data-cbd]");
