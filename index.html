@@ -1692,7 +1692,7 @@ const T = s => { const r = tr(norm(s)); return r == null ? s : r; };
 const M = s => I18N_MOTIVO[String(s).toLowerCase()] || s;
 const SCORE = [["eventos c/ sinal forte", "eventos c/ señal fuerte"], ["GPS ativo força Alta", "GPS activo fuerza Alta"], ["Inadimplência", "Morosidad"], ["Sem atuação", "Sin actuación"], ["sem atuação", "sin actuación"]];
 const R = [
-  [/^([A-Z]{3}-?\d[A-Z0-9]\d{2}) · (.+)$/, m => `${m[1]} · ${T(m[2])}`],
+  [/^([A-Z]{3}-?\d[A-Z0-9]\d{2}|\d{4}[A-Z]\d|\d{2}[A-Z]{3}\d) · (.+)$/, m => `${m[1]} · ${T(m[2])}`],
   [/^(.+?): último há (\S+) \(fora da janela\)$/, m => `${T(m[1])}: último hace ${m[2]} (fuera de la ventana)`],
   [/^(.+?): sem sinal$/, m => `${T(m[1])}: sin señal`],
   [/^(.+?): sem registro$/, m => `${T(m[1])}: sin registro`],
@@ -5281,18 +5281,9 @@ async function __iniciarAppComDados(__payload) {
     renderAll();
   }
   addEventListener("hashchange", (() => goTo(location.hash)));
-  const PLACA_MASK_PATTERN = [ "L", "L", "L", "N", "L", "N", "N" ];
   function maskPlacaBusca(raw) {
-    const chars = raw.toUpperCase().replace(/[^A-Z0-9]/g, "");
-    let out = "";
-    if (/^[0-9]/.test(chars)) return chars.slice(0, 7);
-    for (let i = 0, p = 0; i < chars.length && p < PLACA_MASK_PATTERN.length; i++) {
-      const c = chars[i], ok = PLACA_MASK_PATTERN[p] === "L" ? /[A-Z]/.test(c) : p === 4 ? /[A-Z0-9]/.test(c) : /[0-9]/.test(c);
-      if (!ok) continue;
-      out += c;
-      p++;
-    }
-    return out.length > 3 ? `${out.slice(0, 3)}-${out.slice(3)}` : out;
+    const chars = raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+    return /^[A-Z]{3}[0-9]/.test(chars) ? `${chars.slice(0, 3)}-${chars.slice(3)}` : chars;
   }
   $("#searchInput").addEventListener("input", (e => {
     const v = maskPlacaBusca(e.target.value);
