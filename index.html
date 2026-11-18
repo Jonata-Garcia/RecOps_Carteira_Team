@@ -1165,6 +1165,41 @@ body.gate-on{ overflow:hidden; }
 @keyframes gatePulsa{ 0%,100%{ transform:scale(.55); opacity:.55; } 50%{ transform:scale(1); opacity:1; } }
 @keyframes gateBarra{ to{ left:100%; } }
 @media (prefers-reduced-motion: reduce){ .gate-spin::before, .gate-spin::after, .gate-bar i{ animation-duration:3s; } }
+.nl{ display:flex; align-items:center; gap:5px; max-width:180px; margin-top:6px; padding:0; border:0; background:none; color:var(--text-secondary); font:inherit; font-size:12px; text-align:left; cursor:pointer; --is:12px; }
+.nl .li{ flex:none; color:#FFCE00; }
+.nl-t{ min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.nl-n{ flex:none; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+.nl:hover .nl-t{ color:var(--text-primary); }
+td > .plate{ vertical-align:middle; }
+.nl-add{ display:inline-grid; place-items:center; width:26px; height:26px; margin-left:6px; padding:0; border:0; border-radius:var(--radius-md); vertical-align:middle; background:none; color:var(--text-muted); cursor:pointer; opacity:0; transition:opacity .15s; --is:14px; }
+.grid tbody tr.row:hover .nl-add, .nl-add:focus-visible{ opacity:1; }
+.nl-add:hover{ color:#FFCE00; background:rgba(255,255,255,.06); }
+.np{ position:fixed; top:var(--hub-h); right:0; bottom:0; z-index:80; width:min(400px, 100vw); display:flex; flex-direction:column; background:var(--glass); border-left:1px solid var(--line-2); box-shadow:-24px 0 48px rgba(0,0,0,.45); transform:translateX(100%); transition:transform .25s var(--ease); }
+.np.open{ transform:none; }
+.np-h{ display:flex; align-items:center; gap:10px; padding:16px 16px 12px; }
+.np-h b{ font-family:var(--font-display); font-style:italic; font-size:18px; letter-spacing:.6px; }
+.np-x{ margin-left:auto; display:grid; place-items:center; width:32px; height:32px; padding:0; border:0; border-radius:var(--radius-md); background:none; color:var(--text-muted); cursor:pointer; --is:16px; }
+.np-x:hover{ color:var(--text-primary); background:rgba(255,255,255,.06); }
+.np-novo{ display:flex; align-items:center; gap:8px; margin:0 16px 12px; padding:10px 12px; border:1px dashed var(--line-2); border-radius:12px; background:none; color:var(--text-secondary); font:inherit; font-size:13px; cursor:pointer; --is:14px; }
+.np-novo:hover{ color:var(--text-primary); border-color:#FFCE00; }
+.np-l{ flex:1; overflow:auto; display:flex; flex-direction:column; gap:8px; padding:0 16px 16px; }
+.nb{ display:flex; flex-direction:column; gap:4px; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--glass-2); cursor:pointer; }
+.nb:hover{ border-color:var(--line-2); }
+.nb > b{ font-size:14px; color:var(--text-primary); overflow-wrap:anywhere; }
+.nb > p{ margin:0; font-size:13px; line-height:1.45; color:var(--text-secondary); white-space:pre-wrap; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.nb > time, .nb-f time{ font-size:11.5px; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+.nb.on{ cursor:default; border-color:#FFCE00; background:var(--glass-3); }
+.nb-t, .nb-c{ width:100%; box-sizing:border-box; padding:0; border:0; outline:0; resize:none; background:none; color:var(--text-primary); font:inherit; }
+.nb-t{ font-size:15px; font-weight:700; }
+.nb-c{ min-height:96px; font-size:13.5px; line-height:1.5; color:var(--text-secondary); }
+.nb-t::placeholder, .nb-c::placeholder{ color:var(--text-faint); }
+.nb-f{ display:flex; align-items:center; gap:8px; }
+.nb-del{ margin-left:auto; display:inline-flex; align-items:center; gap:6px; height:28px; padding:0 8px; border:0; border-radius:var(--radius-md); background:none; color:var(--text-muted); font:inherit; font-size:12px; cursor:pointer; --is:14px; }
+.nb-del:hover{ color:var(--status-critical); background:rgba(255,84,73,.1); }
+.nb-del.confirma{ color:#fff; background:var(--status-critical); }
+.np-erro{ margin:0 16px 16px; padding:10px 12px; border-radius:var(--radius-md); font-size:12.5px; color:#ff8a82; background:rgba(255,84,73,.1); border:1px solid rgba(255,84,73,.3); }
+.np-erro[hidden]{ display:none; }
+@media (prefers-reduced-motion: reduce){ .np{ transition:none; } }
 </style>
 </head>
 <body class="gate-on">
@@ -1636,6 +1671,12 @@ const I18N_D = {
 "Nenhuma saída por mudança de situação.": "Ninguna salida por cambio de situación.",
 "Nenhuma saída por 150 dias neste mês.": "Ninguna salida por 150 días en este mes.",
 "Só México": "Solo México",
+"Nova nota": "Nueva nota",
+"Título": "Título",
+"Nota": "Nota",
+"Notas": "Notas",
+"Apagar": "Borrar",
+"Não salvou. Tentando de novo…": "No se guardó. Reintentando…",
 "Entrada na carteira por aprovação de solicitação de gestores.": "Entrada a la cartera por aprobación de solicitud de gestores.",
 "Entrou em Apropriação Indébita com menos de 150 dias de inadimplência.": "Entró en Apropiación indebida con menos de 150 días de mora.",
 "Apropriação Indébita": "Apropiación indebida",
@@ -2167,6 +2208,8 @@ async function __iniciarAppComDados(__payload) {
   const ICONS = {
     search: `<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>`,
     x: `<path d="M18 6 6 18M6 6l12 12"/>`,
+    note: `<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/>`,
+    trash: `<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>`,
     chevDown: `<path d="m6 9 6 6 6-6"/>`,
     chevRight: `<path d="m9 18 6-6-6-6"/>`,
     box: `<path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/>`,
@@ -3521,6 +3564,11 @@ async function __iniciarAppComDados(__payload) {
     b: "acomp",
     get: d => (d.tags || []).map((t => TAG_OPCOES[t] ? TAG_OPCOES[t].label : t)).join(", ")
   }, {
+    k: "notas",
+    l: "Notas",
+    b: "acomp",
+    get: d => notasDe(d.placa).filter((n => !notaVazia(n))).map((n => [ n.titulo.trim(), n.corpo.trim() ].filter(Boolean).join(": "))).join(" | ")
+  }, {
     k: "int_recusas",
     l: "Interpretação das recusas",
     b: "acomp",
@@ -3877,7 +3925,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function rowHTML(d, i) {
     const geral = !carteiraAtual(), a = analistaDaUf[d.uf], open = state.expandedPlaca === d.placa;
-    return `<tr class="row ai p-${d.prioridade} ${open ? "open" : ""}" data-placa="${d.placa}" aria-expanded="${open}" style="animation-delay:${Math.min(i, 12) * 30}ms">\n    <td>${plateHTML(d)}</td>\n    ${geral ? `<td class="c-analista">${ehMx(d) ? `<span class="who-mini" title="México"><span class="av mx">${BANDEIRA_MX}</span></span>` : a ? `<span class="who-mini" style="--ac:${a.cor}" title="${a.nome}"><span class="av">${a.ini}</span></span>` : `<span class="sinal-off">—</span>`}</td>` : ""}\n    <td>${prioHTML(d)}</td><td>${semAtuacaoHTML(d)}</td><td>${inadHTML(d)}</td>\n    <td>${gpsAtivoHTML(d)}</td><td>${pingHTML(d)}</td><td>${sinaisHTML(d)}</td><td>${tagsHTML(d)}</td>\n    <td class="c-caret">${ic("chevRight")}</td>\n  </tr>${open ? detailHTML(d, "in done") : ""}`;
+    return `<tr class="row ai p-${d.prioridade} ${open ? "open" : ""}" data-placa="${d.placa}" aria-expanded="${open}" style="animation-delay:${Math.min(i, 12) * 30}ms">\n    <td>${plateHTML(d)}${notaSlotHTML(d.placa)}</td>\n    ${geral ? `<td class="c-analista">${ehMx(d) ? `<span class="who-mini" title="México"><span class="av mx">${BANDEIRA_MX}</span></span>` : a ? `<span class="who-mini" style="--ac:${a.cor}" title="${a.nome}"><span class="av">${a.ini}</span></span>` : `<span class="sinal-off">—</span>`}</td>` : ""}\n    <td>${prioHTML(d)}</td><td>${semAtuacaoHTML(d)}</td><td>${inadHTML(d)}</td>\n    <td>${gpsAtivoHTML(d)}</td><td>${pingHTML(d)}</td><td>${sinaisHTML(d)}</td><td>${tagsHTML(d)}</td>\n    <td class="c-caret">${ic("chevRight")}</td>\n  </tr>${open ? detailHTML(d, "in done") : ""}`;
   }
   function renderTable() {
     const base = escopo(), lista = ordenar(filtrar(base));
@@ -4548,6 +4596,216 @@ async function __iniciarAppComDados(__payload) {
       modalLocks = 0;
       document.body.style.overflow = "";
     }
+  }
+  let NOTAS = {};
+  const notaFila = new Map(), notaPainel = { placa: null, ativa: null, timer: null, confirmaDel: null };
+  let notaEnviando = false, notaRetry = null;
+  const notaId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const notaTitulo = n => n.titulo.trim() || n.corpo.trim().split("\n")[0] || "";
+  const notaVazia = n => !n.titulo.trim() && !n.corpo.trim();
+  const notasDe = placa => (NOTAS[placa] || []).slice().sort(((a, b) => (b.editadoEm || "").localeCompare(a.editadoEm || "")));
+  const notaData = iso => iso ? new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso)).replace(",", "") : "";
+  function notaSlotHTML(placa) {
+    const l = notasDe(placa).filter((n => !notaVazia(n)));
+    if (!l.length) return `<button class="nl-add ai" type="button" data-notas="${placa}" title="Nova nota" aria-label="Nova nota">${ic("note")}</button>`;
+    return `<button class="nl ai" type="button" data-notas="${placa}" title="${esc(notaTitulo(l[0]))}">${ic("note")}<span class="nl-t">${esc(notaTitulo(l[0]))}</span>${l.length > 1 ? `<span class="nl-n">+${l.length - 1}</span>` : ""}</button>`;
+  }
+  function notaAtualizaLinha(placa) {
+    const td = document.querySelector(`tr.row[data-placa="${placa}"] > td:first-child`);
+    if (!td) return;
+    td.querySelectorAll(":scope > .nl, :scope > .nl-add").forEach((b => b.remove()));
+    td.insertAdjacentHTML("beforeend", notaSlotHTML(placa));
+  }
+  function notaUpsertLocal(placa, nota) {
+    const l = NOTAS[placa] || (NOTAS[placa] = []), i = l.findIndex((x => x.id === nota.id));
+    if (i >= 0) l[i] = nota; else l.push(nota);
+  }
+  function notaRemoveLocal(placa, id) {
+    if (!NOTAS[placa]) return;
+    NOTAS[placa] = NOTAS[placa].filter((x => x.id !== id));
+    if (!NOTAS[placa].length) delete NOTAS[placa];
+  }
+  async function notasApi(corpo) {
+    const r = await fetch(__WEBHOOK_URL + "-notas", { method: "POST", headers: { [__SENHA_HEADER]: __senhaAtual, "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+    if (!r.ok) throw new Error(`n8n respondeu ${r.status}`);
+    return r.json();
+  }
+  function notasRecebidas(servidor) {
+    const ativa = notaPainel.ativa && notaPainel.placa ? (NOTAS[notaPainel.placa] || []).find((x => x.id === notaPainel.ativa)) : null;
+    const antes = new Set(Object.keys(NOTAS));
+    NOTAS = servidor && typeof servidor === "object" ? servidor : {};
+    Object.values(NOTAS).forEach((l => l.forEach((n => { n.salva = true; }))));
+    for (const p of notaFila.values()) if (p.op === "salvar") notaUpsertLocal(p.placa, { ...p.nota, salva: true }); else notaRemoveLocal(p.placa, p.id);
+    if (ativa) notaUpsertLocal(notaPainel.placa, ativa);
+    new Set([ ...antes, ...Object.keys(NOTAS) ]).forEach(notaAtualizaLinha);
+    if (notaPainel.placa) notaRenderLista();
+  }
+  function notaErro(msg) {
+    const el = document.getElementById("npErro");
+    if (el) { el.textContent = msg || ""; el.hidden = !msg; }
+  }
+  async function carregarNotas() {
+    if (typeof __WEBHOOK_URL === "undefined" || !__senhaAtual) return;
+    try {
+      const j = await notasApi({ op: "listar" });
+      if (j && j.ok) notasRecebidas(j.notas);
+    } catch (err) { console.error("[carteira] notas:", err); }
+  }
+  async function notaEnviar() {
+    if (notaEnviando || !notaFila.size || typeof __WEBHOOK_URL === "undefined" || !__senhaAtual) return;
+    notaEnviando = true;
+    const [chave, p] = notaFila.entries().next().value;
+    let ok = false;
+    try {
+      for (let t = 0; t < 4 && !ok; t++) {
+        const j = await notasApi(p.op === "salvar" ? { op: "salvar", placa: p.placa, nota: p.nota } : { op: "apagar", placa: p.placa, id: p.id });
+        if (j && j.ok) {
+          ok = true;
+          if (notaFila.get(chave) === p) notaFila.delete(chave);
+          notasRecebidas(j.notas);
+        } else if (j && j.conflito) await new Promise((r => setTimeout(r, 250 + Math.random() * 500 * (t + 1))));
+        else throw new Error(j && j.erro || "resposta inválida");
+      }
+      if (!ok) throw new Error("conflito ao gravar");
+      notaErro("");
+    } catch (err) {
+      console.error("[carteira] salvar nota:", err);
+      notaErro("Não salvou. Tentando de novo…");
+      clearTimeout(notaRetry);
+      notaRetry = setTimeout(notaEnviar, 5e3);
+    } finally {
+      notaEnviando = false;
+      if (ok && notaFila.size) notaEnviar();
+    }
+  }
+  function notaEnfileira(placa, nota) {
+    const chave = `${placa}|${nota.id}`;
+    if (notaVazia(nota)) {
+      notaRemoveLocal(placa, nota.id);
+      if (nota.salva) notaFila.set(chave, { op: "apagar", placa, id: nota.id }); else notaFila.delete(chave);
+    } else notaFila.set(chave, { op: "salvar", placa, nota: { id: nota.id, titulo: nota.titulo, corpo: nota.corpo, criadoEm: nota.criadoEm } });
+    notaAtualizaLinha(placa);
+    notaEnviar();
+  }
+  function notaPainelEl() {
+    let el = document.getElementById("notas");
+    if (el) return el;
+    el = document.createElement("aside");
+    el.id = "notas"; el.className = "np"; el.setAttribute("aria-label", "Notas"); el.hidden = true;
+    el.innerHTML = `<div class="np-h"><b id="npPlaca"></b><button class="np-x" type="button" data-np-fechar aria-label="Fechar">${ic("x")}</button></div>
+      <button class="np-novo" type="button" data-np-nova>${ic("plus")}Nova nota</button><p class="np-erro" id="npErro" hidden></p><div class="np-l" id="npLista"></div>`;
+    document.body.appendChild(el);
+    el.addEventListener("input", (e => {
+      const n = notaAtivaObj();
+      if (!n) return;
+      if (e.target.classList.contains("nb-t")) n.titulo = e.target.value;
+      else if (e.target.classList.contains("nb-c")) { n.corpo = e.target.value; notaCresce(e.target); }
+      else return;
+      n.editadoEm = new Date().toISOString();
+      clearTimeout(notaPainel.timer);
+      notaPainel.timer = setTimeout((() => notaFecharAtiva(false)), 700);
+    }));
+    el.addEventListener("keydown", (e => {
+      if (e.key === "Enter" && e.target.classList.contains("nb-t")) { e.preventDefault(); const c = el.querySelector(".nb.on .nb-c"); if (c) c.focus(); }
+    }));
+    return el;
+  }
+  const notaAtivaObj = () => notaPainel.placa && notaPainel.ativa ? (NOTAS[notaPainel.placa] || []).find((x => x.id === notaPainel.ativa)) || null : null;
+  const notaCresce = ta => { ta.style.height = "auto"; ta.style.height = ta.scrollHeight + "px"; };
+  function notaFecharAtiva(sair = true) {
+    clearTimeout(notaPainel.timer);
+    const n = notaAtivaObj();
+    if (n && (sair || !notaVazia(n)) && (n.gravado !== `${n.titulo}\u0000${n.corpo}` || notaVazia(n))) {
+      n.gravado = `${n.titulo}\u0000${n.corpo}`;
+      notaEnfileira(notaPainel.placa, n);
+      if (!notaVazia(n)) n.salva = true;
+    }
+    if (sair) notaPainel.ativa = null;
+  }
+  function notaBlocoHTML(n) {
+    if (n.id === notaPainel.ativa) return `<div class="nb on" data-nb="${n.id}"><input class="nb-t" maxlength="120" placeholder="Título" value="${esc(n.titulo)}"><textarea class="nb-c" maxlength="5000" placeholder="Nota">${esc(n.corpo)}</textarea>
+      <div class="nb-f"><time>${notaData(n.editadoEm)}</time><button class="nb-del${notaPainel.confirmaDel === n.id ? " confirma" : ""}" type="button" data-nb-del="${n.id}">${notaPainel.confirmaDel === n.id ? "Apagar" : ic("trash")}</button></div></div>`;
+    return `<div class="nb" data-nb="${n.id}">${n.titulo.trim() ? `<b>${esc(n.titulo)}</b>` : ""}${n.corpo.trim() ? `<p>${esc(n.corpo)}</p>` : ""}<time>${notaData(n.editadoEm)}</time></div>`;
+  }
+  function notaRenderLista() {
+    const lista = document.getElementById("npLista");
+    if (!lista) return;
+    const ativoEl = lista.querySelector(".nb.on"), foco = ativoEl && ativoEl.contains(document.activeElement) ? document.activeElement : null;
+    const sel = foco ? [ foco.className, foco.selectionStart, foco.selectionEnd ] : null, topo = lista.scrollTop;
+    const l = notasDe(notaPainel.placa).filter((n => n.id === notaPainel.ativa || !notaVazia(n)));
+    lista.innerHTML = l.map(notaBlocoHTML).join("");
+    const novoAtivo = lista.querySelector(".nb.on");
+    if (novoAtivo && ativoEl && ativoEl.dataset.nb === novoAtivo.dataset.nb) novoAtivo.replaceWith(ativoEl);
+    const ta = lista.querySelector(".nb.on .nb-c");
+    if (ta) notaCresce(ta);
+    lista.scrollTop = topo;
+    if (sel) { const f = lista.querySelector(`.nb.on .${sel[0].split(" ")[0]}`); if (f && f !== document.activeElement) { f.focus(); f.setSelectionRange(sel[1], sel[2]); } }
+  }
+  function notaDelBtn() {
+    const b = document.querySelector("#npLista .nb.on .nb-del");
+    if (!b) return;
+    const c = notaPainel.confirmaDel === b.dataset.nbDel;
+    b.classList.toggle("confirma", c);
+    b.innerHTML = c ? "Apagar" : ic("trash");
+  }
+  function notaAtivar(id, campo = "nb-c") {
+    if (notaPainel.ativa === id) return;
+    notaFecharAtiva();
+    notaPainel.ativa = id; notaPainel.confirmaDel = null;
+    const n = notaAtivaObj();
+    if (n) n.gravado = `${n.titulo}\u0000${n.corpo}`;
+    notaRenderLista();
+    const f = document.querySelector(`#npLista .nb.on .${campo}`);
+    if (f) { f.focus(); f.setSelectionRange(f.value.length, f.value.length); }
+  }
+  function notaNova() {
+    const agora = new Date().toISOString(), n = { id: notaId(), titulo: "", corpo: "", criadoEm: agora, editadoEm: agora };
+    notaFecharAtiva();
+    notaUpsertLocal(notaPainel.placa, n);
+    notaAtivar(n.id, "nb-t");
+    document.getElementById("npLista").scrollTop = 0;
+  }
+  function abrirNotas(placa) {
+    const el = notaPainelEl();
+    if (notaPainel.placa) notaFecharAtiva();
+    notaPainel.placa = placa; notaPainel.ativa = null; notaPainel.confirmaDel = null;
+    $("#npPlaca").textContent = placa;
+    el.hidden = false;
+    requestAnimationFrame((() => el.classList.add("open")));
+    if (!notasDe(placa).some((n => !notaVazia(n)))) notaNova(); else notaRenderLista();
+    carregarNotas();
+  }
+  function fecharNotas() {
+    const el = document.getElementById("notas");
+    if (!el || !notaPainel.placa) return;
+    notaFecharAtiva();
+    const placa = notaPainel.placa;
+    notaPainel.placa = null;
+    el.classList.remove("open");
+    setTimeout((() => { if (!notaPainel.placa) el.hidden = true; }), 260);
+    notaAtualizaLinha(placa);
+  }
+  const notasAberto = () => !!notaPainel.placa;
+  function notaClique(t) {
+    const abre = t.closest("[data-notas]");
+    if (abre) { abrirNotas(abre.dataset.notas); return true; }
+    if (!t.closest("#notas")) return false;
+    if (t.closest("[data-np-fechar]")) fecharNotas();
+    else if (t.closest("[data-np-nova]")) notaNova();
+    else if (t.closest("[data-nb-del]")) {
+      const id = t.closest("[data-nb-del]").dataset.nbDel;
+      if (notaPainel.confirmaDel !== id) { notaPainel.confirmaDel = id; notaDelBtn(); return true; }
+      const n = notaAtivaObj();
+      if (n) { n.titulo = ""; n.corpo = ""; }
+      notaFecharAtiva();
+      notaPainel.confirmaDel = null;
+      notaRenderLista();
+    } else {
+      const b = t.closest(".nb:not(.on)");
+      if (b) notaAtivar(b.dataset.nb);
+      else if (notaPainel.confirmaDel) { notaPainel.confirmaDel = null; notaDelBtn(); }
+    }
+    return true;
   }
   function openModal(cls = "") {
     closePop();
@@ -5310,6 +5568,10 @@ async function __iniciarAppComDados(__payload) {
   }));
   document.addEventListener("click", (async e => {
     const t = e.target;
+    if (notaClique(t)) {
+      e.stopPropagation();
+      return;
+    }
     const copyBtn = t.closest("[data-copy]");
     if (copyBtn) {
       e.stopPropagation();
@@ -5817,7 +6079,7 @@ async function __iniciarAppComDados(__payload) {
   }));
   document.addEventListener("keydown", (e => {
     if (e.key !== "Escape") return;
-    if ($("#lightbox").classList.contains("open")) closeLightbox(); else if ($("#qthMapa").classList.contains("open")) fecharMapaQth(); else if ($("#overlay").classList.contains("open")) closeModal(); else closePop();
+    if ($("#lightbox").classList.contains("open")) closeLightbox(); else if ($("#qthMapa").classList.contains("open")) fecharMapaQth(); else if ($("#overlay").classList.contains("open")) closeModal(); else if (notasAberto()) fecharNotas(); else closePop();
   }));
   const MOV_IDS = [ "movEntradas", "movSituacao", "mov150" ];
   let movIdx = -1;
@@ -5884,6 +6146,7 @@ async function __iniciarAppComDados(__payload) {
   }
   goTo(location.hash);
   setInterval(renderFresh, 6e4);
+  carregarNotas();
 }
 
 const __WEBHOOK_URL = "https://webhook-n8n-int.mottu.io/webhook/carteira-v2";
