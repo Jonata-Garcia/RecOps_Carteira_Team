@@ -1677,6 +1677,7 @@ const I18N_D = {
 "Notas": "Notas",
 "Apagar": "Borrar",
 "Não salvou. Tentando de novo…": "No se guardó. Reintentando…",
+"Nota não salva: webhook carteira-v2-notas inativo no n8n": "Nota no guardada: webhook carteira-v2-notas inactivo en n8n",
 "Entrada na carteira por aprovação de solicitação de gestores.": "Entrada a la cartera por aprobación de solicitud de gestores.",
 "Entrou em Apropriação Indébita com menos de 150 dias de inadimplência.": "Entró en Apropiación indebida con menos de 150 días de mora.",
 "Apropriação Indébita": "Apropiación indebida",
@@ -4625,10 +4626,18 @@ async function __iniciarAppComDados(__payload) {
     NOTAS[placa] = NOTAS[placa].filter((x => x.id !== id));
     if (!NOTAS[placa].length) delete NOTAS[placa];
   }
+  const NOTA_FILA_KEY = "recops_notas_pendentes";
+  const notaFilaGuarda = () => store.set(NOTA_FILA_KEY, [ ...notaFila.values() ]);
+  const NOTA_ERROS = { 404: "webhook carteira-v2-notas inativo no n8n", 401: "senha recusada pelo webhook de notas", 403: "senha recusada pelo webhook de notas", 500: "erro no n8n (veja Executions do carteira-v2-notas)" };
   async function notasApi(corpo) {
-    const r = await fetch(__WEBHOOK_URL + "-notas", { method: "POST", headers: { [__SENHA_HEADER]: __senhaAtual, "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
-    if (!r.ok) throw new Error(`n8n respondeu ${r.status}`);
-    return r.json();
+    let r;
+    try {
+      r = await fetch(__WEBHOOK_URL + "-notas", { method: "POST", headers: { [__SENHA_HEADER]: __senhaAtual, "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+    } catch (err) { throw new Error("sem conexão com o n8n (VPN ou CORS)"); }
+    if (!r.ok) throw new Error(NOTA_ERROS[r.status] || `n8n respondeu ${r.status}`);
+    const j = await r.json().catch((() => null));
+    if (!j) throw new Error("n8n respondeu sem JSON");
+    return j;
   }
   function notasRecebidas(servidor) {
     const ativa = notaPainel.ativa && notaPainel.placa ? (NOTAS[notaPainel.placa] || []).find((x => x.id === notaPainel.ativa)) : null;
@@ -4644,12 +4653,24 @@ async function __iniciarAppComDados(__payload) {
     const el = document.getElementById("npErro");
     if (el) { el.textContent = msg || ""; el.hidden = !msg; }
   }
+  let notaAvisou = false;
+  function notaFalhou(err) {
+    const msg = `Nota não salva: ${err && err.message ? err.message : err}`;
+    console.error("[carteira] notas:", err);
+    notaErro(msg);
+    if (!notaAvisou) { notaAvisou = true; toast(msg); }
+  }
   async function carregarNotas() {
     if (typeof __WEBHOOK_URL === "undefined" || !__senhaAtual) return;
+    if (!notaFila.size) for (const p of store.get(NOTA_FILA_KEY, [])) if (p && p.placa && (p.nota || p.id)) notaFila.set(`${p.placa}|${p.nota ? p.nota.id : p.id}`, p);
     try {
       const j = await notasApi({ op: "listar" });
-      if (j && j.ok) notasRecebidas(j.notas);
-    } catch (err) { console.error("[carteira] notas:", err); }
+      if (j && j.ok) notasRecebidas(j.notas); else throw new Error(j && j.erro || "resposta inválida");
+    } catch (err) {
+      notasRecebidas(NOTAS);
+      if (notaFila.size) notaFalhou(err); else console.error("[carteira] notas:", err);
+    }
+    notaEnviar();
   }
   async function notaEnviar() {
     if (notaEnviando || !notaFila.size || typeof __WEBHOOK_URL === "undefined" || !__senhaAtual) return;
@@ -4662,15 +4683,16 @@ async function __iniciarAppComDados(__payload) {
         if (j && j.ok) {
           ok = true;
           if (notaFila.get(chave) === p) notaFila.delete(chave);
+          notaFilaGuarda();
           notasRecebidas(j.notas);
         } else if (j && j.conflito) await new Promise((r => setTimeout(r, 250 + Math.random() * 500 * (t + 1))));
         else throw new Error(j && j.erro || "resposta inválida");
       }
       if (!ok) throw new Error("conflito ao gravar");
       notaErro("");
+      notaAvisou = false;
     } catch (err) {
-      console.error("[carteira] salvar nota:", err);
-      notaErro("Não salvou. Tentando de novo…");
+      notaFalhou(err);
       clearTimeout(notaRetry);
       notaRetry = setTimeout(notaEnviar, 5e3);
     } finally {
@@ -4684,6 +4706,7 @@ async function __iniciarAppComDados(__payload) {
       notaRemoveLocal(placa, nota.id);
       if (nota.salva) notaFila.set(chave, { op: "apagar", placa, id: nota.id }); else notaFila.delete(chave);
     } else notaFila.set(chave, { op: "salvar", placa, nota: { id: nota.id, titulo: nota.titulo, corpo: nota.corpo, criadoEm: nota.criadoEm } });
+    notaFilaGuarda();
     notaAtualizaLinha(placa);
     notaEnviar();
   }
@@ -4786,6 +4809,7 @@ async function __iniciarAppComDados(__payload) {
     notaAtualizaLinha(placa);
   }
   const notasAberto = () => !!notaPainel.placa;
+  addEventListener("pagehide", (() => notaFecharAtiva(false)));
   function notaClique(t) {
     const abre = t.closest("[data-notas]");
     if (abre) { abrirNotas(abre.dataset.notas); return true; }
