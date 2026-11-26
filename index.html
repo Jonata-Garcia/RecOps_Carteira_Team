@@ -577,7 +577,6 @@ td.c-analista .av{ display:grid; place-items:center; width:24px; height:24px; bo
 .cbd-acoes .btn.cbd-no{ background:rgba(255,84,73,.12); border-color:rgba(255,84,73,.55); color:#ff8a82; }
 .cbd-acoes .btn.cbd-no:hover{ background:rgba(255,84,73,.24); border-color:#ff5449; }
 .cbd-acoes .btn.cbd-no.ativo{ background:linear-gradient(180deg, #ff6b61, #e53b30); border-color:transparent; color:#fff; font-weight:700; box-shadow:0 8px 22px -10px rgba(255,84,73,.8); }
-.sig.face.rec30::after{ content:""; position:absolute; top:-3px; right:-3px; width:8px; height:8px; border-radius:50%; background:#2ECC71; box-shadow:0 0 0 2px var(--bg); animation:breathe 1.6s ease-in-out infinite; }
 @keyframes breathe{ 50%{ opacity:.35; } }
 .sig.pinned{ outline:2px solid var(--mottu-green-70); outline-offset:2px; }
 
@@ -1356,6 +1355,7 @@ const I18N_D = {
 "Baixa": "Baja",
 "alta": "alta",
 "Sem atuação": "Sin actuación",
+"30 dias sem atuação": "30 días sin actuación",
 "sem atuação": "sin actuación",
 "Sem atuação do RecOps": "Sin actuación de RecOps",
 "do RecOps": "de RecOps",
@@ -2097,6 +2097,7 @@ async function __iniciarAppComDados(__payload) {
     cbd: 720,
     multa: 720,
     pingCelular: 720,
+    face: 720,
     ticket: 720
   };
   const PESO_EVENTO = {
@@ -2105,6 +2106,7 @@ async function __iniciarAppComDados(__payload) {
     cbd: 2,
     multa: 1,
     pingCelular: 1,
+    face: 2,
     ticket: 1
   };
   const LIMITE_DIAS_CARTEIRA = 150;
@@ -2330,6 +2332,16 @@ async function __iniciarAppComDados(__payload) {
     if (lerLocal("cbd_descartado", {})[placa] === id) return "descartado";
     return null;
   }
+  function faceDescartado(placa) {
+    const r = lerLocal("facematch_descartado", {})[placa];
+    if (!r) return false;
+    const ev = (FACEMATCH_BY_PLACA[placa] || {}).eventos || [], falhas = ev.filter((e => !e.success)).length;
+    return falhas <= (typeof r === "object" && typeof r.qtdFalhas === "number" ? r.qtdFalhas : falhas);
+  }
+  function horasFace(d) {
+    const ev = ((FACEMATCH_BY_PLACA[d.placa] || {}).eventos || []).map((e => Date.parse(e.data))).filter((x => !isNaN(x)));
+    return ev.length ? Math.max(0, (Date.now() - Math.max(...ev)) / 36e5) : null;
+  }
   function pesoInadimplencia(dias) {
     if (dias == null) return 0;
     if (dias <= 30) return 0;
@@ -2354,8 +2366,10 @@ async function __iniciarAppComDados(__payload) {
     const ticketInfo = TICKET_INFO[d.placa];
     d.horas_desde_ticket = ticketInfo ? ticketInfo.horasDesde : null;
     d.evt_ticket = d.horas_desde_ticket != null && d.horas_desde_ticket <= JANELA_EVENTO.ticket;
-    d.eventosRecentesCount = [ d.evt_gps, d.evt_ping, d.evt_cbd, d.evt_multa, d.evt_ping_cel, d.evt_ticket ].filter(Boolean).length;
-    d.eventosPontos = (d.evt_gps ? PESO_EVENTO.gps : 0) + (d.evt_ping ? PESO_EVENTO.ping : 0) + (d.evt_cbd ? PESO_EVENTO.cbd : 0) + (d.evt_multa ? PESO_EVENTO.multa : 0) + (d.evt_ping_cel ? PESO_EVENTO.pingCelular : 0) + (d.evt_ticket ? PESO_EVENTO.ticket : 0);
+    d.horas_desde_face = horasFace(d);
+    d.evt_face = d.horas_desde_face != null && d.horas_desde_face <= JANELA_EVENTO.face && !faceDescartado(d.placa);
+    d.eventosRecentesCount = [ d.evt_gps, d.evt_ping, d.evt_cbd, d.evt_multa, d.evt_ping_cel, d.evt_face, d.evt_ticket ].filter(Boolean).length;
+    d.eventosPontos = (d.evt_gps ? PESO_EVENTO.gps : 0) + (d.evt_ping ? PESO_EVENTO.ping : 0) + (d.evt_cbd ? PESO_EVENTO.cbd : 0) + (d.evt_multa ? PESO_EVENTO.multa : 0) + (d.evt_ping_cel ? PESO_EVENTO.pingCelular : 0) + (d.evt_face ? PESO_EVENTO.face : 0) + (d.evt_ticket ? PESO_EVENTO.ticket : 0);
     const inad = INADIMPLENCIA[d.placa] || [ null, null, false ];
     d.dias_inadimplencia = inad[0];
     d.tolerancia_inadimplencia = inad[1];
@@ -2365,16 +2379,16 @@ async function __iniciarAppComDados(__payload) {
     d.pesoAtuacao = pesoSemAtuacao(d.dias_sem_atuacao);
     d.score = d.pesoInad + d.pesoAtuacao + d.eventosPontos;
     d.comboInadimplencia = d.dias_inadimplencia != null && d.dias_inadimplencia > 60 && d.ainda_nao_atuada;
-    d.eventoForte = d.evt_gps || d.evt_ping || d.evt_cbd;
+    d.eventoForte = d.evt_gps || d.evt_ping || d.evt_cbd || d.evt_face;
     d.comboEventos = d.eventosRecentesCount >= 2 && d.eventoForte;
     d.comboCritico = d.comboInadimplencia || d.comboEventos;
     d.gpsOverride = d.evt_gps;
-    d.eventoAtivoNaoGps = d.evt_ping || d.evt_cbd || d.evt_multa || d.evt_ping_cel || d.evt_ticket;
+    d.eventoAtivoNaoGps = d.evt_ping || d.evt_cbd || d.evt_multa || d.evt_ping_cel || d.evt_face || d.evt_ticket;
     if (d.gpsOverride || d.comboCritico || d.score >= 6) d.prioridade = "alta"; else if (d.score >= 3 || d.eventoAtivoNaoGps) d.prioridade = "atencao"; else d.prioridade = "normal";
     d.alta = d.prioridade === "alta";
     d.atencao = d.prioridade === "atencao";
     d.prioRank = d.alta ? 0 : d.atencao ? 1 : 2;
-    d.sinalRank = d.evt_gps ? 0 : d.evt_ping ? 1 : d.evt_cbd || d.evt_multa || d.evt_ping_cel || d.evt_ticket ? 2 : 3;
+    d.sinalRank = d.evt_gps ? 0 : d.evt_ping ? 1 : d.evt_face ? 2 : d.evt_cbd || d.evt_multa || d.evt_ping_cel || d.evt_ticket ? 3 : 4;
     d.prioridadeBase = d.prioridade;
     d.altaBase = d.alta;
     d.atencaoBase = d.atencao;
@@ -2825,6 +2839,7 @@ async function __iniciarAppComDados(__payload) {
     ufs: [],
     prioridades: [],
     semAtuacao: false,
+    sem30: false,
     vence150: false,
     gestores: false,
     facematch: false,
@@ -2935,13 +2950,14 @@ async function __iniciarAppComDados(__payload) {
     icon: "sFace",
     cor: "var(--sig-face)",
     fg: "var(--sig-face-fg)",
-    match: d => d.facematchTemFalso && !d.facematchDescartado
+    match: d => !!d.evt_face
   } ];
   const SINAIS_HORAS_FIELD = {
     multa: "horas_desde_multa",
     cbd: "horas_desde_cbd",
     ping: "horas_desde_ping",
     cel: "horas_desde_ping_celular",
+    face: "horas_desde_face",
     ticket: "horas_desde_ticket"
   };
   function sinalPayload(d, key) {
@@ -3132,13 +3148,11 @@ async function __iniciarAppComDados(__payload) {
       if (a) chips.push(chip(def("disp"), `on${DISP_FORTES.has(a.top.classe) ? " fresh" : ""}`, `Aparelho compartilhado · ${DISP_CLASSES[a.top.classe].leitura}`, `${a.top.ap.totalContas || a.top.todas.length} contas`));
     }
     if (BO_FURTO_BY_PLACA[d.placa]) chips.push(chip(def("bo"), "on", "Boletim de Ocorrência (furto)", null));
-    if (d.facematchTemEvento) {
-      const cls = d.facematchConfirmado ? "on" : d.facematchDescartado ? "descartado" : "on";
-      const rec30 = ((FACEMATCH_BY_PLACA[d.placa] || {}).eventos || []).some((x => {
-        const t = Date.parse(x.data);
-        return !isNaN(t) && Date.now() - t <= 30 * 864e5;
-      }));
-      chips.push(chip(def("face"), `face ${cls}${rec30 ? " rec30" : ""}`, d.facematchTemFalso ? "FaceMatch com tentativa sem sucesso — abrir revisão" : "FaceMatch — somente tentativas aprovadas", null));
+    if (d.facematchTemEvento && d.horas_desde_face != null) {
+      const h = d.horas_desde_face, fresh = d.evt_face && h <= JANELA_EVENTO.face / 2;
+      const cls = d.facematchDescartado ? "descartado" : `${d.evt_face || d.facematchConfirmado ? "on" : ""}${fresh ? " fresh" : ""}`;
+      const quando = d.evt_face ? `FaceMatch há ${formatHoras(h)}` : `FaceMatch: último há ${formatHoras(h)} (fora da janela)`;
+      chips.push(chip(def("face"), `face ${cls}`, `${quando}${d.facematchTemFalso ? " · tentativa sem sucesso — abrir revisão" : ""}`, `Há ${formatHoras(h)}`));
     }
     return `<div class="sigs">${chips.join("") || `<span class="sigs-vazio">Sem sinais</span>`}</div>`;
   }
@@ -3158,6 +3172,7 @@ async function __iniciarAppComDados(__payload) {
       if (state.prioridades.length && !state.prioridades.includes(d.prioridade)) return false;
       if (state.semAtuacao && !d.ainda_nao_atuada) return false;
       if (state.vence150 && !vence150(d)) return false;
+      if (state.sem30 && !sem30(d)) return false;
       if (state.gestores && !d.aprovadaViaSolicitacaoGestores) return false;
       if (state.facematch && !(d.facematchTemFalso && !d.facematchDescartado)) return false;
       if (state.tagsFiltro.length || state.tagsSemTags) {
@@ -3171,10 +3186,6 @@ async function __iniciarAppComDados(__payload) {
   function horasBo(d) {
     const i = BO_FURTO_BY_PLACA[d.placa], t = i && parseDataBR(i.data);
     return t ? Math.max(0, (Date.now() - t.getTime()) / 36e5) : null;
-  }
-  function horasFace(d) {
-    const ev = ((FACEMATCH_BY_PLACA[d.placa] || {}).eventos || []).map((e => Date.parse(e.data))).filter((x => !isNaN(x)));
-    return ev.length ? Math.max(0, (Date.now() - Math.max(...ev)) / 36e5) : null;
   }
   function camposRecenciaSinais() {
     const sel = state.sinaisFiltro.map((k => SINAIS_HORAS_FIELD[k])).filter(Boolean);
@@ -3197,6 +3208,9 @@ async function __iniciarAppComDados(__payload) {
           const ap = a.horas_desde_ping == null ? Infinity : a.horas_desde_ping, bp = b.horas_desde_ping == null ? Infinity : b.horas_desde_ping;
           if (ap !== bp) return ap - bp;
         }
+        const aFace = a.evt_face ? 0 : 1, bFace = b.evt_face ? 0 : 1;
+        if (aFace !== bFace) return aFace - bFace;
+        if (a.evt_face && a.horas_desde_face !== b.horas_desde_face) return a.horas_desde_face - b.horas_desde_face;
         const aCel = a.evt_ping_cel ? 0 : 1, bCel = b.evt_ping_cel ? 0 : 1;
         if (aCel !== bCel) return aCel - bCel;
         if (a.evt_ping_cel && a.horas_desde_ping_celular !== b.horas_desde_ping_celular) return a.horas_desde_ping_celular - b.horas_desde_ping_celular;
@@ -3218,7 +3232,7 @@ async function __iniciarAppComDados(__payload) {
       return av - bv;
     }
     const campos = camposRecenciaSinais();
-    const extras = [ state.sinaisFiltro.includes("bo") ? horasBo : null, state.sinaisFiltro.includes("face") ? horasFace : null, state.sinaisFiltro.includes("disp") ? horasDisp : null ].filter(Boolean);
+    const extras = [ state.sinaisFiltro.includes("bo") ? horasBo : null, state.sinaisFiltro.includes("disp") ? horasDisp : null ].filter(Boolean);
     const minCampo = d => {
       let m = null;
       const vs = campos.map((c => d[c])).concat(extras.map((f => f(d))));
@@ -3248,13 +3262,14 @@ async function __iniciarAppComDados(__payload) {
       return 0;
     }));
   }
-  const filtrosAtivos = () => !!(state.search || state.ufs.length || state.prioridades.length || state.semAtuacao || state.vence150 || state.gestores || state.facematch || state.tagsFiltro.length || state.tagsSemTags || state.sinaisFiltro.length);
+  const filtrosAtivos = () => !!(state.search || state.ufs.length || state.prioridades.length || state.semAtuacao || state.sem30 || state.vence150 || state.gestores || state.facematch || state.tagsFiltro.length || state.tagsSemTags || state.sinaisFiltro.length);
   function limparFiltros() {
     Object.assign(state, {
       search: "",
       ufs: [],
       prioridades: [],
       semAtuacao: false,
+      sem30: false,
       vence150: false,
       gestores: false,
       facematch: false,
@@ -3708,6 +3723,7 @@ async function __iniciarAppComDados(__payload) {
     }), 1500);
   }
   const AVISO_150_DIAS = 30;
+  const sem30 = d => d.dias_sem_atuacao != null && d.dias_sem_atuacao >= 30;
   const vence150 = d => d.dias_inadimplencia != null && d.dias_inadimplencia >= LIMITE_DIAS_CARTEIRA - AVISO_150_DIAS && d.dias_inadimplencia < LIMITE_DIAS_CARTEIRA;
   function ovKpis(l) {
     const nat = l.filter((d => d.ainda_nao_atuada)).length;
@@ -3856,7 +3872,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function renderMenuButtons() {
     const counts = {
-      prio: state.prioridades.length + (state.semAtuacao ? 1 : 0) + (state.vence150 ? 1 : 0),
+      prio: state.prioridades.length + (state.semAtuacao ? 1 : 0) + (state.sem30 ? 1 : 0) + (state.vence150 ? 1 : 0),
       sinais: state.sinaisFiltro.length,
       tags: state.tagsFiltro.length + (state.tagsSemTags ? 1 : 0)
     };
@@ -4535,7 +4551,7 @@ async function __iniciarAppComDados(__payload) {
   function prioMenuHTML() {
     const l = escopo();
     const opt = (k, lb, c, icon, ativo, n) => `<button class="opt ai" type="button" style="--sc:${c}" data-opt-prio="${k}" aria-pressed="${ativo}"><span class="oi">${ic(icon)}</span><b class="olb">${lb}</b><span class="n pn">(${n})</span>${ic("check", "ck")}</button>`;
-    return `<div class="sf-head">Filtrar por prioridade</div><div class="menu-group"><div class="menu-grid">${[ [ "alta", "Alta", "var(--status-critical)", "flame" ], [ "atencao", "Média", "var(--status-warning)", "badge" ], [ "normal", "Baixa", "var(--status-normal)", "gauge" ] ].map((([k, lb, c, icon]) => opt(k, lb, c, icon, state.prioridades.includes(k), l.filter((d => d.prioridade === k)).length))).join("")}</div></div>\n    <div class="menu-group"><div class="menu-grid">${opt("__nat__", "Sem atuação", "var(--status-info)", "hourglass", state.semAtuacao, l.filter((d => d.ainda_nao_atuada)).length)}${opt("__150__", `Chegam a ${LIMITE_DIAS_CARTEIRA}`, "var(--status-critical)", "timer", state.vence150, l.filter(vence150).length)}</div></div>\n    <div class="menu-foot"><span>Prioridades combinam com OU · os de baixo restringem</span><button class="link-btn" type="button" data-opt-prio="__clear__">Limpar</button></div>`;
+    return `<div class="sf-head">Filtrar por prioridade</div><div class="menu-group"><div class="menu-grid">${[ [ "alta", "Alta", "var(--status-critical)", "flame" ], [ "atencao", "Média", "var(--status-warning)", "badge" ], [ "normal", "Baixa", "var(--status-normal)", "gauge" ] ].map((([k, lb, c, icon]) => opt(k, lb, c, icon, state.prioridades.includes(k), l.filter((d => d.prioridade === k)).length))).join("")}</div></div>\n    <div class="menu-group"><div class="menu-grid">${opt("__nat__", "Sem atuação", "var(--status-info)", "hourglass", state.semAtuacao, l.filter((d => d.ainda_nao_atuada)).length)}${opt("__30__", "30 dias sem atuação", "var(--status-warning)", "clock", state.sem30, l.filter(sem30).length)}${opt("__150__", `Chegam a ${LIMITE_DIAS_CARTEIRA}`, "var(--status-critical)", "timer", state.vence150, l.filter(vence150).length)}</div></div>\n    <div class="menu-foot"><span>Prioridades combinam com OU · os de baixo restringem</span><button class="link-btn" type="button" data-opt-prio="__clear__">Limpar</button></div>`;
   }
   const SINAIS_MENU_ORDEM = [ "multa", "cbd", "ping", "cel", "ticket", "bo", "disp", "face" ];
   function sinaisMenuHTML() {
@@ -5753,8 +5769,9 @@ async function __iniciarAppComDados(__payload) {
       if (k === "__clear__") {
         state.prioridades = [];
         state.semAtuacao = false;
+        state.sem30 = false;
         state.vence150 = false;
-      } else if (k === "__nat__") state.semAtuacao = !state.semAtuacao; else if (k === "__150__") state.vence150 = !state.vence150; else state.prioridades = state.prioridades.includes(k) ? state.prioridades.filter((x => x !== k)) : [ ...state.prioridades, k ];
+      } else if (k === "__nat__") state.semAtuacao = !state.semAtuacao; else if (k === "__30__") state.sem30 = !state.sem30; else if (k === "__150__") state.vence150 = !state.vence150; else state.prioridades = state.prioridades.includes(k) ? state.prioridades.filter((x => x !== k)) : [ ...state.prioridades, k ];
       setPopHTML(prioMenuHTML());
       renderKpis();
       renderMenuButtons();
@@ -5820,6 +5837,7 @@ async function __iniciarAppComDados(__payload) {
       };
       store.set("facematch_confirmado", conf);
       store.set("facematch_descartado", desc);
+      if (DATA_BY_PLACA[placa]) motorPrioridade(DATA_BY_PLACA[placa]);
       aplicarFacematchOverride();
       renderAll();
       openFacematch(placa);
