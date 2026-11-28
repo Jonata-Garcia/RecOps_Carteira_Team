@@ -1226,6 +1226,16 @@ td > .plate{ vertical-align:middle; }
 .mp-it .mp-ok{ color:var(--mottu-green-70); visibility:hidden; }
 .mp-it[aria-checked="true"] .mp-ok{ visibility:visible; }
 .mp-it.mp-multi .mp-ok{ display:none; }
+.tag.envio{ color:var(--text-primary); font-weight:600; }
+.envio-x{ display:inline-grid; place-items:center; height:18px; min-width:18px; margin-left:2px; padding:0 4px; border:0; border-radius:4px; background:none; color:var(--text-muted); font:inherit; font-size:10.5px; cursor:pointer; --is:11px; }
+.envio-x:hover{ color:var(--text-primary); background:rgba(255,255,255,.08); }
+.envio-x.confirma{ color:#fff; background:var(--status-critical); }
+.mp-grid tbody tr.row.mp-trava{ cursor:not-allowed; }
+.mp-grid tbody tr.row.mp-trava > td:not(.mp-cb):not(:last-child){ opacity:.35; }
+.mp-grid tbody tr.row.mp-trava > td:last-child .tags > :not(.envio){ opacity:.35; }
+.mp-lock{ display:inline-grid; place-items:center; min-width:18px; height:18px; padding:0; border:0; border-radius:4px; background:none; color:var(--text-muted); font:inherit; font-size:10.5px; cursor:pointer; --is:14px; }
+.mp-lock:hover{ color:var(--text-primary); background:rgba(255,255,255,.08); }
+.mp-lock.confirma{ padding:0 5px; color:#fff; background:var(--status-critical); }
 .mp-tagdot{ display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 3px; border-radius:6px; font-size:11px; background:color-mix(in srgb, var(--tc) 22%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tc) 55%, transparent); }
 .mp-it .av{ display:grid; place-items:center; width:20px; height:20px; border-radius:50%; font-family:var(--font-display); font-weight:800; font-size:9px; color:#0B0C0B; }
 .mp-sep{ width:1px; height:22px; margin:0 6px; background:var(--line-2); }
@@ -1235,7 +1245,9 @@ td > .plate{ vertical-align:middle; }
 .mp-grid thead th{ top:0; background:#121513; }
 .mp-grid tbody tr.row{ cursor:pointer; animation:none; }
 .mp-grid tbody tr.row td *{ pointer-events:none; }
-.mp-grid tbody tr.row:not(.on) > td{ opacity:.45; }
+.mp-grid tbody tr.row td .mp-lock, .mp-grid tbody tr.row td .mp-lock *, .mp-grid tbody tr.row td .envio-x, .mp-grid tbody tr.row td .envio-x *{ pointer-events:auto; }
+.mp-grid tbody tr.row:not(.on):not(.mp-trava) > td{ opacity:.45; }
+.mp-grid .envio-x{ display:none; }
 .mp-grid .mp-cb{ width:34px; text-align:center; }
 .mp-box{ display:inline-grid; place-items:center; width:18px; height:18px; border:1.5px solid var(--text-faint); border-radius:5px; color:#0B0C0B; --is:12px; }
 .on .mp-box, .mp-box.on{ background:var(--mottu-green); border-color:var(--mottu-green); }
@@ -1454,6 +1466,9 @@ const I18N_D = {
 "Prioridades combinam com OU · os de baixo restringem": "Las prioridades se combinan con O · los de abajo restringen",
 "Todas": "Todas",
 "Todas as tags": "Todas las etiquetas",
+"Tirar envio": "Quitar envío",
+"Tirar": "Quitar",
+"Registrando envio…": "Registrando envío…",
 "Todos os sinais": "Todas las señales",
 "Sem tags": "Sin etiquetas",
 "Remover todas": "Quitar todas",
@@ -1846,6 +1861,9 @@ const R = [
   [/^(.*?)~(\d+) (min|h) atrás$/, m => `${m[1] ? T(m[1].trim()) + " " : ""}hace ~${m[2]} ${m[3]}`],
   [/^(\d\d\/\d\d\/\d{4}) às (\d\d:\d\d)(.*)$/, m => `${m[1]} a las ${m[2]}${m[3].replace(/— (.+)$/, (_, r) => "— " + T(r))}`],
   [/^Atualizado em (.+)$/, m => `Actualizado el ${m[1]}`],
+  [/^Enviado para (.+?)((?: · \d{2}\/\d{2})?)$/, m => `Enviado a ${m[1]}${m[2]}`],
+  [/^Vale até (\d{2}\/\d{2})$/, m => `Válido hasta ${m[1]}`],
+  [/^Com (.+) até (\d{2}\/\d{2})$/, m => `Con ${m[1]} hasta ${m[2]}`],
   [/^Foto indisponível · (.+)$/, m => `Foto no disponible · ${m[1]}`],
   [/^(\d+) de (\d+) dias — sai da carteira ao completar (\d+)$/, m => `${m[1]} de ${m[2]} días — sale de la cartera al cumplir ${m[3]}`],
   [/^(\d+) de (\d+) placas · (\d+)% da carteira$/, m => `${m[1]} de ${m[2]} placas · ${m[3]}% de la cartera`],
@@ -2314,6 +2332,7 @@ async function __iniciarAppComDados(__payload) {
   const ICONS = {
     search: `<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>`,
     x: `<path d="M18 6 6 18M6 6l12 12"/>`,
+    lock: `<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>`,
     note: `<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/>`,
     trash: `<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>`,
     chevDown: `<path d="m6 9 6 6 6-6"/>`,
@@ -3258,6 +3277,70 @@ async function __iniciarAppComDados(__payload) {
     }
     return `<div class="sigs">${chips.join("") || `<span class="sigs-vazio">Sem sinais</span>`}</div>`;
   }
+  const EMPRESA_NOME = { onsystem: "Onsystem", odeen: "Odeen", safeon: "SafeOn" };
+  const ENVIO_VALIDADE = 7 * 864e5;
+  let ENVIOS = {}, envioTirar = null;
+  const envioDe = placa => { const e = ENVIOS[placa]; return e && EMPRESA_NOME[e.empresa] && Date.now() - Date.parse(e.em) < ENVIO_VALIDADE ? e : null; };
+  const envioDia = e => new Intl.DateTimeFormat("pt-BR", { timeZone: TZ_SP, day: "2-digit", month: "2-digit" }).format(new Date(e.em));
+  const envioAte = e => new Intl.DateTimeFormat("pt-BR", { timeZone: TZ_SP, day: "2-digit", month: "2-digit" }).format(new Date(Date.parse(e.em) + ENVIO_VALIDADE));
+  const envioRotulo = e => `Enviado para ${EMPRESA_NOME[e.empresa]} · ${envioDia(e)}`;
+  function envioPillHTML(d) {
+    const e = envioDe(d.placa);
+    if (!e) return "";
+    const conf = envioTirar === d.placa;
+    return `<span class="tag envio" style="--tc:#00B131" title="Vale até ${envioAte(e)}"><span class="te">📤</span>${esc(envioRotulo(e))}<button class="envio-x ${conf ? "confirma" : ""}" type="button" data-envio-tirar="${d.placa}" aria-label="Tirar envio">${conf ? "Tirar" : ic("x")}</button></span>`;
+  }
+  async function enviosApi(corpo) {
+    let r;
+    try {
+      r = await fetch(__WEBHOOK_URL + "-envios", { method: "POST", headers: { [__SENHA_HEADER]: __senhaAtual, "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+    } catch (err) { throw new Error("sem conexão com o n8n (VPN ou CORS)"); }
+    if (!r.ok) throw new Error(r.status === 404 ? "webhook carteira-v2-envios inativo no n8n" : r.status === 401 || r.status === 403 ? "senha recusada pelo webhook de envios" : `n8n respondeu ${r.status}`);
+    const j = await r.json().catch((() => null));
+    if (!j) throw new Error("n8n respondeu sem JSON");
+    return j;
+  }
+  async function enviosOp(corpo) {
+    for (let t = 0; t < 4; t++) {
+      const j = await enviosApi(corpo);
+      if (j.ok) return j;
+      if (!j.conflito) throw new Error(j.erro || "resposta inválida");
+      await new Promise((r => setTimeout(r, 250 + Math.random() * 500 * (t + 1))));
+    }
+    throw new Error("conflito ao gravar");
+  }
+  function enviosRecebidos(env) {
+    ENVIOS = env && typeof env === "object" ? env : {};
+    if (typeof renderTable === "function") renderTable();
+  }
+  async function carregarEnvios() {
+    if (typeof __WEBHOOK_URL === "undefined" || !__senhaAtual) return;
+    try { const j = await enviosApi({ op: "listar" }); if (j && j.ok) enviosRecebidos(j.envios); } catch (err) { console.error("[carteira] envios:", err); }
+  }
+  function envioRedesenha() {
+    renderTable();
+    const tab = document.querySelector(".mp .mp-tab");
+    if (!tab) return;
+    const y = tab.scrollTop;
+    tab.innerHTML = mpTabelaHTML();
+    tab.scrollTop = y;
+    mpContagem();
+  }
+  async function envioTirarClique(placa) {
+    if (envioTirar !== placa) { envioTirar = placa; envioRedesenha(); return; }
+    envioTirar = null;
+    try {
+      const j = await enviosOp({ op: "remover", placa });
+      ENVIOS = j.envios && typeof j.envios === "object" ? j.envios : {};
+      const noModal = document.querySelector(".mp") && mp.base.some((d => d.placa === placa));
+      if (noModal) mp.sel.add(placa);
+      envioRedesenha();
+      toast(noModal ? `${placa} liberada e marcada para ${EMPRESA_NOME[mp.dest] || "a planilha"}` : `Envio de ${placa} retirado`);
+    } catch (err) {
+      envioRedesenha();
+      toast(`Não deu para tirar o envio: ${err.message}`);
+    }
+  }
   function tagsHTML(d) {
     const pills = (d.tags || []).map((k => {
       const t = TAG_OPCOES[k];
@@ -3265,7 +3348,7 @@ async function __iniciarAppComDados(__payload) {
       const lock = tagAuto(d, k);
       return `<span class="tag ${lock ? "lock" : ""}" style="--tc:${t.cor}" ${lock ? `title="${esc(tituloTagAuto(d, k))}"` : ""}><span class="te">${TAG_ICONE[k] || ""}</span>${esc(t.label)}</span>`;
     })).join("");
-    return `<div class="tags" data-tags="${d.placa}">${pills}<button class="tag-add ai" type="button" data-tagmenu="${d.placa}" title="Editar tags" aria-label="Editar tags de ${d.placa}">${ic(pills ? "tag" : "plus")}</button></div>`;
+    return `<div class="tags" data-tags="${d.placa}">${envioPillHTML(d)}${pills}<button class="tag-add ai" type="button" data-tagmenu="${d.placa}" title="Editar tags" aria-label="Editar tags de ${d.placa}">${ic(pills ? "tag" : "plus")}</button></div>`;
   }
   function filtrar(lista) {
     return lista.filter((d => {
@@ -4998,7 +5081,7 @@ async function __iniciarAppComDados(__payload) {
     { k: "notas", l: "Notas", w: 50, longo: true, get: d => notasDe(d.placa).filter((n => !notaVazia(n))).map((n => [ n.titulo.trim(), n.corpo.trim() ].filter(Boolean).join(": "))).join("\n\n") },
     { k: "prioridade", l: "Prioridade", w: 11, extra: true, get: d => ({ alta: "Alta", atencao: "Média", normal: "Baixa" })[d.prioridade] || "" },
     { k: "dias_atuacao", l: "Dias sem atuação", w: 12, extra: true, get: d => d.ainda_nao_atuada ? "Sem atuação do RecOps" : d.dias_sem_atuacao },
-    { k: "tags", l: "Tags", w: 30, extra: true, get: d => (d.tags || []).map((t => TAG_OPCOES[t] ? TAG_OPCOES[t].label : t)).join(", ") },
+    { k: "tags", l: "Tags", w: 30, extra: true, get: d => { const e = envioDe(d.placa); return (e ? [ envioRotulo(e) ] : []).concat((d.tags || []).map((t => TAG_OPCOES[t] ? TAG_OPCOES[t].label : t))).join(", "); } },
     { k: "analista", l: "Analista", w: 18, extra: true, get: d => ehMx(d) ? "México" : (analistaDaUf[d.uf] || {}).nome || "" }
   ];
   const MP_COLS_KEY = "recops_mp_colunas";
@@ -5010,6 +5093,7 @@ async function __iniciarAppComDados(__payload) {
     for (const c of padrao) if (!lista.some((x => x.k === c.k))) lista.push(c);
     return lista;
   }
+  const mpBloqueio = d => { if (mp.dest === "nenhuma") return null; const e = envioDe(d.placa); return e && e.empresa !== mp.dest ? e : null; };
   const mpOrdemPrioridade = l => l.slice().sort(((a, b) => compararOrdenarPadrao(a, b, "prioridade", true)));
   function mpEscopo() {
     const a = ANALISTAS.find((x => x.id === mp.esc));
@@ -5018,7 +5102,8 @@ async function __iniciarAppComDados(__payload) {
   function mpBase() {
     const l = mpEscopo();
     const porUf = mp.ufs.length ? l.filter((d => mp.ufs.includes(d.uf))) : l;
-    const porTag = mp.tags.length ? porUf.filter((d => (d.tags || []).some((t => mp.tags.includes(t))) || mp.tags.includes("__sem__") && !(d.tags || []).length)) : porUf;
+    const tagsDe = d => { const e = envioDe(d.placa); return e ? [ ...(d.tags || []), `__env_${e.empresa}` ] : d.tags || []; };
+    const porTag = mp.tags.length ? porUf.filter((d => tagsDe(d).some((t => mp.tags.includes(t))) || mp.tags.includes("__sem__") && !tagsDe(d).length)) : porUf;
     return mpOrdemPrioridade(porTag);
   }
   function mpAplicaAtalhos() {
@@ -5028,12 +5113,12 @@ async function __iniciarAppComDados(__payload) {
     if (mp.metade === "primeira") l = l.slice(0, meio);
     else if (mp.metade === "segunda") l = l.slice(meio);
     else if (mp.metade === "aleatoria") l = l.map((d => [ Math.random(), d ])).sort(((x, y) => x[0] - y[0])).slice(0, meio).map((x => x[1]));
-    mp.sel = new Set(l.map((d => d.placa)));
+    mp.sel = new Set(l.filter((d => !mpBloqueio(d))).map((d => d.placa)));
   }
   const mpNomePadrao = () => `${mp.dest === "nenhuma" ? "Carteira RecOps" : MP_EMPRESAS.find((e => e[0] === mp.dest))[1]} - ${(new Date).toLocaleDateString("pt-BR", { timeZone: TZ_SP }).replace(/\//g, "-")}`;
   function mpRowHTML(d) {
-    const on = mp.sel.has(d.placa);
-    return `<tr class="row p-${d.prioridade} ${on ? "on" : ""}" data-mp-placa="${d.placa}"><td class="mp-cb"><span class="mp-box">${ic("check")}</span></td><td>${plateHTML(d)}</td><td>${prioHTML(d)}</td><td>${semAtuacaoHTML(d)}</td><td>${inadHTML(d)}</td><td>${gpsAtivoHTML(d)}</td><td>${pingHTML(d)}</td><td>${sinaisHTML(d)}</td><td>${tagsHTML(d)}</td></tr>`;
+    const on = mp.sel.has(d.placa), b = mpBloqueio(d);
+    return `<tr class="row p-${d.prioridade} ${on ? "on" : ""} ${b ? "mp-trava" : ""}" data-mp-placa="${d.placa}" ${b ? `title="Com ${EMPRESA_NOME[b.empresa]} até ${envioAte(b)}"` : ""}><td class="mp-cb">${b ? `<button class="mp-lock ${envioTirar === d.placa ? "confirma" : ""}" type="button" data-envio-tirar="${d.placa}" title="Liberar: tirar de ${EMPRESA_NOME[b.empresa]}" aria-label="Liberar ${d.placa}">${envioTirar === d.placa ? "Tirar" : ic("lock")}</button>` : `<span class="mp-box">${ic("check")}</span>`}</td><td>${plateHTML(d)}</td><td>${prioHTML(d)}</td><td>${semAtuacaoHTML(d)}</td><td>${inadHTML(d)}</td><td>${gpsAtivoHTML(d)}</td><td>${pingHTML(d)}</td><td>${sinaisHTML(d)}</td><td>${tagsHTML(d)}</td></tr>`;
   }
   function mpColsHTML() {
     return `<b>Colunas</b>${mp.cols.map(((c, i) => { const def = MP_COLUNAS.find((x => x.k === c.k)); return `<div class="mp-col ${c.on ? "" : "off"}"><button class="mp-c" type="button" data-mp-col="${c.k}" aria-pressed="${c.on}"><span class="mp-box ${c.on ? "on" : ""}">${ic("check")}</span><span>${esc(def.l)}</span></button><button class="mp-mv mp-up" type="button" data-mp-sobe="${i}" aria-label="Subir" ${i ? "" : "disabled"}>${ic("chevDown")}</button><button class="mp-mv" type="button" data-mp-desce="${i}" aria-label="Descer" ${i < mp.cols.length - 1 ? "" : "disabled"}>${ic("chevDown")}</button></div>`; })).join("")}`;
@@ -5057,11 +5142,14 @@ async function __iniciarAppComDados(__payload) {
     const metades = [ [ "inteira", "Todas as placas", nSel ], [ "primeira", "1ª metade · mais prioritárias", meio ], [ "segunda", "2ª metade · menos prioritárias", nSel - meio ], [ "aleatoria", "Metade aleatória", meio ] ].map((([k, r, n]) => item("data-mp-metade", k, r, n, mp.metade === k))).join("");
     const contTag = {};
     let semTag = 0;
-    for (const d of naUf) { const ts = d.tags || []; if (!ts.length) semTag++; for (const t of ts) contTag[t] = (contTag[t] || 0) + 1; }
+    const contEnv = {};
+    for (const d of naUf) { const ts = d.tags || [], e = envioDe(d.placa); if (!ts.length && !e) semTag++; for (const t of ts) contTag[t] = (contTag[t] || 0) + 1; if (e) contEnv[e.empresa] = (contEnv[e.empresa] || 0) + 1; }
     const tagsOrd = Object.keys(contTag).filter((k => TAG_OPCOES[k])).sort(((x, y) => TAG_CATEGORIAS.indexOf(TAG_OPCOES[x].categoria) - TAG_CATEGORIAS.indexOf(TAG_OPCOES[y].categoria) || TAG_OPCOES[x].label.localeCompare(TAG_OPCOES[y].label)));
     const tagIt = (k, rot, n, pre) => `<button class="mp-it mp-multi" type="button" data-mp-tag="${k}" aria-checked="${mp.tags.includes(k)}"><span class="mp-box ${mp.tags.includes(k) ? "on" : ""}">${ic("check")}</span>${pre}<span class="mp-itl">${rot}</span><span class="n tnum">${n}</span></button>`;
-    const tagsMenu = item("data-mp-tag", "__todas__", "Todas as tags", naUf.length, !mp.tags.length) + tagsOrd.map((k => tagIt(k, esc(TAG_OPCOES[k].label), contTag[k], `<span class="mp-tagdot" style="--tc:${TAG_OPCOES[k].cor}">${TAG_ICONE[k] || ""}</span>`))).join("") + (semTag ? tagIt("__sem__", "Sem tags", semTag, `<span class="mp-tagdot" style="--tc:var(--text-faint)"></span>`) : "");
-    const valTag = !mp.tags.length ? "Todas" : mp.tags.length === 1 ? esc(mp.tags[0] === "__sem__" ? "Sem tags" : (TAG_OPCOES[mp.tags[0]] || {}).label || mp.tags[0]) : `${mp.tags.length} tags`;
+    const envItens = Object.keys(EMPRESA_NOME).filter((k => contEnv[k])).map((k => tagIt(`__env_${k}`, `Enviado para ${EMPRESA_NOME[k]}`, contEnv[k], `<span class="mp-tagdot" style="--tc:#00B131">📤</span>`))).join("");
+    const tagsMenu = item("data-mp-tag", "__todas__", "Todas as tags", naUf.length, !mp.tags.length) + envItens + tagsOrd.map((k => tagIt(k, esc(TAG_OPCOES[k].label), contTag[k], `<span class="mp-tagdot" style="--tc:${TAG_OPCOES[k].cor}">${TAG_ICONE[k] || ""}</span>`))).join("") + (semTag ? tagIt("__sem__", "Sem tags", semTag, `<span class="mp-tagdot" style="--tc:var(--text-faint)"></span>`) : "");
+    const rotTag = k => k === "__sem__" ? "Sem tags" : k.startsWith("__env_") ? `Enviado para ${EMPRESA_NOME[k.slice(6)]}` : (TAG_OPCOES[k] || {}).label || k;
+    const valTag = !mp.tags.length ? "Todas" : mp.tags.length === 1 ? esc(rotTag(mp.tags[0])) : `${mp.tags.length} tags`;
     const valEsc = mp.esc === "geral" ? "Geral" : mp.esc === "br" ? "Brasil" : mp.esc === "mx" ? "México" : a ? esc(a.nome) : "Geral";
     const valUf = !mp.ufs.length ? "Todos" : mp.ufs.length <= 3 ? mp.ufs.join(", ") : `${mp.ufs.length} estados`;
     const valFaixa = { todas: "Todas", 90: "90+ dias", 120: "120+ dias" }[mp.faixa];
@@ -5071,7 +5159,8 @@ async function __iniciarAppComDados(__payload) {
       <span class="mp-sep"></span>${dd("esc", "Carteira", valEsc, carteiras)}${dd("uf", "Estados", valUf, estados, "mp-menu-uf")}${dd("tag", "Tags", valTag, tagsMenu, "mp-menu-larga")}${dd("faixa", "Inadimplência", valFaixa, faixas)}${dd("metade", "Seleção", valMetade, metades, "mp-menu-larga")}</div>`;
   }
   function mpTabelaHTML() {
-    const todas = mp.base.length && mp.base.every((d => mp.sel.has(d.placa))), algum = mp.base.some((d => mp.sel.has(d.placa)));
+    const livres = mp.base.filter((d => !mpBloqueio(d)));
+    const todas = livres.length && livres.every((d => mp.sel.has(d.placa))), algum = livres.some((d => mp.sel.has(d.placa)));
     return `<table class="grid mp-grid"><thead><tr><th class="mp-cb"><button class="mp-c" type="button" data-mp-todas aria-label="Selecionar todas" style="all:unset;cursor:pointer"><span class="mp-box ${todas ? "on" : algum ? "meio" : ""}">${ic("check")}</span></button></th><th>Placa</th><th>Prioridade</th><th>Dias sem atuação</th><th>Dias em inadimplência</th><th>GPS ativo</th><th>Ping</th><th>Sinais novos</th><th>Tags</th></tr></thead><tbody>${mp.base.map(mpRowHTML).join("")}</tbody></table>`;
   }
   function mpContagem() {
@@ -5109,7 +5198,8 @@ async function __iniciarAppComDados(__payload) {
     document.head.appendChild(s);
   })));
   async function mpGerar(btn) {
-    const lista = mp.base.filter((d => mp.sel.has(d.placa))), cols = mp.cols.filter((c => c.on)).map((c => MP_COLUNAS.find((x => x.k === c.k))));
+    let lista = mp.base.filter((d => mp.sel.has(d.placa) && !mpBloqueio(d)));
+    const cols = mp.cols.filter((c => c.on)).map((c => MP_COLUNAS.find((x => x.k === c.k))));
     if (!lista.length || !cols.length) return;
     const inp = document.getElementById("mpNome");
     const nome = ((inp && inp.value.trim()) || mpNomePadrao()).replace(/[\\/:*?"<>|]+/g, "_").replace(/\.xlsx?$/i, "");
@@ -5119,6 +5209,16 @@ async function __iniciarAppComDados(__payload) {
     btn.textContent = "Gerando…";
     try {
       const ExcelJS = await carregaExcelJs();
+      let foraTrava = [];
+      if (mp.dest !== "nenhuma") {
+        btn.textContent = "Registrando envio…";
+        const j = await enviosOp({ op: "enviar", empresa: mp.dest, placas: lista.map((d => d.placa)) });
+        foraTrava = (j.recusadas || []).map((r => r.placa));
+        enviosRecebidos(j.envios);
+        lista = lista.filter((d => !foraTrava.includes(d.placa)));
+        if (!lista.length) throw new Error("todas as placas já estão com outra empresa");
+        btn.textContent = "Gerando…";
+      }
       const wb = new ExcelJS.Workbook();
       wb.creator = "Carteira RecOps";
       const ws = wb.addWorksheet(mp.dest === "nenhuma" ? "Carteira" : MP_EMPRESAS.find((e => e[0] === mp.dest))[1], { views: [ { state: "frozen", ySplit: 1 } ] });
@@ -5153,7 +5253,7 @@ async function __iniciarAppComDados(__payload) {
       a.remove();
       setTimeout((() => URL.revokeObjectURL(url)), 2e3);
       closeModal();
-      toast(`Planilha gerada · ${lista.length} placas`);
+      toast(foraTrava.length ? `Planilha gerada · ${lista.length} placas · ${foraTrava.length} já estavam com outra empresa e ficaram fora` : `Planilha gerada · ${lista.length} placas`);
     } catch (err) {
       console.error("[carteira] planilha:", err);
       toast(`Não deu para gerar a planilha: ${err && err.message ? err.message : err}`);
@@ -5187,24 +5287,28 @@ async function __iniciarAppComDados(__payload) {
       if (at.dataset.mpFaixa) mp.faixa = at.dataset.mpFaixa;
       if (at.dataset.mpMetade) mp.metade = at.dataset.mpMetade;
       if (inp && nomeAuto) inp.value = mpNomePadrao();
-      if (at.dataset.mpDest) { mpRender(false); return true; }
+      if (at.dataset.mpDest) { for (const d of mp.base) if (mpBloqueio(d)) mp.sel.delete(d.placa); mpRender(); return true; }
       mpAplicaAtalhos();
       mpRender();
       return true;
     }
     if (t.closest("[data-mp-todas]")) {
-      const todas = mp.base.every((d => mp.sel.has(d.placa)));
-      mp.base.forEach((d => todas ? mp.sel.delete(d.placa) : mp.sel.add(d.placa)));
+      const livres = mp.base.filter((d => !mpBloqueio(d))), todas = livres.every((d => mp.sel.has(d.placa)));
+      livres.forEach((d => todas ? mp.sel.delete(d.placa) : mp.sel.add(d.placa)));
       m.querySelector(".mp-tab").innerHTML = mpTabelaHTML();
       mpContagem();
       return true;
     }
+    const envX = t.closest("[data-envio-tirar]");
+    if (envX) { envioTirarClique(envX.dataset.envioTirar); return true; }
+    if (envioTirar) { envioTirar = null; envioRedesenha(); }
     const tr = t.closest("tr[data-mp-placa]");
     if (tr) {
-      const p = tr.dataset.mpPlaca;
+      const p = tr.dataset.mpPlaca, b = mpBloqueio(DATA_BY_PLACA[p]);
+      if (b) { toast(`${p} está com ${EMPRESA_NOME[b.empresa]} até ${envioAte(b)} · clique no cadeado para liberar`); return true; }
       mp.sel.has(p) ? mp.sel.delete(p) : mp.sel.add(p);
       tr.classList.toggle("on", mp.sel.has(p));
-      const todas = mp.base.every((d => mp.sel.has(d.placa))), algum = mp.base.some((d => mp.sel.has(d.placa)));
+      const livres = mp.base.filter((d => !mpBloqueio(d))), todas = livres.every((d => mp.sel.has(d.placa))), algum = livres.some((d => mp.sel.has(d.placa)));
       const cab = m.querySelector("[data-mp-todas] .mp-box");
       if (cab) { cab.classList.toggle("on", todas); cab.classList.toggle("meio", !todas && algum); }
       mpContagem();
@@ -5990,6 +6094,13 @@ async function __iniciarAppComDados(__payload) {
       return;
     }
     if (mpClique(t)) return;
+    const envX = t.closest("[data-envio-tirar]");
+    if (envX) {
+      e.stopPropagation();
+      envioTirarClique(envX.dataset.envioTirar);
+      return;
+    }
+    if (envioTirar && !t.closest(".envio")) { envioTirar = null; renderTable(); }
     const copyBtn = t.closest("[data-copy]");
     if (copyBtn) {
       e.stopPropagation();
@@ -6572,6 +6683,7 @@ async function __iniciarAppComDados(__payload) {
   goTo(location.hash);
   setInterval(renderFresh, 6e4);
   carregarNotas();
+  carregarEnvios();
 }
 
 const __WEBHOOK_URL = "https://webhook-n8n-int.mottu.io/webhook/carteira-v2";
