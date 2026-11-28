@@ -1469,6 +1469,13 @@ const I18N_D = {
 "Tirar envio": "Quitar envío",
 "Tirar": "Quitar",
 "Registrando envio…": "Registrando envío…",
+"Buscando localizações…": "Buscando ubicaciones…",
+"Pernoite celular 1": "Pernocta celular 1",
+"Pernoite celular 2": "Pernocta celular 2",
+"Pernoite celular 3": "Pernocta celular 3",
+"Pernoite moto": "Pernocta moto",
+"Ping rastreador": "Ping rastreador",
+"Ping antena": "Ping antena",
 "Todos os sinais": "Todas las señales",
 "Sem tags": "Sin etiquetas",
 "Remover todas": "Quitar todas",
@@ -5064,6 +5071,19 @@ async function __iniciarAppComDados(__payload) {
   const mpQuando = v => { const s = fmtDataHora(v); return s ? s.replace(" - ", " ").replace(/(\d{2}):(\d{2})$/, "$1h$2") : ""; };
   const mpLink = (lat, lon, quando) => lat != null && lon != null && lat !== "" && lon !== "" && Number.isFinite(+lat) && Number.isFinite(+lon) && (+lat !== 0 || +lon !== 0) ? { text: quando || `${(+lat).toFixed(5)}, ${(+lon).toFixed(5)}`, link: `https://www.google.com/maps?q=${+lat},${+lon}` } : "";
   const mpDataBR = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ""); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s || ""); };
+  let MP_LOCAIS = {};
+  const mpLocal = (d, k, i) => { const L = MP_LOCAIS[d.placa]; const p = L && (i == null ? L[k] : (L[k] || [])[i]); return p ? mpLink(p.lat, p.lon, p.quando) : ""; };
+  async function locaisBusca(lista, antena) {
+    const ctl = new AbortController(), tempo = setTimeout((() => ctl.abort()), 18e4);
+    let r;
+    try {
+      r = await fetch(__WEBHOOK_URL + "-locais", { method: "POST", signal: ctl.signal, headers: { [__SENHA_HEADER]: __senhaAtual, "Content-Type": "application/json" }, body: JSON.stringify({ antena, placas: lista.map((d => ({ placa: d.placa, uf: d.uf || "", usuarioId: typeof USUARIO_ID_BY_PLACA !== "undefined" && USUARIO_ID_BY_PLACA[d.placa] || null }))) }) });
+    } catch (err) { throw new Error(err && err.name === "AbortError" ? "o n8n demorou demais para responder as localizações" : "sem conexão com o n8n (VPN ou CORS)"); } finally { clearTimeout(tempo); }
+    if (!r.ok) throw new Error(r.status === 404 ? "webhook carteira-v2-locais inativo no n8n" : r.status === 401 || r.status === 403 ? "senha recusada pelo webhook de localizações" : `n8n respondeu ${r.status} nas localizações`);
+    const j = await r.json().catch((() => null));
+    if (!j || !j.ok) throw new Error(`localizações: ${j && j.erro || "resposta inválida"}`);
+    return j.locais || {};
+  }
   const MP_COLUNAS = [
     { k: "placa", l: "Placa", w: 12, get: d => d.placa },
     { k: "modelo", l: "Modelo", w: 18, get: d => (MODELO_INFO[d.placa] || [])[0] || "" },
@@ -5075,7 +5095,13 @@ async function __iniciarAppComDados(__payload) {
     { k: "cpf", l: "CPF", w: 17, get: d => (LOCATARIO_CONTATO_BY_PLACA[d.placa] || {}).cpf || "" },
     { k: "celular", l: "Celular", w: 19, get: d => (LOCATARIO_CONTATO_BY_PLACA[d.placa] || {}).celular || "" },
     { k: "inad", l: "Inadimplência (dias)", w: 13, get: d => d.dias_inadimplencia ?? "" },
+    { k: "cel1", l: "Pernoite celular 1", w: 18, loc: true, get: d => mpLocal(d, "cel", 0) },
+    { k: "cel2", l: "Pernoite celular 2", w: 18, loc: true, get: d => mpLocal(d, "cel", 1) },
+    { k: "cel3", l: "Pernoite celular 3", w: 18, loc: true, get: d => mpLocal(d, "cel", 2) },
+    { k: "moto", l: "Pernoite moto", w: 18, loc: true, get: d => mpLocal(d, "moto") },
     { k: "loc_facial", l: "Localização registro facial", w: 20, get: d => { const ev = ((FACEMATCH_BY_PLACA[d.placa] || {}).eventos || []).filter((e => e.lat != null && e.lon != null)); const e = ev[ev.length - 1]; return e ? mpLink(e.lat, e.lon, mpQuando(e.data)) : ""; } },
+    { k: "rastreador", l: "Ping rastreador", w: 18, loc: true, get: d => mpLocal(d, "rastreador") },
+    { k: "antena", l: "Ping antena", w: 18, loc: true, get: d => mpLocal(d, "antena") },
     { k: "recolhimento", l: "Histórico do recolhimento", w: 60, longo: true, get: d => ((RECUSAS_BY_PLACA[d.placa] || {}).recusas || []).slice().reverse().map(mpRelatoRecusa).filter(Boolean).join("\n") },
     { k: "acionamentos", l: "Histórico de acionamentos", w: 70, longo: true, get: d => ((RECOPS_OCORRENCIA_BY_PLACA[d.placa] || {}).comentarios || []).slice().reverse().map((c => { const t = mpComentarioAnalista(c); return t ? `${[ c.data, c.autor ].filter(Boolean).join(" · ")}: ${t}` : null; })).filter(Boolean).join("\n\n") },
     { k: "notas", l: "Notas", w: 50, longo: true, get: d => notasDe(d.placa).filter((n => !notaVazia(n))).map((n => [ n.titulo.trim(), n.corpo.trim() ].filter(Boolean).join(": "))).join("\n\n") },
@@ -5090,7 +5116,11 @@ async function __iniciarAppComDados(__payload) {
     const salvo = store.get(MP_COLS_KEY, null), padrao = MP_COLUNAS.map((c => ({ k: c.k, on: !c.extra })));
     if (!Array.isArray(salvo)) return padrao;
     const conhecidas = new Set(MP_COLUNAS.map((c => c.k))), lista = salvo.filter((c => c && conhecidas.has(c.k)));
-    for (const c of padrao) if (!lista.some((x => x.k === c.k))) lista.push(c);
+    padrao.forEach(((c, i) => {
+      if (lista.some((x => x.k === c.k))) return;
+      const ant = padrao.slice(0, i).reverse().find((x => lista.some((y => y.k === x.k))));
+      lista.splice(ant ? lista.findIndex((y => y.k === ant.k)) + 1 : 0, 0, c);
+    }));
     return lista;
   }
   const mpBloqueio = d => { if (mp.dest === "nenhuma") return null; const e = envioDe(d.placa); return e && e.empresa !== mp.dest ? e : null; };
@@ -5210,6 +5240,11 @@ async function __iniciarAppComDados(__payload) {
     try {
       const ExcelJS = await carregaExcelJs();
       let foraTrava = [];
+      MP_LOCAIS = {};
+      if (cols.some((c => c.loc))) {
+        btn.textContent = "Buscando localizações…";
+        MP_LOCAIS = await locaisBusca(lista, cols.some((c => c.k === "antena"))).catch((e => { throw new Error(`${e.message} · desmarque as colunas de localização para gerar sem elas`); }));
+      }
       if (mp.dest !== "nenhuma") {
         btn.textContent = "Registrando envio…";
         const j = await enviosOp({ op: "enviar", empresa: mp.dest, placas: lista.map((d => d.placa)) });
