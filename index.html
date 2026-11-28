@@ -4949,6 +4949,32 @@ async function __iniciarAppComDados(__payload) {
   }
   const MP_EMPRESAS = [ [ "nenhuma", "Nenhuma" ], [ "onsystem", "Onsystem" ], [ "odeen", "Odeen" ], [ "safeon", "SafeOn" ] ];
   const MP_SEM_EMPRESA = /acionamento\s*-\s*[^#\n]*#\s*\d+/i;
+  const mpEscRe = t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const MP_EMP_FORTES = [ "On ?System", "Selva", "Odeen", "Safe ?On", "Velox", "Coddi", "i2 Recupera[cç][aã]o", "Scorpion", "Acanto", "Vectra", "Black Hunter", "Loreiro", "Jo[aã]o Marcelo", "RNS", "RCL", "AGS", "Seg ?System", "Soluciones ECA", "GL Recupera[cç][aã]o" ];
+  const MP_EMP_FRACAS = [ "Ativa", "Bravo", "Calado", "Valentim", "SAVE", "Barba Recupera[cç][oõ]es" ];
+  const mpEmpresasDoPayload = (() => {
+    const nomes = new Set;
+    for (const v of Object.values(RECOPS_OCORRENCIA_BY_PLACA)) for (const c of v.comentarios || []) if (c.acionamento && c.acionamento.empresa) nomes.add(String(c.acionamento.empresa).trim());
+    return [ ...nomes ].filter((n => n.length >= 4)).map(mpEscRe);
+  })();
+  const MP_RE_FORTE = new RegExp(`(^|[^\\p{L}\\d])(${MP_EMP_FORTES.concat(mpEmpresasDoPayload).join("|")})(?=$|[^\\p{L}\\d])`, "giu");
+  const MP_RE_FRACA = new RegExp(`(^|[^\\p{L}\\d])(${MP_EMP_FRACAS.join("|")})(?=$|[^\\p{L}\\d])`, "gu");
+  const MP_RE_FRACA_I = new RegExp(MP_RE_FRACA.source, "iu");
+  function mpComentarioAnalista(c) {
+    const texto = String(c.texto || "").trim();
+    if (!texto || c.acionamento || /^#\s*RECOPS/i.test(texto) || MP_SEM_EMPRESA.test(`${c.autor || ""} ${texto}`)) return null;
+    MP_RE_FORTE.lastIndex = 0;
+    if (texto.split(/\s+/).length <= 4 && (new RegExp(MP_RE_FORTE.source, "iu").test(texto) || MP_RE_FRACA_I.test(texto))) return null;
+    return texto.replace(MP_RE_FORTE, "$1apoio").replace(MP_RE_FRACA, "$1apoio");
+  }
+  const MP_RECUSA_RUIDO = /^(\[devolvido automaticamente\]|servi[cç]o devolvido|fim de turno$)/i;
+  function mpRelatoRecusa(r) {
+    let t = String(r.comentario || "").trim();
+    if (/^insucesso flow\b/i.test(t)) t = t.split(/\s+-\s+/).slice(2).join(" - ").trim();
+    const mot = String(r.motivo || "").trim();
+    if (!t || MP_RECUSA_RUIDO.test(t) || t.toLowerCase() === mot.toLowerCase() || t.replace(/[^\p{L}\d]/gu, "").length < 8) return null;
+    return [ mpDataBR(r.data), mot, t ].filter(Boolean).join(" · ");
+  }
   const mpQuando = v => { const s = fmtDataHora(v); return s ? s.replace(" - ", " ").replace(/(\d{2}):(\d{2})$/, "$1h$2") : ""; };
   const mpLink = (lat, lon, quando) => lat != null && lon != null && lat !== "" && lon !== "" && Number.isFinite(+lat) && Number.isFinite(+lon) && (+lat !== 0 || +lon !== 0) ? { text: quando || `${(+lat).toFixed(5)}, ${(+lon).toFixed(5)}`, link: `https://www.google.com/maps?q=${+lat},${+lon}` } : "";
   const mpDataBR = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ""); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s || ""); };
@@ -4964,8 +4990,8 @@ async function __iniciarAppComDados(__payload) {
     { k: "celular", l: "Celular", w: 19, get: d => (LOCATARIO_CONTATO_BY_PLACA[d.placa] || {}).celular || "" },
     { k: "inad", l: "Inadimplência (dias)", w: 13, get: d => d.dias_inadimplencia ?? "" },
     { k: "loc_facial", l: "Localização registro facial", w: 20, get: d => { const ev = ((FACEMATCH_BY_PLACA[d.placa] || {}).eventos || []).filter((e => e.lat != null && e.lon != null)); const e = ev[ev.length - 1]; return e ? mpLink(e.lat, e.lon, mpQuando(e.data)) : ""; } },
-    { k: "recolhimento", l: "Histórico do recolhimento", w: 60, longo: true, get: d => ((RECUSAS_BY_PLACA[d.placa] || {}).recusas || []).slice().reverse().map((r => [ mpDataBR(r.data), r.motivo, r.comentario ].filter(Boolean).join(" · "))).join("\n") },
-    { k: "acionamentos", l: "Histórico de acionamentos", w: 70, longo: true, get: d => ((RECOPS_OCORRENCIA_BY_PLACA[d.placa] || {}).comentarios || []).filter((c => !c.acionamento && !MP_SEM_EMPRESA.test(`${c.autor || ""} ${c.texto || ""}`))).slice().reverse().map((c => `${[ c.data, c.autor ].filter(Boolean).join(" · ")}: ${c.texto}`)).join("\n\n") },
+    { k: "recolhimento", l: "Histórico do recolhimento", w: 60, longo: true, get: d => ((RECUSAS_BY_PLACA[d.placa] || {}).recusas || []).slice().reverse().map(mpRelatoRecusa).filter(Boolean).join("\n") },
+    { k: "acionamentos", l: "Histórico de acionamentos", w: 70, longo: true, get: d => ((RECOPS_OCORRENCIA_BY_PLACA[d.placa] || {}).comentarios || []).slice().reverse().map((c => { const t = mpComentarioAnalista(c); return t ? `${[ c.data, c.autor ].filter(Boolean).join(" · ")}: ${t}` : null; })).filter(Boolean).join("\n\n") },
     { k: "notas", l: "Notas", w: 50, longo: true, get: d => notasDe(d.placa).filter((n => !notaVazia(n))).map((n => [ n.titulo.trim(), n.corpo.trim() ].filter(Boolean).join(": "))).join("\n\n") },
     { k: "prioridade", l: "Prioridade", w: 11, extra: true, get: d => ({ alta: "Alta", atencao: "Média", normal: "Baixa" })[d.prioridade] || "" },
     { k: "dias_atuacao", l: "Dias sem atuação", w: 12, extra: true, get: d => d.ainda_nao_atuada ? "Sem atuação do RecOps" : d.dias_sem_atuacao },
