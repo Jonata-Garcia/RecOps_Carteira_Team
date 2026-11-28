@@ -1207,11 +1207,11 @@ td > .plate{ vertical-align:middle; }
 .mp-seg{ display:inline-flex; gap:2px; padding:3px; border:1px solid var(--line-2); border-radius:10px; }
 .mp-seg button{ height:30px; padding:0 14px; border:0; border-radius:7px; background:none; color:var(--text-secondary); font:inherit; font-size:13px; cursor:pointer; }
 .mp-seg button:hover{ color:var(--text-primary); }
-.mp-seg button[aria-checked="true"]{ background:#FFCE00; color:#0B0C0B; font-weight:600; }
+.mp-seg button[aria-checked="true"]{ background:var(--mottu-green); color:#0B0C0B; font-weight:600; }
 .mp-dd{ position:relative; }
 .mp-f{ display:inline-flex; align-items:center; gap:8px; height:38px; padding:0 10px 0 12px; border:1px solid var(--line-2); border-radius:10px; background:none; color:var(--text-primary); font:inherit; font-size:13px; cursor:pointer; --is:14px; }
 .mp-f:hover, .mp-dd.open .mp-f{ border-color:var(--text-faint); background:rgba(255,255,255,.03); }
-.mp-fk{ color:var(--text-muted); font-size:12px; }
+.mp-fk{ font-family:var(--font-display); font-style:italic; font-weight:800; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase; color:var(--mottu-green-70); }
 .mp-f b{ font-weight:600; max-width:200px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
 .mp-fc{ color:var(--text-muted); transition:transform .15s; }
 .mp-dd.open .mp-fc{ transform:rotate(180deg); }
@@ -1226,6 +1226,7 @@ td > .plate{ vertical-align:middle; }
 .mp-it .mp-ok{ color:var(--mottu-green-70); visibility:hidden; }
 .mp-it[aria-checked="true"] .mp-ok{ visibility:visible; }
 .mp-it.mp-multi .mp-ok{ display:none; }
+.mp-tagdot{ display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 3px; border-radius:6px; font-size:11px; background:color-mix(in srgb, var(--tc) 22%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tc) 55%, transparent); }
 .mp-it .av{ display:grid; place-items:center; width:20px; height:20px; border-radius:50%; font-family:var(--font-display); font-weight:800; font-size:9px; color:#0B0C0B; }
 .mp-sep{ width:1px; height:22px; margin:0 6px; background:var(--line-2); }
 .mp-main{ display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:12px; min-height:0; }
@@ -1747,6 +1748,8 @@ const I18N_D = {
 "Gerando…": "Generando…",
 "Selecionar todas": "Seleccionar todas",
 "Todos os estados": "Todos los estados",
+"Todas as tags": "Todas las etiquetas",
+"Sem tags": "Sin etiquetas",
 "Carteira": "Cartera",
 "Estados": "Estados",
 "Inadimplência": "Mora",
@@ -4999,7 +5002,7 @@ async function __iniciarAppComDados(__payload) {
     { k: "analista", l: "Analista", w: 18, extra: true, get: d => ehMx(d) ? "México" : (analistaDaUf[d.uf] || {}).nome || "" }
   ];
   const MP_COLS_KEY = "recops_mp_colunas";
-  const mp = { dd: null, dest: "nenhuma", esc: "geral", ufs: [], faixa: "todas", metade: "inteira", sel: new Set, base: [], cols: [] };
+  const mp = { dd: null, dest: "nenhuma", esc: "geral", ufs: [], tags: [], faixa: "todas", metade: "inteira", sel: new Set, base: [], cols: [] };
   function mpColsIniciais() {
     const salvo = store.get(MP_COLS_KEY, null), padrao = MP_COLUNAS.map((c => ({ k: c.k, on: !c.extra })));
     if (!Array.isArray(salvo)) return padrao;
@@ -5014,7 +5017,9 @@ async function __iniciarAppComDados(__payload) {
   }
   function mpBase() {
     const l = mpEscopo();
-    return mpOrdemPrioridade(mp.ufs.length ? l.filter((d => mp.ufs.includes(d.uf))) : l);
+    const porUf = mp.ufs.length ? l.filter((d => mp.ufs.includes(d.uf))) : l;
+    const porTag = mp.tags.length ? porUf.filter((d => (d.tags || []).some((t => mp.tags.includes(t))) || mp.tags.includes("__sem__") && !(d.tags || []).length)) : porUf;
+    return mpOrdemPrioridade(porTag);
   }
   function mpAplicaAtalhos() {
     mp.base = mpBase();
@@ -5035,7 +5040,8 @@ async function __iniciarAppComDados(__payload) {
   }
   function mpTopoHTML() {
     const escopo = mpEscopo(), a = ANALISTAS.find((x => x.id === mp.esc));
-    const naCarteira = mp.ufs.length ? escopo.filter((d => mp.ufs.includes(d.uf))) : escopo;
+    const naUf = mp.ufs.length ? escopo.filter((d => mp.ufs.includes(d.uf))) : escopo;
+    const naCarteira = mpBase();
     const nFaixa = f => f === "90" ? naCarteira.filter((d => d.dias_inadimplencia >= 90)).length : f === "120" ? naCarteira.filter((d => d.dias_inadimplencia >= 120)).length : naCarteira.length;
     const nSel = nFaixa(mp.faixa), meio = Math.ceil(nSel / 2);
     const item = (attr, v, rot, n, on, extra = "") => `<button class="mp-it" type="button" ${attr}="${v}" aria-checked="${on}">${extra}<span class="mp-itl">${rot}</span>${n != null ? `<span class="n tnum">${n}</span>` : ""}${ic("check", "mp-ok")}</button>`;
@@ -5049,13 +5055,20 @@ async function __iniciarAppComDados(__payload) {
     const estados = item("data-mp-uf", "__todas__", "Todos os estados", escopo.length, !mp.ufs.length) + ufs.map((u => `<button class="mp-it mp-multi" type="button" data-mp-uf="${u}" aria-checked="${mp.ufs.includes(u)}"><span class="mp-box ${mp.ufs.includes(u) ? "on" : ""}">${ic("check")}</span><span class="mp-itl">${u}</span><span class="n tnum">${cont[u]}</span></button>`)).join("");
     const faixas = [ [ "todas", "Todas" ], [ "90", "90+ dias" ], [ "120", "120+ dias" ] ].map((([k, r]) => item("data-mp-faixa", k, r, nFaixa(k), mp.faixa === k))).join("");
     const metades = [ [ "inteira", "Todas as placas", nSel ], [ "primeira", "1ª metade · mais prioritárias", meio ], [ "segunda", "2ª metade · menos prioritárias", nSel - meio ], [ "aleatoria", "Metade aleatória", meio ] ].map((([k, r, n]) => item("data-mp-metade", k, r, n, mp.metade === k))).join("");
+    const contTag = {};
+    let semTag = 0;
+    for (const d of naUf) { const ts = d.tags || []; if (!ts.length) semTag++; for (const t of ts) contTag[t] = (contTag[t] || 0) + 1; }
+    const tagsOrd = Object.keys(contTag).filter((k => TAG_OPCOES[k])).sort(((x, y) => TAG_CATEGORIAS.indexOf(TAG_OPCOES[x].categoria) - TAG_CATEGORIAS.indexOf(TAG_OPCOES[y].categoria) || TAG_OPCOES[x].label.localeCompare(TAG_OPCOES[y].label)));
+    const tagIt = (k, rot, n, pre) => `<button class="mp-it mp-multi" type="button" data-mp-tag="${k}" aria-checked="${mp.tags.includes(k)}"><span class="mp-box ${mp.tags.includes(k) ? "on" : ""}">${ic("check")}</span>${pre}<span class="mp-itl">${rot}</span><span class="n tnum">${n}</span></button>`;
+    const tagsMenu = item("data-mp-tag", "__todas__", "Todas as tags", naUf.length, !mp.tags.length) + tagsOrd.map((k => tagIt(k, esc(TAG_OPCOES[k].label), contTag[k], `<span class="mp-tagdot" style="--tc:${TAG_OPCOES[k].cor}">${TAG_ICONE[k] || ""}</span>`))).join("") + (semTag ? tagIt("__sem__", "Sem tags", semTag, `<span class="mp-tagdot" style="--tc:var(--text-faint)"></span>`) : "");
+    const valTag = !mp.tags.length ? "Todas" : mp.tags.length === 1 ? esc(mp.tags[0] === "__sem__" ? "Sem tags" : (TAG_OPCOES[mp.tags[0]] || {}).label || mp.tags[0]) : `${mp.tags.length} tags`;
     const valEsc = mp.esc === "geral" ? "Geral" : mp.esc === "br" ? "Brasil" : mp.esc === "mx" ? "México" : a ? esc(a.nome) : "Geral";
     const valUf = !mp.ufs.length ? "Todos" : mp.ufs.length <= 3 ? mp.ufs.join(", ") : `${mp.ufs.length} estados`;
     const valFaixa = { todas: "Todas", 90: "90+ dias", 120: "120+ dias" }[mp.faixa];
     const valMetade = { inteira: "Todas as placas", primeira: "1ª metade", segunda: "2ª metade", aleatoria: "Metade aleatória" }[mp.metade];
     const dd = (k, rot, val, menu, larg = "") => `<div class="mp-dd ${mp.dd === k ? "open" : ""}"><button class="mp-f" type="button" data-mp-dd="${k}" aria-expanded="${mp.dd === k}"><span class="mp-fk">${rot}</span><b>${val}</b>${ic("chevDown", "mp-fc")}</button>${mp.dd === k ? `<div class="mp-menu ${larg}" role="menu">${menu}</div>` : ""}</div>`;
     return `<div class="mp-bar"><div class="mp-seg" role="radiogroup" aria-label="Enviar para">${MP_EMPRESAS.map((([k, n]) => `<button type="button" role="radio" data-mp-dest="${k}" aria-checked="${mp.dest === k}">${n}</button>`)).join("")}</div>
-      <span class="mp-sep"></span>${dd("esc", "Carteira", valEsc, carteiras)}${dd("uf", "Estados", valUf, estados, "mp-menu-uf")}${dd("faixa", "Inadimplência", valFaixa, faixas)}${dd("metade", "Seleção", valMetade, metades, "mp-menu-larga")}</div>`;
+      <span class="mp-sep"></span>${dd("esc", "Carteira", valEsc, carteiras)}${dd("uf", "Estados", valUf, estados, "mp-menu-uf")}${dd("tag", "Tags", valTag, tagsMenu, "mp-menu-larga")}${dd("faixa", "Inadimplência", valFaixa, faixas)}${dd("metade", "Seleção", valMetade, metades, "mp-menu-larga")}</div>`;
   }
   function mpTabelaHTML() {
     const todas = mp.base.length && mp.base.every((d => mp.sel.has(d.placa))), algum = mp.base.some((d => mp.sel.has(d.placa)));
@@ -5078,7 +5091,7 @@ async function __iniciarAppComDados(__payload) {
   }
   function abrirMontagem() {
     const a = carteiraAtual();
-    Object.assign(mp, { dd: null, dest: "nenhuma", esc: a ? a.id : "geral", ufs: [], faixa: "todas", metade: "inteira", cols: mpColsIniciais() });
+    Object.assign(mp, { dd: null, dest: "nenhuma", esc: a ? a.id : "geral", ufs: [], tags: [], faixa: "todas", metade: "inteira", cols: mpColsIniciais() });
     mpAplicaAtalhos();
     $("#modal").innerHTML = `<div class="modal-head"><span class="mic">${ic("download", "live")}</span><h2 class="modal-title" id="modalTitle">Montar planilha</h2><button class="icon-btn" type="button" data-action="close-modal" aria-label="Fechar">${ic("x")}</button></div>
       <div class="mp"><div class="mp-topo"></div><div class="mp-main"><div class="mp-tab"></div><aside class="mp-cols"></aside></div>
@@ -5158,16 +5171,18 @@ async function __iniciarAppComDados(__payload) {
       m.querySelector(".mp-topo").innerHTML = mpTopoHTML();
       return true;
     }
-    const at = t.closest("[data-mp-dest],[data-mp-esc],[data-mp-uf],[data-mp-faixa],[data-mp-metade]");
+    const at = t.closest("[data-mp-dest],[data-mp-esc],[data-mp-uf],[data-mp-tag],[data-mp-faixa],[data-mp-metade]");
     if (!at && mp.dd && !t.closest(".mp-menu")) {
       mp.dd = null;
       m.querySelector(".mp-topo").innerHTML = mpTopoHTML();
     }
     if (at) {
-      if (!at.dataset.mpUf || at.dataset.mpUf === "__todas__") mp.dd = null;
+      const multi = (at.dataset.mpUf && at.dataset.mpUf !== "__todas__") || (at.dataset.mpTag && at.dataset.mpTag !== "__todas__");
+      if (!multi) mp.dd = null;
+      if (at.dataset.mpTag) { const k = at.dataset.mpTag; mp.tags = k === "__todas__" ? [] : mp.tags.includes(k) ? mp.tags.filter((x => x !== k)) : [ ...mp.tags, k ]; }
       const inp = document.getElementById("mpNome"), nomeAuto = inp && inp.value === mpNomePadrao();
       if (at.dataset.mpDest) mp.dest = at.dataset.mpDest;
-      if (at.dataset.mpEsc) { mp.esc = at.dataset.mpEsc; mp.ufs = []; }
+      if (at.dataset.mpEsc) { mp.esc = at.dataset.mpEsc; mp.ufs = []; mp.tags = []; }
       if (at.dataset.mpUf) { const u = at.dataset.mpUf; mp.ufs = u === "__todas__" ? [] : mp.ufs.includes(u) ? mp.ufs.filter((x => x !== u)) : [ ...mp.ufs, u ]; }
       if (at.dataset.mpFaixa) mp.faixa = at.dataset.mpFaixa;
       if (at.dataset.mpMetade) mp.metade = at.dataset.mpMetade;
